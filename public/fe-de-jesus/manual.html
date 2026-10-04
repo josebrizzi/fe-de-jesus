@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fe de Jesús — Manual de uso</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:Arial, Helvetica, sans-serif; color:#1a202c; background:#f0f4f8; line-height:1.5; }
+  .hoja { max-width:820px; margin:0 auto; background:#fff; padding:28px 34px; }
+  h1 { margin:0 0 4px; color:#1a3a6b; font-size:26px; }
+  .sub { color:#4a5568; margin:0 0 14px; }
+  h2 { color:#1a3a6b; font-size:19px; border-bottom:2px solid #d4a017; padding-bottom:3px; margin:20px 0 8px; }
+  h3 { font-size:15px; margin:12px 0 4px; color:#2c5282; }
+  ol, ul { margin:4px 0 8px; padding-left:22px; }
+  li { margin-bottom:3px; font-size:14px; }
+  p { font-size:14px; margin:4px 0 8px; }
+  code { background:#edf2f7; padding:1px 5px; border-radius:4px; font-size:13px; }
+  .nota { background:#fffaf0; border-left:4px solid #d4a017; padding:8px 12px; font-size:13px; margin:8px 0; }
+  .dos { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  td, th { border:1px solid #cbd5e0; padding:5px 8px; text-align:left; vertical-align:top; }
+  th { background:#ebf4ff; color:#1a3a6b; }
+  .imprimir { float:right; padding:8px 14px; border:none; border-radius:8px; background:#1a3a6b; color:#fff; font-weight:bold; cursor:pointer; }
+  @media (max-width:700px) { .dos { grid-template-columns:1fr; } .hoja { padding:18px; } }
+  @media print {
+    body { background:#fff; }
+    .hoja { padding:0; max-width:none; }
+    .imprimir { display:none; }
+    h2 { break-after:avoid; }
+    li, table { break-inside:avoid; }
+    @page { size:A4; margin:14mm; }
+  }
+</style>
+</head>
+<body>
+<div class="hoja">
+  <button class="imprimir" onclick="window.print()">🖨️ Imprimir / guardar PDF</button>
+  <h1>✝️ Fe de Jesús — Manual de uso</h1>
+  <p class="sub">Estudios bíblicos interactivos: el instructor proyecta las preguntas y cada alumno responde desde su celular.</p>
+
+  <div class="dos">
+    <div>
+      <h2>👤 Para el instructor</h2>
+      <h3>1. Entrar</h3>
+      <ol>
+        <li>Abrí la página de inicio y tocá <b>Soy instructor</b> (o entrá directo a <code>.../fe-de-jesus/admin.html</code>).</li>
+        <li>La primera vez pide la <b>clave de instructor</b>. Queda guardada en ese navegador.</li>
+        <li>Escribí tu nombre en el recuadro <b>Tu nombre</b>: aparece en el PDF de los alumnos.</li>
+      </ol>
+      <h3>2. Armar la sala</h3>
+      <ol>
+        <li>En <b>Código de sala</b> usá el que aparece o escribí uno (ej: <code>JUEVES1</code>) y tocá <b>Aplicar</b>.</li>
+        <li>Tocá <b>Copiar</b> en <b>Enlace para alumnos</b> y mandalo por WhatsApp. Cada grupo debe usar un código distinto.</li>
+        <li>Arriba verás cuántos están conectados (incluye tu propio panel).</li>
+      </ol>
+      <h3>3. Dar el estudio</h3>
+      <ol>
+        <li>Elegí el <b>estudio</b> y tocá una <b>pregunta</b>: se muestra sola en todos los celulares.</li>
+        <li><b>Mostrar en celulares</b> la vuelve a enviar. <b>Revelar respuesta</b> marca la correcta (solo en opción múltiple).</li>
+        <li>Con <b>Anterior</b> y <b>Siguiente</b> avanzás. Atajos de teclado: <code>←</code> <code>→</code>, <code>Espacio</code> (mostrar) y <code>R</code> (revelar).</li>
+        <li><b>Preguntas abiertas:</b> ves lo que escribe cada alumno. Escribí la respuesta correcta y tocá <b>Guardar y enviar a todos</b>.</li>
+      </ol>
+      <h3>4. Chat 💬</h3>
+      <ul>
+        <li>Botón 💬 abajo a la derecha. Podés escribir o grabar un audio (hasta 1 minuto).</li>
+        <li>En <b>Para:</b> elegís <b>Toda la sala</b> o un alumno (mensaje <b>privado</b> 🔒). Tocando el nombre de un alumno en el chat, le respondés a él.</li>
+        <li>🔔 activa o silencia el aviso sonoro. El contador rojo y el título de la pestaña avisan si hay mensajes nuevos.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>🎓 Para el alumno</h2>
+      <h3>1. Entrar</h3>
+      <ol>
+        <li>Abrí el enlace que mandó el instructor. Si abrís la página de inicio, tocá <b>Soy alumno</b> y escribí el código de sala.</li>
+        <li>Escribí tu nombre y tocá <b>Empezar</b>. Abajo a la izquierda dice <i>Conectado · Sala</i>.</li>
+        <li>Si el celular lo usa otra persona, tocá 👤 (arriba a la izquierda) para <b>cambiar de alumno</b>. Ojo: borra las respuestas guardadas en ese celular.</li>
+      </ol>
+      <h3>2. Responder</h3>
+      <ol>
+        <li>Esperá a que el instructor muestre una pregunta.</li>
+        <li><b>Opción múltiple:</b> tocá tu respuesta (podés cambiarla hasta que el instructor la revele).</li>
+        <li><b>Pregunta abierta:</b> escribí en el cuadro. Se envía solo, unos segundos después de dejar de escribir.</li>
+        <li>Tocá 📖 la referencia para leer el versículo. Podés cambiar la versión de la Biblia. 🔍 (arriba) busca por cita o por palabra.</li>
+        <li>🌙 / ☀️ cambia entre modo oscuro y claro.</li>
+      </ol>
+      <h3>3. Tus respuestas en PDF</h3>
+      <ol>
+        <li>Al responder todas las preguntas aparece <b>Ver mis respuestas</b>.</li>
+        <li>Revisá nombre y fecha, y tocá <b>Descargar PDF</b>: incluye puntaje, respuestas, correcciones y espacio para firmas.</li>
+      </ol>
+      <h3>4. Chat con el instructor 💬</h3>
+      <ul>
+        <li>Escribí o grabá un audio: <b>solo lo ve el instructor</b>. Él puede contestarte a vos o a todo el grupo.</li>
+        <li>El navegador pide permiso para usar el micrófono: tocá <b>Permitir</b>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>🛠️ Si algo no anda</h2>
+  <table>
+    <tr><th style="width:34%">Problema</th><th>Qué hacer</th></tr>
+    <tr><td>La página tarda hasta un minuto en abrir</td><td>Es normal si nadie la usaba: el servicio gratuito se duerme. El instructor debe abrirla unos minutos antes de empezar.</td></tr>
+    <tr><td>“Clave incorrecta”</td><td>Recargá la página y escribí de nuevo la clave de instructor (cuidá espacios y mayúsculas).</td></tr>
+    <tr><td>Al alumno no le llegan las preguntas</td><td>Verificá que muestre el mismo código de sala que el instructor (abajo a la izquierda). Si no, abrir otra vez el enlace del instructor.</td></tr>
+    <tr><td>Se perdió la conexión</td><td>Se reconecta sola. Si no, recargá la página: el alumno recupera la pregunta actual y sus respuestas.</td></tr>
+    <tr><td>No graba audio</td><td>Permití el micrófono en el navegador. Si no se puede, usá el chat de texto.</td></tr>
+    <tr><td>Un audio no se reproduce (iPhone antiguo)</td><td>Algunos Safari viejos no leen los audios grabados desde Android o PC. Pedí que lo manden por texto.</td></tr>
+  </table>
+
+  <div class="nota"><b>Importante:</b> las respuestas del alumno se guardan en su propio celular (no cambiar de navegador). El servidor recuerda por unas horas las respuestas y el chat de cada sala, pero no son un archivo permanente: si el servicio se reinicia se pierden. Por eso conviene que cada alumno descargue su PDF al terminar.</div>
+</div>
+</body>
+</html>

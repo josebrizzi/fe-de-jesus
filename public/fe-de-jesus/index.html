@@ -1578,16 +1578,20 @@
 
 <script>
 // ============================================================
-// CHAT (texto y audio)
+// CHAT v2 (texto, audio, privado, sonido)
 // ============================================================
 (function () {
   var ROL = "alumno";
   var MAX_SEG = 60;               // duración máxima de un audio
   var mensajes = [];
   var vistos = {};
+  var nombres = {};               // cid -> nombre (para los privados)
   var noLeidos = 0;
   var abierto = false;
   var rec = null, stream = null, chunks = [], t0 = 0, timer = null, cancelado = false;
+  var tituloBase = document.title;
+  var sonido = localStorage.getItem("fe-chat-sonido") !== "0";
+  var audioCtx = null;
 
   function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
   function conectado() { return typeof ws !== "undefined" && ws && ws.readyState === 1; }
@@ -1604,30 +1608,58 @@
     return c;
   };
 
+  // ---------- sonido ----------
+  function desbloquear() {
+    try {
+      if (!audioCtx) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) audioCtx = new AC(); }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    } catch (e) {}
+  }
+  document.addEventListener("pointerdown", desbloquear, true);
+  document.addEventListener("keydown", desbloquear, true);
+  function pitido() {
+    if (!sonido || !audioCtx) return;
+    try {
+      var t = audioCtx.currentTime;
+      var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(660, t);
+      o.frequency.setValueAtTime(880, t + 0.15);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t); o.stop(t + 0.45);
+    } catch (e) {}
+  }
+
   // ---------- estilos y elementos ----------
   var css = document.createElement("style");
-  css.textContent = "#chatBtn{position:fixed;right:14px;bottom:14px;width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:26px;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:900;box-shadow:0 4px 16px rgba(0,0,0,.35)}\n.chat-badge{position:absolute;top:-4px;right:-4px;min-width:22px;height:22px;border-radius:11px;background:#e53e3e;color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;padding:0 5px}\n#chatPanel{position:fixed;right:14px;bottom:80px;width:min(380px,calc(100vw - 28px));height:min(70vh,520px);background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.4);z-index:1500;display:flex;flex-direction:column;overflow:hidden}\n.chat-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--primary-soft);color:var(--primary)}\n.chat-titulo{font-weight:bold;font-size:15px}\n.chat-x{background:none;border:none;color:inherit;font-size:18px;padding:4px 8px;cursor:pointer}\n.chat-aviso{font-size:12px;color:var(--text-muted);padding:6px 14px;border-bottom:1px solid var(--border)}\n.chat-lista{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px}\n.chat-vacio{text-align:center;color:var(--text-muted);font-size:13px;padding:20px 10px}\n.chat-burb{max-width:86%;padding:8px 11px;border-radius:12px;background:var(--bg);border:1px solid var(--border);align-self:flex-start;word-break:break-word}\n.chat-burb.propio{align-self:flex-end;background:var(--primary-soft);border-color:var(--primary)}\n.chat-meta{font-size:11px;color:var(--text-muted);margin-bottom:3px}\n.chat-txt{font-size:15px;line-height:1.4;white-space:pre-wrap}\n.chat-burb audio{width:220px;max-width:100%;height:36px}\n.chat-rec{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--border);background:var(--primary-soft)}\n#chatRecTxt{flex:1;font-weight:bold;color:#e53e3e}\n.chat-mini{padding:8px 12px;font-size:13px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}\n.chat-mini.ok{background:#2f855a;color:#fff;border-color:#2f855a}\n.chat-form{display:flex;gap:6px;padding:10px;border-top:1px solid var(--border);align-items:center}\n.chat-form input{flex:1;min-width:0;padding:10px 12px;font-size:16px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text)}\n.chat-ic{width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:18px;cursor:pointer;flex:none}\n.chat-ic.envia{background:var(--primary);color:var(--bg);border-color:var(--primary)}\n.chat-ic:disabled{opacity:.4;cursor:not-allowed}";
+  css.textContent = "#chatBtn{position:fixed;right:14px;bottom:14px;width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:26px;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:900;box-shadow:0 4px 16px rgba(0,0,0,.35)}\n.chat-badge{position:absolute;top:-4px;right:-4px;min-width:22px;height:22px;border-radius:11px;background:#e53e3e;color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;padding:0 5px}\n#chatPanel{position:fixed;right:14px;bottom:80px;width:min(380px,calc(100vw - 28px));height:min(72vh,540px);background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.4);z-index:1500;display:flex;flex-direction:column;overflow:hidden}\n.chat-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--primary-soft);color:var(--primary)}\n.chat-head-btns{display:flex;align-items:center}\n.chat-titulo{font-weight:bold;font-size:15px}\n.chat-x{background:none;border:none;color:inherit;font-size:18px;padding:4px 8px;cursor:pointer}\n.chat-aviso{font-size:12px;color:var(--text-muted);padding:6px 14px;border-bottom:1px solid var(--border)}\n.chat-aviso.privado{color:#c05621;font-weight:bold}\n.chat-lista{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px}\n.chat-vacio{text-align:center;color:var(--text-muted);font-size:13px;padding:20px 10px}\n.chat-burb{max-width:86%;padding:8px 11px;border-radius:12px;background:var(--bg);border:1px solid var(--border);align-self:flex-start;word-break:break-word}\n.chat-burb.propio{align-self:flex-end;background:var(--primary-soft);border-color:var(--primary)}\n.chat-burb.priv{border-style:dashed}\n.chat-meta{font-size:11px;color:var(--text-muted);margin-bottom:3px}\n.chat-meta.resp{cursor:pointer;text-decoration:underline}\n.chat-txt{font-size:15px;line-height:1.4;white-space:pre-wrap}\n.chat-burb audio{width:220px;max-width:100%;height:36px}\n.chat-rec{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--border);background:var(--primary-soft)}\n#chatRecTxt{flex:1;font-weight:bold;color:#e53e3e}\n.chat-mini{padding:8px 12px;font-size:13px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}\n.chat-mini.ok{background:#2f855a;color:#fff;border-color:#2f855a}\n.chat-para-fila{display:flex;gap:8px;align-items:center;padding:6px 12px;border-top:1px solid var(--border);font-size:13px;color:var(--text-muted)}\n.chat-para-fila select{width:auto;flex:1;min-width:0;padding:7px 8px;font-size:14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)}\n.chat-form{display:flex;gap:6px;padding:10px;border-top:1px solid var(--border);align-items:center}\n.chat-form input{flex:1;min-width:0;padding:10px 12px;font-size:16px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text)}\n.chat-ic{width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:18px;cursor:pointer;flex:none}\n.chat-ic.envia{background:var(--primary);color:var(--bg);border-color:var(--primary)}\n.chat-ic:disabled{opacity:.4;cursor:not-allowed}";
   document.head.appendChild(css);
 
   var btn = document.createElement("button");
   btn.id = "chatBtn"; btn.type = "button"; btn.setAttribute("aria-label", "Chat");
   btn.innerHTML = '<span>💬</span><span id="chatBadge" class="chat-badge" style="display:none">0</span>';
 
+  var esInstr = ROL === "instructor";
   var panel = document.createElement("div");
   panel.id = "chatPanel";
   panel.style.display = "none";
   panel.innerHTML =
-    '<div class="chat-head"><div class="chat-titulo">' + (ROL === "instructor" ? "💬 Chat de la sala" : "💬 Chat con el instructor") + '</div>' +
-    '<button type="button" id="chatCerrar" class="chat-x" aria-label="Cerrar">✖</button></div>' +
-    '<div class="chat-aviso">' + (ROL === "instructor" ? "Lo que escribas o grabes lo ven todos los alumnos de la sala." : "Solo el instructor ve lo que envías aquí.") + '</div>' +
+    '<div class="chat-head"><div class="chat-titulo">' + (esInstr ? "💬 Chat de la sala" : "💬 Chat con el instructor") + '</div>' +
+    '<div class="chat-head-btns"><button type="button" id="chatSonido" class="chat-x" title="Sonido de aviso"></button>' +
+    '<button type="button" id="chatCerrar" class="chat-x" aria-label="Cerrar">✖</button></div></div>' +
+    '<div id="chatAviso" class="chat-aviso"></div>' +
     '<div id="chatLista" class="chat-lista"></div>' +
     '<div id="chatRec" class="chat-rec" style="display:none">' +
       '<span id="chatRecTxt">● 0:00</span>' +
       '<button type="button" id="chatRecCancel" class="chat-mini">✖ Cancelar</button>' +
       '<button type="button" id="chatRecEnviar" class="chat-mini ok">➤ Enviar audio</button>' +
     '</div>' +
+    (esInstr ? '<div class="chat-para-fila"><label for="chatPara">Para:</label><select id="chatPara"><option value="">👥 Toda la sala</option></select></div>' : '') +
     '<div class="chat-form">' +
-      '<input type="text" id="chatInput" maxlength="1000" autocomplete="off" placeholder="' + (ROL === "instructor" ? "Mensaje para toda la sala..." : "Escribe al instructor...") + '">' +
+      '<input type="text" id="chatInput" maxlength="1000" autocomplete="off" placeholder="' + (esInstr ? "Escribe tu mensaje..." : "Escribe al instructor...") + '">' +
       '<button type="button" id="chatMic" class="chat-ic" aria-label="Grabar audio">🎤</button>' +
       '<button type="button" id="chatEnviar" class="chat-ic envia" aria-label="Enviar">➤</button>' +
     '</div>';
@@ -1641,33 +1673,97 @@
   var barraRec = document.getElementById("chatRec");
   var recTxt = document.getElementById("chatRecTxt");
   var btnMic = document.getElementById("chatMic");
+  var btnSonido = document.getElementById("chatSonido");
+  var selPara = document.getElementById("chatPara");
+  var aviso = document.getElementById("chatAviso");
+
+  function pintarSonido() {
+    btnSonido.textContent = sonido ? "🔔" : "🔕";
+    btnSonido.title = sonido ? "Sonido activado (clic para silenciar)" : "Sonido silenciado (clic para activar)";
+  }
+
+  function actualizarAviso() {
+    if (!esInstr) { aviso.textContent = "Solo el instructor ve lo que envías aquí."; aviso.className = "chat-aviso"; return; }
+    var v = selPara.value;
+    if (v) {
+      aviso.textContent = "🔒 Privado: solo lo verá " + (nombres[v] || "el alumno") + ".";
+      aviso.className = "chat-aviso privado";
+    } else {
+      aviso.textContent = "Lo que escribas o grabes lo ven todos los alumnos de la sala.";
+      aviso.className = "chat-aviso";
+    }
+  }
+
+  // ---------- destinatario (solo instructor) ----------
+  function asegurarOpcion(cid, nombre, sinConexion) {
+    var existe = false;
+    for (var i = 0; i < selPara.options.length; i++) if (selPara.options[i].value === cid) existe = true;
+    if (!existe) {
+      var op = document.createElement("option");
+      op.value = cid;
+      op.textContent = "🎓 " + (nombre || "Alumno") + (sinConexion ? " (sin conexión)" : "") + " (privado)";
+      selPara.appendChild(op);
+    }
+  }
+  function actualizarAlumnos(listaAlumnos) {
+    if (!esInstr) return;
+    var actual = selPara.value;
+    selPara.innerHTML = '<option value="">👥 Toda la sala</option>';
+    (listaAlumnos || []).forEach(function (a) {
+      nombres[a.cid] = a.nombre;
+      asegurarOpcion(a.cid, a.nombre, false);
+    });
+    // Si el alumno elegido se desconectó, se conserva la opción para no mandarlo a todos por error
+    if (actual) {
+      asegurarOpcion(actual, nombres[actual], true);
+      selPara.value = actual;
+    }
+    actualizarAviso();
+  }
+  if (esInstr) selPara.addEventListener("change", actualizarAviso);
+
+  function destino() {
+    if (!esInstr || !selPara.value) return {};
+    return { para: selPara.value, paraNombre: nombres[selPara.value] || "" };
+  }
 
   // ---------- mostrar mensajes ----------
   function vacio() {
-    lista.innerHTML = '<div class="chat-vacio">' + (ROL === "instructor" ? "Aún no hay mensajes." : "Aún no hay mensajes. Escribe o graba un audio para el instructor.") + '</div>';
+    lista.innerHTML = '<div class="chat-vacio">' + (esInstr ? "Aún no hay mensajes." : "Aún no hay mensajes. Escribe o graba un audio para el instructor.") + '</div>';
   }
   function bajar() { lista.scrollTop = lista.scrollHeight; }
 
   function agregar(m) {
     if (!m || vistos[m.id]) return;
     vistos[m.id] = 1;
+    if (m.de === "alumno" && m.cid && m.nombre) nombres[m.cid] = m.nombre;
     var v = lista.querySelector(".chat-vacio");
     if (v) v.remove();
 
     var propio = m.de === ROL;
     var b = document.createElement("div");
-    b.className = "chat-burb" + (propio ? " propio" : "");
+    b.className = "chat-burb" + (propio ? " propio" : "") + (m.para ? " priv" : "");
 
     var quien;
-    if (propio) quien = "Tú";
-    else if (m.de === "instructor") quien = "Instructor" + (m.nombre && m.nombre !== "Instructor" ? " · " + m.nombre : "");
-    else quien = m.nombre || "Alumno";
+    if (propio) quien = m.para ? "Tú → " + (m.paraNombre || "alumno") + " 🔒" : "Tú";
+    else if (m.de === "instructor") quien = "Instructor" + (m.nombre && m.nombre !== "Instructor" ? " · " + m.nombre : "") + (m.para ? " 🔒 solo para ti" : "");
+    else quien = (m.nombre || "Alumno") + (esInstr ? " ↩" : "");
     var hora = "";
     try { hora = new Date(m.ts).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
 
     var meta = document.createElement("div");
     meta.className = "chat-meta";
     meta.textContent = quien + (hora ? " · " + hora : "") + (m.tipo === "audio" && m.dur ? " · 🎤 " + fmt(Math.round(m.dur)) : "");
+    if (esInstr && m.de === "alumno" && m.cid) {
+      meta.className += " resp";
+      meta.title = "Responder en privado a " + (m.nombre || "este alumno");
+      meta.addEventListener("click", function () {
+        asegurarOpcion(m.cid, m.nombre, false);
+        selPara.value = m.cid;
+        actualizarAviso();
+        input.focus();
+      });
+    }
     b.appendChild(meta);
 
     if (m.tipo === "audio" && m.audio) {
@@ -1688,10 +1784,18 @@
   function marcarBadge() {
     if (noLeidos > 0) { badge.textContent = noLeidos > 99 ? "99+" : String(noLeidos); badge.style.display = "flex"; }
     else badge.style.display = "none";
+    document.title = noLeidos > 0 ? "(" + noLeidos + ") " + tituloBase : tituloBase;
+  }
+  function avisarNuevo() {
+    noLeidos++;
+    marcarBadge();
+    pitido();
+    try { if (navigator.vibrate) navigator.vibrate(120); } catch (e) {}
   }
 
   // Lo llama el WebSocket cuando llega algo del chat
   window.chatRecibir = function (d) {
+    if (d.type === "chat-alumnos") { actualizarAlumnos(d.alumnos); return; }
     if (d.type === "chat-historial") {
       mensajes = d.mensajes || [];
       vistos = {};
@@ -1702,11 +1806,7 @@
     if (d.type === "chat-msg") {
       mensajes.push(d.msg);
       agregar(d.msg);
-      if (!abierto && d.msg.de !== ROL) {
-        noLeidos++;
-        marcarBadge();
-        try { if (navigator.vibrate) navigator.vibrate(120); } catch (e) {}
-      }
+      if (d.msg.de !== ROL && (!abierto || document.hidden)) avisarNuevo();
       return;
     }
     if (d.type === "chat-error") {
@@ -1719,7 +1819,10 @@
     var t = input.value.trim();
     if (!t) return;
     if (!conectado()) { alert("Sin conexión. Espera un momento e inténtalo de nuevo."); return; }
-    ws.send(JSON.stringify({ type: "chat-enviar", tipo: "texto", texto: t, nombre: miNombre(), cid: window.chatCid() }));
+    var paquete = { type: "chat-enviar", tipo: "texto", texto: t, nombre: miNombre(), cid: window.chatCid() };
+    var dst = destino();
+    for (var k in dst) paquete[k] = dst[k];
+    ws.send(JSON.stringify(paquete));
     input.value = "";
     input.focus();
   }
@@ -1772,12 +1875,15 @@
     if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
     mostrarRec(false);
     if (cancelado || !chunks.length || dur < 1) return;
+    var dst = destino();   // se fija al terminar de grabar
     var blob = new Blob(chunks, { type: (rec && rec.mimeType) || "audio/webm" });
     var fr = new FileReader();
     fr.onload = function () {
       if (!conectado()) { alert("Sin conexión: el audio no se pudo enviar."); return; }
       if (String(fr.result).length > 1400000) { alert("El audio es demasiado largo. Graba uno más corto."); return; }
-      ws.send(JSON.stringify({ type: "chat-enviar", tipo: "audio", audio: fr.result, dur: dur, nombre: miNombre(), cid: window.chatCid() }));
+      var paquete = { type: "chat-enviar", tipo: "audio", audio: fr.result, dur: dur, nombre: miNombre(), cid: window.chatCid() };
+      for (var k in dst) paquete[k] = dst[k];
+      ws.send(JSON.stringify(paquete));
     };
     fr.readAsDataURL(blob);
   }
@@ -1797,10 +1903,22 @@
   btnMic.addEventListener("click", iniciarRec);
   document.getElementById("chatRecCancel").addEventListener("click", function () { detener(true); });
   document.getElementById("chatRecEnviar").addEventListener("click", function () { detener(false); });
+  btnSonido.addEventListener("click", function () {
+    sonido = !sonido;
+    localStorage.setItem("fe-chat-sonido", sonido ? "1" : "0");
+    pintarSonido();
+    if (sonido) { desbloquear(); pitido(); }
+  });
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && abierto) { noLeidos = 0; marcarBadge(); }
+  });
 
+  pintarSonido();
+  actualizarAviso();
   vacio();
 })();
 </script>
+
 
 </body>
 </html>

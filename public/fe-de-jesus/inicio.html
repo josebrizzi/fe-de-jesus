@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fe de Jesús</title>
+<style>
+  :root { --bg:#f0f4f8; --card:#ffffff; --text:#1a202c; --muted:#718096; --border:#e2e8f0; --primary:#1a3a6b; --soft:#ebf4ff; --accent:#d4a017; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1419; --card:#1a202c; --text:#e2e8f0; --muted:#a0aec0; --border:#2d3748; --primary:#63b3ed; --soft:#1a365d; --accent:#ecc94b; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--text); display:flex; flex-direction:column; align-items:center; }
+  header { width:100%; background:var(--primary); color:#fff; text-align:center; padding:26px 16px; }
+  @media (prefers-color-scheme: dark) { header { color:#0f1419; } }
+  header h1 { margin:0; font-size:28px; }
+  header p { margin:6px 0 0; opacity:.85; }
+  main { width:100%; max-width:520px; padding:18px; display:flex; flex-direction:column; gap:16px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:0 3px 12px rgba(0,0,0,.08); }
+  .card h2 { margin:0 0 6px; font-size:20px; color:var(--primary); }
+  .card p { margin:0 0 14px; color:var(--muted); font-size:14px; line-height:1.4; }
+  input { width:100%; padding:14px; font-size:18px; text-align:center; text-transform:uppercase; letter-spacing:2px; border:2px solid var(--border); border-radius:12px; background:var(--bg); color:var(--text); margin-bottom:12px; }
+  input:focus { outline:none; border-color:var(--primary); }
+  .btn { display:block; width:100%; padding:14px; font-size:16px; font-weight:bold; text-align:center; text-decoration:none; border:none; border-radius:12px; background:var(--primary); color:#fff; cursor:pointer; }
+  @media (prefers-color-scheme: dark) { .btn { color:#0f1419; } }
+  .btn.sec { background:var(--soft); color:var(--primary); margin-top:10px; border:1px solid var(--primary); }
+  .pie { text-align:center; font-size:14px; padding-bottom:24px; }
+  .pie a { color:var(--primary); }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>✝️ Fe de Jesús</h1>
+  <p>Estudios bíblicos interactivos</p>
+</header>
+<main>
+  <section class="card">
+    <h2>🎓 Soy alumno</h2>
+    <p>Escribí el código de sala que te dio el instructor.</p>
+    <form id="formAlumno">
+      <input id="sala" type="text" maxlength="20" placeholder="CÓDIGO" autocomplete="off" autocapitalize="characters">
+      <button class="btn" type="submit">Entrar a la sala</button>
+    </form>
+    <a id="continuar" class="btn sec" href="./" hidden>Continuar en la sala</a>
+  </section>
+  <section class="card">
+    <h2>👤 Soy instructor</h2>
+    <p>Abrí el panel para elegir el estudio, proyectar las preguntas y chatear con tu grupo.</p>
+    <a class="btn" href="admin.html">Abrir panel del instructor</a>
+  </section>
+  <p class="pie"><a href="manual.html">📘 Manual de uso</a></p>
+</main>
+<script>
+  function limpiar(s) { return String(s || "").toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20); }
+  document.getElementById("formAlumno").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var c = limpiar(document.getElementById("sala").value);
+    if (!c) { document.getElementById("sala").focus(); return; }
+    location.href = "./?sala=" + encodeURIComponent(c);
+  });
+  try {
+    var guardada = localStorage.getItem("fe-sala");
+    if (guardada) {
+      var a = document.getElementById("continuar");
+      a.href = "./?sala=" + encodeURIComponent(guardada);
+      a.textContent = "Continuar en la sala " + guardada;
+      a.hidden = false;
+    }
+  } catch (e) {}
+</script>
+</body>
+</html>

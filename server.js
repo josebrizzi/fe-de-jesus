@@ -22,6 +22,12 @@ const db = new sqlite3.Database(
   }
 );
 
+// En Render, la raíz lleva a la página de inicio de Fe de Jesús
+app.get("/", (req, res, next) => {
+  if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) return res.redirect("/fe-de-jesus/inicio.html");
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/api/versions", (req, res) => {
@@ -584,11 +590,11 @@ if (INSTRUCTOR_KEY === "cambia-esta-clave") {
   console.warn("AVISO: usando la clave por defecto. Define la variable INSTRUCTOR_KEY.");
 }
 const TIPOS_INSTRUCTOR = ["project", "project-fe", "fe-respuesta-correcta", "fe-nombre-instructor"];
-const TIPOS_ALUMNO = ["fe-respuesta-alumno", "fe-nombre-alumno"];
 
-// Límites del chat
+// Límites
 const MAX_AUDIO = 1500000;      // caracteres del audio en base64 (aprox. 1.1 MB)
-const MAX_HISTORIAL = 30;       // mensajes que se recuerdan por sala (en memoria)
+const MAX_HISTORIAL = 30;       // mensajes de chat que se recuerdan por sala (en memoria)
+const MAX_RESPUESTAS = 2000;    // respuestas de alumnos que se recuerdan por sala (en memoria)
 
 // Cada sala (grupo) tiene su propio estado y sus propios mensajes
 const salas = new Map();
@@ -599,17 +605,31 @@ function limpiarSala(s) {
 
 function estadoSala(id) {
   if (!salas.has(id)) {
-    salas.set(id, { proyeccion: null, correccion: null, instructor: null, chat: [], actividad: Date.now() });
+    salas.set(id, {
+      proyeccion: null, correccion: null, instructor: null,
+      chat: [], respuestas: new Map(), actividad: Date.now()
+    });
   }
   const st = salas.get(id);
   st.actividad = Date.now();
   return st;
 }
 
+function guardarRespuesta(st, data) {
+  const clave = [data.estudioId, data.preguntaN, data.nombre || "Anónimo"].join("|");
+  st.respuestas.delete(clave);
+  st.respuestas.set(clave, data);
+  while (st.respuestas.size > MAX_RESPUESTAS) {
+    st.respuestas.delete(st.respuestas.keys().next().value);
+  }
+}
+
 wss.on("connection", (ws) => {
   ws.isInstructor = false;
   ws.isAlive = true;
   ws.sala = "GENERAL"; // hasta que el cliente mande "join"
+  ws.cid = "";
+  ws.nombre = "";
   ws.ultimoChat = 0;
   ws.on("pong", () => { ws.isAlive = true; });
 
@@ -628,18 +648,26 @@ wss.on("connection", (ws) => {
       if (data.type === "join") {
         const anterior = ws.sala;
         ws.sala = limpiarSala(data.sala);
+        ws.cid = String(data.cid || "").slice(0, 60);
         const st = estadoSala(ws.sala);
         if (st.instructor) ws.send(JSON.stringify(st.instructor));
         if (st.proyeccion) ws.send(JSON.stringify(st.proyeccion));
         if (st.correccion) ws.send(JSON.stringify(st.correccion));
-        // Historial del chat: el instructor ve todo; el alumno solo lo del instructor y lo suyo
-        const cid = String(data.cid || "");
+        // Historial del chat: el instructor ve todo; el alumno solo lo del instructor (general o privado para él) y lo suyo
+        const cid = ws.cid;
         const historial = st.chat.filter((m) =>
-          ws.isInstructor || m.de === "instructor" || (cid && m.cid === cid)
+          ws.isInstructor ||
+          (m.de === "instructor" && (!m.para || m.para === cid)) ||
+          (cid && m.cid === cid)
         );
         ws.send(JSON.stringify({ type: "chat-historial", mensajes: historial }));
+        // El instructor recupera las respuestas que los alumnos ya enviaron
+        if (ws.isInstructor) {
+          st.respuestas.forEach((d) => ws.send(JSON.stringify(d)));
+        }
         broadcastCount(ws.sala);
-        if (anterior !== ws.sala) broadcastCount(anterior);
+        enviarRoster(ws.sala);
+        if (anterior !== ws.sala) { broadcastCount(anterior); enviarRoster(anterior); }
         return;
       }
 
@@ -658,6 +686,16 @@ wss.on("connection", (ws) => {
           tipo: tipo,
           ts: ahora
         };
+        if (!ws.isInstructor && data.nombre) ws.nombre = msg.nombre;
+
+        // Mensaje privado: solo el instructor puede elegir destinatario
+        if (ws.isInstructor && data.para) {
+          msg.para = String(data.para).slice(0, 60);
+          msg.paraNombre = String(data.paraNombre || "").slice(0, 60);
+          wss.clients.forEach((c) => {
+            if (c.sala === ws.sala && c.cid === msg.para && c.nombre) msg.paraNombre = c.nombre;
+          });
+        }
 
         if (tipo === "texto") {
           msg.texto = String(data.texto || "").trim().slice(0, 1000);
@@ -679,6 +717,22 @@ wss.on("connection", (ws) => {
         st.chat.push(msg);
         while (st.chat.length > MAX_HISTORIAL) st.chat.shift();
         enviarChat(msg, ws);
+        enviarRoster(ws.sala); // por si el nombre del alumno cambió
+        return;
+      }
+
+      // ---- RESPUESTAS DE ALUMNOS: solo las ve el instructor ----
+      if (data.type === "fe-respuesta-alumno") {
+        if (JSON.stringify(data).length > 20000) return;
+        if (data.nombre) ws.nombre = String(data.nombre).slice(0, 60);
+        guardarRespuesta(estadoSala(ws.sala), data);
+        enviarAInstructores(data, ws.sala);
+        return;
+      }
+      if (data.type === "fe-nombre-alumno") {
+        ws.nombre = String(data.nombre || "").slice(0, 60);
+        enviarAInstructores(data, ws.sala);
+        enviarRoster(ws.sala);
         return;
       }
 
@@ -698,8 +752,6 @@ wss.on("connection", (ws) => {
       } else if (data.type === "fe-nombre-instructor") {
         st.instructor = data;
         broadcast(data, ws.sala);
-      } else if (TIPOS_ALUMNO.includes(data.type)) {
-        broadcast(data, ws.sala);
       }
     } catch (error) {
       console.error("Mensaje WebSocket inválido:", error.message);
@@ -708,6 +760,7 @@ wss.on("connection", (ws) => {
 
   ws.on("close", () => {
     broadcastCount(ws.sala);
+    enviarRoster(ws.sala);
   });
 });
 
@@ -738,12 +791,32 @@ function broadcast(data, sala) {
   });
 }
 
-// Chat: el instructor habla para toda la sala; el alumno solo para los instructores (y él mismo)
+function enviarAInstructores(data, sala) {
+  const message = JSON.stringify(data);
+  wss.clients.forEach((c) => {
+    if (c.readyState === WebSocket.OPEN && c.sala === sala && c.isInstructor) c.send(message);
+  });
+}
+
+// Lista de alumnos conectados en la sala (solo para los instructores)
+function enviarRoster(sala) {
+  const lista = new Map();
+  wss.clients.forEach((c) => {
+    if (c.readyState === WebSocket.OPEN && c.sala === sala && !c.isInstructor && c.cid) {
+      lista.set(c.cid, { cid: c.cid, nombre: c.nombre || "Alumno" });
+    }
+  });
+  enviarAInstructores({ type: "chat-alumnos", alumnos: Array.from(lista.values()) }, sala);
+}
+
+// Chat: el instructor habla para toda la sala (o en privado a un alumno);
+// el alumno solo para los instructores (y él mismo ve su mensaje)
 function enviarChat(msg, origen) {
   const texto = JSON.stringify({ type: "chat-msg", msg: msg });
   wss.clients.forEach((c) => {
     if (c.readyState !== WebSocket.OPEN || c.sala !== origen.sala) return;
-    if (msg.de === "instructor" || c.isInstructor || c === origen) c.send(texto);
+    if (c.isInstructor || c === origen) { c.send(texto); return; }
+    if (msg.de === "instructor" && (!msg.para || c.cid === msg.para)) c.send(texto);
   });
 }
 
