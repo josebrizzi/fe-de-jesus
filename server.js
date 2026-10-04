@@ -7,7 +7,7 @@ const fs = require("fs");
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server, maxPayload: 4 * 1024 * 1024 });
 
 const PORT = process.env.PORT || 8090;
 
@@ -586,6 +586,10 @@ if (INSTRUCTOR_KEY === "cambia-esta-clave") {
 const TIPOS_INSTRUCTOR = ["project", "project-fe", "fe-respuesta-correcta", "fe-nombre-instructor"];
 const TIPOS_ALUMNO = ["fe-respuesta-alumno", "fe-nombre-alumno"];
 
+// Límites del chat
+const MAX_AUDIO = 1500000;      // caracteres del audio en base64 (aprox. 1.1 MB)
+const MAX_HISTORIAL = 30;       // mensajes que se recuerdan por sala (en memoria)
+
 // Cada sala (grupo) tiene su propio estado y sus propios mensajes
 const salas = new Map();
 
@@ -595,7 +599,7 @@ function limpiarSala(s) {
 
 function estadoSala(id) {
   if (!salas.has(id)) {
-    salas.set(id, { proyeccion: null, correccion: null, instructor: null, actividad: Date.now() });
+    salas.set(id, { proyeccion: null, correccion: null, instructor: null, chat: [], actividad: Date.now() });
   }
   const st = salas.get(id);
   st.actividad = Date.now();
@@ -606,6 +610,7 @@ wss.on("connection", (ws) => {
   ws.isInstructor = false;
   ws.isAlive = true;
   ws.sala = "GENERAL"; // hasta que el cliente mande "join"
+  ws.ultimoChat = 0;
   ws.on("pong", () => { ws.isAlive = true; });
 
   broadcastCount(ws.sala);
@@ -627,8 +632,53 @@ wss.on("connection", (ws) => {
         if (st.instructor) ws.send(JSON.stringify(st.instructor));
         if (st.proyeccion) ws.send(JSON.stringify(st.proyeccion));
         if (st.correccion) ws.send(JSON.stringify(st.correccion));
+        // Historial del chat: el instructor ve todo; el alumno solo lo del instructor y lo suyo
+        const cid = String(data.cid || "");
+        const historial = st.chat.filter((m) =>
+          ws.isInstructor || m.de === "instructor" || (cid && m.cid === cid)
+        );
+        ws.send(JSON.stringify({ type: "chat-historial", mensajes: historial }));
         broadcastCount(ws.sala);
         if (anterior !== ws.sala) broadcastCount(anterior);
+        return;
+      }
+
+      // ---- CHAT ----
+      if (data.type === "chat-enviar") {
+        const ahora = Date.now();
+        if (ahora - ws.ultimoChat < 400) return; // anti-spam
+        ws.ultimoChat = ahora;
+
+        const tipo = data.tipo === "audio" ? "audio" : "texto";
+        const msg = {
+          id: ahora.toString(36) + Math.random().toString(36).slice(2, 6),
+          de: ws.isInstructor ? "instructor" : "alumno",
+          nombre: String(data.nombre || (ws.isInstructor ? "Instructor" : "Anónimo")).slice(0, 60),
+          cid: String(data.cid || "").slice(0, 60),
+          tipo: tipo,
+          ts: ahora
+        };
+
+        if (tipo === "texto") {
+          msg.texto = String(data.texto || "").trim().slice(0, 1000);
+          if (!msg.texto) return;
+        } else {
+          const a = String(data.audio || "");
+          const corte = a.indexOf(";base64,");
+          const cabecera = corte > 0 ? a.slice(0, corte) : "";
+          if (!/^data:audio[/][A-Za-z0-9.+;=,_-]+$/.test(cabecera)) return;
+          if (a.length > MAX_AUDIO) {
+            ws.send(JSON.stringify({ type: "chat-error", error: "audio-largo" }));
+            return;
+          }
+          msg.audio = a;
+          msg.dur = Math.max(0, Math.min(Number(data.dur) || 0, 120));
+        }
+
+        const st = estadoSala(ws.sala);
+        st.chat.push(msg);
+        while (st.chat.length > MAX_HISTORIAL) st.chat.shift();
+        enviarChat(msg, ws);
         return;
       }
 
@@ -685,6 +735,15 @@ function broadcast(data, sala) {
   const message = JSON.stringify(data);
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN && client.sala === sala) client.send(message);
+  });
+}
+
+// Chat: el instructor habla para toda la sala; el alumno solo para los instructores (y él mismo)
+function enviarChat(msg, origen) {
+  const texto = JSON.stringify({ type: "chat-msg", msg: msg });
+  wss.clients.forEach((c) => {
+    if (c.readyState !== WebSocket.OPEN || c.sala !== origen.sala) return;
+    if (msg.de === "instructor" || c.isInstructor || c === origen) c.send(texto);
   });
 }
 

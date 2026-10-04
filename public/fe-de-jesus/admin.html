@@ -317,6 +317,7 @@
       try {
         const data = JSON.parse(event.data);
         if (data.type === "connected") connectedCount.textContent = data.count;
+        if (typeof chatRecibir === "function" && data.type && data.type.indexOf("chat-") === 0) chatRecibir(data);
         if (data.type === "auth-ok") wsStatus.textContent = "Conectado (instructor)";
         if (data.type === "auth-error") {
           localStorage.removeItem("fe-clave-instructor");
@@ -642,6 +643,232 @@
     });
     actualizar();
   })();
+</script>
+
+<script>
+// ============================================================
+// CHAT (texto y audio)
+// ============================================================
+(function () {
+  var ROL = "instructor";
+  var MAX_SEG = 60;               // duración máxima de un audio
+  var mensajes = [];
+  var vistos = {};
+  var noLeidos = 0;
+  var abierto = false;
+  var rec = null, stream = null, chunks = [], t0 = 0, timer = null, cancelado = false;
+
+  function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
+  function conectado() { return typeof ws !== "undefined" && ws && ws.readyState === 1; }
+  function miNombre() {
+    if (ROL === "instructor") return localStorage.getItem("fe-nombre-instructor") || "Instructor";
+    return localStorage.getItem("fe-nombre-alumno") || "Anónimo";
+  }
+  window.chatCid = function () {
+    var c = localStorage.getItem("fe-cid");
+    if (!c) {
+      c = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem("fe-cid", c);
+    }
+    return c;
+  };
+
+  // ---------- estilos y elementos ----------
+  var css = document.createElement("style");
+  css.textContent = "#chatBtn{position:fixed;right:14px;bottom:14px;width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:26px;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:900;box-shadow:0 4px 16px rgba(0,0,0,.35)}\n.chat-badge{position:absolute;top:-4px;right:-4px;min-width:22px;height:22px;border-radius:11px;background:#e53e3e;color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;padding:0 5px}\n#chatPanel{position:fixed;right:14px;bottom:80px;width:min(380px,calc(100vw - 28px));height:min(70vh,520px);background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.4);z-index:1500;display:flex;flex-direction:column;overflow:hidden}\n.chat-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--primary-soft);color:var(--primary)}\n.chat-titulo{font-weight:bold;font-size:15px}\n.chat-x{background:none;border:none;color:inherit;font-size:18px;padding:4px 8px;cursor:pointer}\n.chat-aviso{font-size:12px;color:var(--text-muted);padding:6px 14px;border-bottom:1px solid var(--border)}\n.chat-lista{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px}\n.chat-vacio{text-align:center;color:var(--text-muted);font-size:13px;padding:20px 10px}\n.chat-burb{max-width:86%;padding:8px 11px;border-radius:12px;background:var(--bg);border:1px solid var(--border);align-self:flex-start;word-break:break-word}\n.chat-burb.propio{align-self:flex-end;background:var(--primary-soft);border-color:var(--primary)}\n.chat-meta{font-size:11px;color:var(--text-muted);margin-bottom:3px}\n.chat-txt{font-size:15px;line-height:1.4;white-space:pre-wrap}\n.chat-burb audio{width:220px;max-width:100%;height:36px}\n.chat-rec{display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--border);background:var(--primary-soft)}\n#chatRecTxt{flex:1;font-weight:bold;color:#e53e3e}\n.chat-mini{padding:8px 12px;font-size:13px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}\n.chat-mini.ok{background:#2f855a;color:#fff;border-color:#2f855a}\n.chat-form{display:flex;gap:6px;padding:10px;border-top:1px solid var(--border);align-items:center}\n.chat-form input{flex:1;min-width:0;padding:10px 12px;font-size:16px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text)}\n.chat-ic{width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:18px;cursor:pointer;flex:none}\n.chat-ic.envia{background:var(--primary);color:var(--bg);border-color:var(--primary)}\n.chat-ic:disabled{opacity:.4;cursor:not-allowed}";
+  document.head.appendChild(css);
+
+  var btn = document.createElement("button");
+  btn.id = "chatBtn"; btn.type = "button"; btn.setAttribute("aria-label", "Chat");
+  btn.innerHTML = '<span>💬</span><span id="chatBadge" class="chat-badge" style="display:none">0</span>';
+
+  var panel = document.createElement("div");
+  panel.id = "chatPanel";
+  panel.style.display = "none";
+  panel.innerHTML =
+    '<div class="chat-head"><div class="chat-titulo">' + (ROL === "instructor" ? "💬 Chat de la sala" : "💬 Chat con el instructor") + '</div>' +
+    '<button type="button" id="chatCerrar" class="chat-x" aria-label="Cerrar">✖</button></div>' +
+    '<div class="chat-aviso">' + (ROL === "instructor" ? "Lo que escribas o grabes lo ven todos los alumnos de la sala." : "Solo el instructor ve lo que envías aquí.") + '</div>' +
+    '<div id="chatLista" class="chat-lista"></div>' +
+    '<div id="chatRec" class="chat-rec" style="display:none">' +
+      '<span id="chatRecTxt">● 0:00</span>' +
+      '<button type="button" id="chatRecCancel" class="chat-mini">✖ Cancelar</button>' +
+      '<button type="button" id="chatRecEnviar" class="chat-mini ok">➤ Enviar audio</button>' +
+    '</div>' +
+    '<div class="chat-form">' +
+      '<input type="text" id="chatInput" maxlength="1000" autocomplete="off" placeholder="' + (ROL === "instructor" ? "Mensaje para toda la sala..." : "Escribe al instructor...") + '">' +
+      '<button type="button" id="chatMic" class="chat-ic" aria-label="Grabar audio">🎤</button>' +
+      '<button type="button" id="chatEnviar" class="chat-ic envia" aria-label="Enviar">➤</button>' +
+    '</div>';
+
+  document.body.appendChild(btn);
+  document.body.appendChild(panel);
+
+  var lista = document.getElementById("chatLista");
+  var input = document.getElementById("chatInput");
+  var badge = document.getElementById("chatBadge");
+  var barraRec = document.getElementById("chatRec");
+  var recTxt = document.getElementById("chatRecTxt");
+  var btnMic = document.getElementById("chatMic");
+
+  // ---------- mostrar mensajes ----------
+  function vacio() {
+    lista.innerHTML = '<div class="chat-vacio">' + (ROL === "instructor" ? "Aún no hay mensajes." : "Aún no hay mensajes. Escribe o graba un audio para el instructor.") + '</div>';
+  }
+  function bajar() { lista.scrollTop = lista.scrollHeight; }
+
+  function agregar(m) {
+    if (!m || vistos[m.id]) return;
+    vistos[m.id] = 1;
+    var v = lista.querySelector(".chat-vacio");
+    if (v) v.remove();
+
+    var propio = m.de === ROL;
+    var b = document.createElement("div");
+    b.className = "chat-burb" + (propio ? " propio" : "");
+
+    var quien;
+    if (propio) quien = "Tú";
+    else if (m.de === "instructor") quien = "Instructor" + (m.nombre && m.nombre !== "Instructor" ? " · " + m.nombre : "");
+    else quien = m.nombre || "Alumno";
+    var hora = "";
+    try { hora = new Date(m.ts).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" }); } catch (e) {}
+
+    var meta = document.createElement("div");
+    meta.className = "chat-meta";
+    meta.textContent = quien + (hora ? " · " + hora : "") + (m.tipo === "audio" && m.dur ? " · 🎤 " + fmt(Math.round(m.dur)) : "");
+    b.appendChild(meta);
+
+    if (m.tipo === "audio" && m.audio) {
+      var a = document.createElement("audio");
+      a.controls = true; a.preload = "none"; a.src = m.audio;
+      b.appendChild(a);
+    } else {
+      var t = document.createElement("div");
+      t.className = "chat-txt";
+      t.textContent = m.texto || "";
+      b.appendChild(t);
+    }
+    lista.appendChild(b);
+    while (lista.children.length > 60) lista.removeChild(lista.firstChild);
+    bajar();
+  }
+
+  function marcarBadge() {
+    if (noLeidos > 0) { badge.textContent = noLeidos > 99 ? "99+" : String(noLeidos); badge.style.display = "flex"; }
+    else badge.style.display = "none";
+  }
+
+  // Lo llama el WebSocket cuando llega algo del chat
+  window.chatRecibir = function (d) {
+    if (d.type === "chat-historial") {
+      mensajes = d.mensajes || [];
+      vistos = {};
+      vacio();
+      mensajes.forEach(agregar);
+      return;
+    }
+    if (d.type === "chat-msg") {
+      mensajes.push(d.msg);
+      agregar(d.msg);
+      if (!abierto && d.msg.de !== ROL) {
+        noLeidos++;
+        marcarBadge();
+        try { if (navigator.vibrate) navigator.vibrate(120); } catch (e) {}
+      }
+      return;
+    }
+    if (d.type === "chat-error") {
+      alert("El audio es demasiado largo. Graba uno más corto.");
+    }
+  };
+
+  // ---------- enviar texto ----------
+  function enviarTexto() {
+    var t = input.value.trim();
+    if (!t) return;
+    if (!conectado()) { alert("Sin conexión. Espera un momento e inténtalo de nuevo."); return; }
+    ws.send(JSON.stringify({ type: "chat-enviar", tipo: "texto", texto: t, nombre: miNombre(), cid: window.chatCid() }));
+    input.value = "";
+    input.focus();
+  }
+
+  // ---------- grabar y enviar audio ----------
+  function mostrarRec(si) {
+    barraRec.style.display = si ? "flex" : "none";
+    btnMic.disabled = !!si;
+  }
+  function tick() {
+    var seg = Math.floor((Date.now() - t0) / 1000);
+    recTxt.textContent = "● " + fmt(seg) + " / " + fmt(MAX_SEG);
+    if (seg >= MAX_SEG) detener(false);
+  }
+  function iniciarRec() {
+    if (!conectado()) { alert("Sin conexión. Espera un momento e inténtalo de nuevo."); return; }
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+      alert("Este navegador no permite grabar audio. Usa el chat de texto.");
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+      stream = s; chunks = []; cancelado = false;
+      var tipos = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
+      var mime = "";
+      for (var i = 0; i < tipos.length; i++) {
+        if (MediaRecorder.isTypeSupported(tipos[i])) { mime = tipos[i]; break; }
+      }
+      var opts = { audioBitsPerSecond: 24000 };
+      if (mime) opts.mimeType = mime;
+      rec = new MediaRecorder(stream, opts);
+      rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+      rec.onstop = finRec;
+      rec.start();
+      t0 = Date.now();
+      mostrarRec(true);
+      recTxt.textContent = "● 0:00 / " + fmt(MAX_SEG);
+      timer = setInterval(tick, 250);
+    }).catch(function () {
+      alert("No se pudo usar el micrófono. Revisa el permiso del navegador.");
+    });
+  }
+  function detener(cancel) {
+    cancelado = !!cancel;
+    clearInterval(timer);
+    if (rec && rec.state !== "inactive") rec.stop();
+    else { mostrarRec(false); }
+  }
+  function finRec() {
+    var dur = Math.round((Date.now() - t0) / 1000);
+    if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+    mostrarRec(false);
+    if (cancelado || !chunks.length || dur < 1) return;
+    var blob = new Blob(chunks, { type: (rec && rec.mimeType) || "audio/webm" });
+    var fr = new FileReader();
+    fr.onload = function () {
+      if (!conectado()) { alert("Sin conexión: el audio no se pudo enviar."); return; }
+      if (String(fr.result).length > 1400000) { alert("El audio es demasiado largo. Graba uno más corto."); return; }
+      ws.send(JSON.stringify({ type: "chat-enviar", tipo: "audio", audio: fr.result, dur: dur, nombre: miNombre(), cid: window.chatCid() }));
+    };
+    fr.readAsDataURL(blob);
+  }
+
+  // ---------- abrir / cerrar ----------
+  function alternar(v) {
+    abierto = v;
+    panel.style.display = v ? "flex" : "none";
+    if (v) { noLeidos = 0; marcarBadge(); bajar(); }
+    else if (rec && rec.state === "recording") detener(true);
+  }
+
+  btn.addEventListener("click", function () { alternar(!abierto); });
+  document.getElementById("chatCerrar").addEventListener("click", function () { alternar(false); });
+  document.getElementById("chatEnviar").addEventListener("click", enviarTexto);
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); enviarTexto(); } });
+  btnMic.addEventListener("click", iniciarRec);
+  document.getElementById("chatRecCancel").addEventListener("click", function () { detener(true); });
+  document.getElementById("chatRecEnviar").addEventListener("click", function () { detener(false); });
+
+  vacio();
+})();
 </script>
 
 </body>
