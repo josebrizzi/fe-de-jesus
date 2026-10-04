@@ -1,0 +1,23 @@
+{
+  "id": 20,
+  "titulo": "Y ahora ¿qué hago?",
+  "subtitulo": "Qué enseña la Biblia acerca de la entrega personal a Dios",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Qué paso es indispensable para la salvación?", "referencia": "Marcos 16:16", "opciones": ["Creer y bautizarse", "Solo creer", "Ninguno", "No sé"], "correcta": 0 },
+    { "n": 2, "pregunta": "¿Qué llamado dirigió Jesús a Levi?", "referencia": "Lucas 5:27", "opciones": [], "correcta": -1 },
+    { "n": 3, "pregunta": "¿Cómo respondió Levi?", "referencia": "Lucas 5:28", "opciones": [], "correcta": -1 },
+    { "n": 4, "pregunta": "¿Qué otro tierno llamado hace Jesús?", "referencia": "Apocalipsis 3:20", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Qué decisión debemos tomar ahora?", "referencia": "Hechos 22:16", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Cuán importante es que todos testifiquemos?", "referencia": "Mateo 24:14; 1 Pedro 3:15", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Cómo ser testigos: I - Ser testigos es una orden bíblica (Hechos 1:8). II - Ser testigos es la respuesta al amor de Dios (Romanos 5:8). III - Ser testigos contribuye a la vida espiritual (2 Corintios 5:14-17). Para dar testimonio, es útil tener presente cuatro partes: a) Cómo era mi vida antes de conocer a Jesús; b) Cómo me di cuenta de que necesitaba a Jesús; c) Cómo comprometí mi vida con Jesús; d) La diferencia que Jesús produce en mi vida.",
+  "sugerencias": [
+    { "texto": "No postergar la decisión de aceptar al Señor", "referencia": "Hechos 24:25" },
+    { "texto": "Junto con mi familia decidirme por Dios", "referencia": "Josué 24:15" },
+    { "texto": "Hacer la decisión ahora mismo", "referencia": "Hebreos 3:15" },
+    { "texto": "Pedir el bautismo", "referencia": "Hechos 8:36" },
+    { "texto": "Confiar plenamente en Jesús", "referencia": "Filipenses 4:13" }
+  ],
+  "compromiso": "Creo que el Señor me llama para unirme a su iglesia. Respondo gozoso a su llamado y entrego mi vida mediante el santo bautismo."
+}

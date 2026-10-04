@@ -1,0 +1,23 @@
+{
+  "id": 5,
+  "titulo": "¿Hay esperanza para mí?",
+  "subtitulo": "Qué enseña la Biblia acerca de la salvación",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Cuál es la consecuencia final del pecado?", "referencia": "Romanos 5:12", "opciones": ["Una enfermedad", "No sucede nada", "La muerte", "No sé"], "correcta": 2 },
+    { "n": 2, "pregunta": "¿Puede el hombre resolver el problema del pecado?", "referencia": "Jeremías 2:22", "opciones": ["Portándose bien", "Haciendo promesas", "No", "No sé"], "correcta": 2 },
+    { "n": 3, "pregunta": "¿Qué provisión hizo Dios para salvar al hombre?", "referencia": "Juan 3:16", "opciones": ["Dio a su Hijo", "Cambió la Ley", "Perdonó por amor", "No sé"], "correcta": 0 },
+    { "n": 4, "pregunta": "¿Cómo describió Jesús su misión?", "referencia": "Lucas 19:10", "opciones": ["Sacar el sufrimiento", "Buscar y salvar al perdido", "Condenar al pecador", "No sé"], "correcta": 1 },
+    { "n": 5, "pregunta": "¿Cometió Jesús algún pecado?", "referencia": "Hebreos 4:15", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Cómo pagó Jesús la deuda del hombre?", "referencia": "Isaías 53:3-7", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Qué acto aseguró nuestra salvación?", "referencia": "1 Corintios 15:20-22", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Cuál es el resultado de entregarle la vida a Cristo?", "referencia": "2 Corintios 5:17", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "¿En qué le ayuda saber que Jesús vino para salvarnos y hacer de nosotros nuevas personas? Cuando estamos sufriendo o pasando por angustias, esperamos que Dios cambie situaciones, pero Dios anhela sanarnos como personas. ¿Qué opina de esto?",
+  "sugerencias": [
+    { "texto": "Creer en Jesús", "referencia": "Hechos 16:30, 31" },
+    { "texto": "Aceptarlo como único Salvador", "referencia": "Hechos 4:12" },
+    { "texto": "Abrirle la puerta del corazón", "referencia": "Apocalipsis 3:20" }
+  ],
+  "compromiso": "Creo que Jesús murió por mis pecados. Lo acepto como mi único Salvador. Le entrego mi vida y mi corazón."
+}

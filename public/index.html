@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Biblia Sincronizada</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      background: #f4f1ea;
+      color: #222;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #173f35;
+      color: white;
+
+      padding: 18px 20px;
+
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      opacity: 0.85;
+      font-size: 14px;
+    }
+
+    main {
+      flex: 1;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+    }
+
+    .verse-card {
+
+      width: 100%;
+      max-width: 900px;
+
+      background: white;
+
+      border-radius: 18px;
+
+      padding: 35px 30px;
+
+      box-shadow:
+        0 4px 18px
+        rgba(0,0,0,0.10);
+
+      text-align: center;
+    }
+
+    .reference {
+
+      font-size: 24px;
+
+      font-weight: bold;
+
+      color: #173f35;
+
+      margin-bottom: 25px;
+    }
+
+    .text {
+
+      font-size: 32px;
+
+      line-height: 1.55;
+
+      color: #222;
+
+      max-height: calc(100vh - 260px);
+
+      overflow-y: auto;
+
+      padding-right: 12px;
+    }
+
+    .version {
+
+      margin-top: 25px;
+
+      font-size: 15px;
+
+      color: #777;
+    }
+
+    .waiting {
+
+      color: #777;
+
+      font-size: 20px;
+
+      line-height: 1.5;
+    }
+
+    .status {
+
+      position: fixed;
+
+      bottom: 12px;
+      left: 12px;
+
+      padding: 7px 11px;
+
+      border-radius: 20px;
+
+      background: #ddd;
+
+      color: #555;
+
+      font-size: 12px;
+    }
+
+    .status.connected {
+
+      background: #dcece5;
+
+      color: #173f35;
+
+    }
+
+    @media (max-width: 600px) {
+
+      header h1 {
+        font-size: 20px;
+      }
+
+      .verse-card {
+
+        padding:
+          28px 20px;
+
+      }
+
+      .reference {
+
+        font-size: 21px;
+
+      }
+
+      .text {
+
+        font-size: 25px;
+
+      }
+
+      .version {
+
+        font-size: 14px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+
+    <h1>📖 Biblia Sincronizada</h1>
+
+    <p>
+      Texto bíblico proyectado
+    </p>
+
+  </header>
+
+
+  <main>
+
+    <section class="verse-card">
+
+      <div
+        id="reference"
+        class="reference"
+      >
+        Biblia Sincronizada
+      </div>
+
+
+      <div
+        id="text"
+        class="waiting"
+      >
+        Esperando que el predicador
+        proyecte un versículo...
+      </div>
+
+
+      <div
+        id="version"
+        class="version"
+      >
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <div
+    id="status"
+    class="status"
+  >
+    Conectando...
+  </div>
+
+
+  <script>
+
+    const reference =
+      document.getElementById(
+        "reference"
+      );
+
+    const text =
+      document.getElementById(
+        "text"
+      );
+
+    const version =
+      document.getElementById(
+        "version"
+      );
+
+    const status =
+      document.getElementById(
+        "status"
+      );
+
+
+    let ws;
+
+
+    function conectar() {
+
+      const protocol =
+        location.protocol === "https:"
+          ? "wss:"
+          : "ws:";
+
+
+      const wsBase =
+        location.pathname.startsWith("/biblia")
+          ? "/biblia"
+          : "";
+
+      ws =
+        new WebSocket(
+          `${protocol}//${location.host}${wsBase}`
+        );
+
+
+      ws.addEventListener(
+        "open",
+        () => {
+
+          status.textContent =
+            "Conectado";
+
+          status.classList.add(
+            "connected"
+          );
+
+        }
+      );
+
+
+      ws.addEventListener(
+        "close",
+        () => {
+
+          status.textContent =
+            "Desconectado";
+
+          status.classList.remove(
+            "connected"
+          );
+
+
+          setTimeout(
+            conectar,
+            2000
+          );
+
+        }
+      );
+
+
+      ws.addEventListener(
+        "error",
+        () => {
+
+          status.textContent =
+            "Error de conexión";
+
+          status.classList.remove(
+            "connected"
+          );
+
+        }
+      );
+
+
+      ws.addEventListener(
+        "message",
+        (event) => {
+
+          try {
+
+            const message =
+              JSON.parse(
+                event.data
+              );
+
+
+            if (
+              message.type ===
+              "projection"
+            ) {
+
+              mostrarVersiculo(
+                message.data
+              );
+
+            }
+
+          } catch (error) {
+
+            console.error(
+              error
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    function limpiarHTMLCita(
+      html
+    ) {
+
+      const contenedor =
+        document.createElement("div");
+
+      contenedor.innerHTML =
+        html || "";
+
+      const permitidas = [
+        "B",
+        "STRONG",
+        "U",
+        "S",
+        "DEL",
+        "I",
+        "EM",
+        "BR",
+        "DIV",
+        "P"
+      ];
+
+      contenedor
+        .querySelectorAll("*")
+        .forEach(elemento => {
+
+          if (
+            !permitidas.includes(
+              elemento.tagName
+            )
+          ) {
+
+            const fragmento =
+              document.createDocumentFragment();
+
+            while (
+              elemento.firstChild
+            ) {
+              fragmento.appendChild(
+                elemento.firstChild
+              );
+            }
+
+            elemento.replaceWith(
+              fragmento
+            );
+
+            return;
+          }
+
+          Array.from(
+            elemento.attributes
+          ).forEach(atributo => {
+
+            if (
+              atributo.name !== "style"
+            ) {
+              elemento.removeAttribute(
+                atributo.name
+              );
+              return;
+            }
+
+            const alineacion =
+              elemento.style.textAlign;
+
+            elemento.removeAttribute(
+              "style"
+            );
+
+            if (
+              alineacion === "justify"
+            ) {
+              elemento.style.textAlign =
+                "justify";
+            }
+
+          });
+
+        });
+
+      return contenedor.innerHTML;
+
+    }
+
+
+    function mostrarVersiculo(
+      data
+    ) {
+
+      if (!data) {
+        return;
+      }
+
+
+      if (data.type === "freeText") {
+
+        reference.textContent =
+          "Cita";
+
+        text.className =
+          "text";
+
+        text.innerHTML =
+          limpiarHTMLCita(
+            data.html || ""
+          );
+
+        version.textContent =
+          "";
+
+        return;
+
+      }
+
+
+      reference.textContent =
+        `${data.bookName} ${data.chapter}:${data.verse}`;
+
+
+      text.className =
+        "text";
+
+
+      text.textContent =
+        data.text;
+
+
+      version.textContent =
+        data.version || "";
+
+    }
+
+
+    conectar();
+
+  </script>
+
+</body>
+</html>

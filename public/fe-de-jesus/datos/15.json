@@ -1,0 +1,23 @@
+{
+  "id": 15,
+  "titulo": "¿Debo bautizarme?",
+  "subtitulo": "Qué enseña la Biblia acerca del bautismo",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Por qué debemos bautizarnos?", "referencia": "Mateo 28:18-20", "opciones": ["Acto de purificación", "Cristo lo indicó", "No es necesario", "No sé"], "correcta": 1 },
+    { "n": 2, "pregunta": "¿Cuál es la forma correcta de bautizar?", "referencia": "Mateo 3:13-16", "opciones": ["Por inmersión", "Por aspersión", "Es indistinto", "No sé"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿Es indispensable el bautismo para salvarse?", "referencia": "Marcos 16:16", "opciones": ["Creo que sí", "Creo que no", "Solo si quiero", "No sé"], "correcta": 0 },
+    { "n": 4, "pregunta": "¿Qué simboliza el bautismo?", "referencia": "Romanos 6:3, 4", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Qué declaración hace Dios en ocasión del bautismo?", "referencia": "Mateo 3:17", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Qué dos bendiciones se reciben con el bautismo?", "referencia": "Hechos 2:38", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿A qué institución divina se unen los bautizados?", "referencia": "Hechos 2:41, 42, 47", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Qué gloriosa experiencia obtiene el bautizado?", "referencia": "Romanos 6:4", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "En Juan 3:1 al 7, Jesús enseña que necesitamos nacer de nuevo para participar del reino de Dios. Ese nacimiento implica nacer del agua y del espíritu. El bautismo es el nuevo nacimiento que Jesús quiere que vivamos. ¿Qué siente al saber que Dios nos anima a ver el bautismo como un nuevo nacimiento?",
+  "sugerencias": [
+    { "texto": "Creer en el Señor Jesús", "referencia": "Hechos 8:37" },
+    { "texto": "Abandonar el pecado", "referencia": "Romanos 6:11-13" },
+    { "texto": "Pedir el santo bautismo", "referencia": "Hechos 8:35-38" }
+  ],
+  "compromiso": "Creo en el bautismo por inmersión. Deseo bautizarme, siguiendo el ejemplo de Jesús."
+}

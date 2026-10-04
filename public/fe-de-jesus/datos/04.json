@@ -1,0 +1,24 @@
+{
+  "id": 4,
+  "titulo": "¿Cómo comenzó el sufrimiento?",
+  "subtitulo": "Qué enseña la Biblia sobre el origen del pecado y el mal",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Dónde y cuándo comenzó el pecado?", "referencia": "Apocalipsis 12:7-10", "opciones": ["En la Tierra", "En el cielo", "En el paraíso", "No sé"], "correcta": 1 },
+    { "n": 2, "pregunta": "¿En quién se originó el pecado?", "referencia": "Ezequiel 28:14-17", "opciones": ["En un ángel importante", "En un hombre", "En Dios", "No sé"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿Qué señal de obediencia dio Dios a Adán y a Eva?", "referencia": "Génesis 2:15-17", "opciones": ["Matar un cordero", "No comer de un fruto", "Circuncisión", "No sé"], "correcta": 1 },
+    { "n": 4, "pregunta": "¿En qué consistió el primer pecado?", "referencia": "Génesis 3:1-6", "opciones": ["Mentir", "Tener un hijo", "Desobedecer a Dios", "No sé"], "correcta": 2 },
+    { "n": 5, "pregunta": "¿Qué es el pecado?", "referencia": "1 Juan 3:4", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿A quién se entrega el que practica el pecado?", "referencia": "1 Juan 3:8", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Qué produce el pecado entre el hombre y Dios, y qué relación tiene con el sufrimiento?", "referencia": "Isaías 59:2", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Cuál es el resultado final del pecado?", "referencia": "Romanos 6:23", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Cuando se menciona el pecado, generalmente se asocia a normas religiosas y antiguas. No se considera lo que la Biblia menciona sobre el autor del pecado, el conflicto en el cielo y el sufrimiento que produce a la humanidad al separarla de Dios y sus principios. Se sufre por pecados propios, y otras veces se es víctima de pecados ajenos. Pero, en toda ocasión, el enemigo procura que las personas se alejen de Dios para que su vida quede vacía, llena de dolor, angustia, y sin esperanza. ¿Qué opina usted sobre esto?",
+  "sugerencias": [
+    { "texto": "Resistir a Satanás en nombre de Dios", "referencia": "Santiago 4:7" },
+    { "texto": "No consentir al pecado", "referencia": "Romanos 6:12" },
+    { "texto": "Permanecer en Dios, con la ayuda de Jesús", "referencia": "1 Juan 3:6" },
+    { "texto": "Confiar en la ayuda de Jesús", "referencia": "Romanos 8:37" }
+  ],
+  "compromiso": "Procuraré, con la ayuda de Dios, limpiar mi vida y alejarme de todo pecado."
+}

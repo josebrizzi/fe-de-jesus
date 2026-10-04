@@ -1,0 +1,11 @@
+node_modules
+*.bak
+backups/
+*.backup*
+*.save
+*.sh
+*.log
+*.pyc
+__pycache__/
+aplicar-cambios.js
+/datos/

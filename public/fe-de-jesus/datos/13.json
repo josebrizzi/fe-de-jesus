@@ -1,0 +1,22 @@
+{
+  "id": 13,
+  "titulo": "¿Qué espera Dios de mí los sábados?",
+  "subtitulo": "Lo que enseña la Biblia acerca de cómo se debe guardar el sábado",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Qué hizo Dios con el sábado?", "referencia": "Génesis 2:1-3", "opciones": ["Nada", "Descansó, lo santificó y lo bendijo", "Creó la vida", "No sé"], "correcta": 1 },
+    { "n": 2, "pregunta": "¿En qué día se deben hacer los preparativos para respetar el sábado?", "referencia": "Éxodo 16:22, 23", "opciones": ["Es indistinto", "El sábado", "El viernes", "No sé"], "correcta": 2 },
+    { "n": 3, "pregunta": "¿A partir de qué momento se inicia el sábado bíblico?", "referencia": "Levítico 23:32", "opciones": ["A las 0 hs.", "Cuando uno pueda", "Al atardecer del viernes", "No sé"], "correcta": 2 },
+    { "n": 4, "pregunta": "¿De qué hay que abstenerse el sábado?", "referencia": "Éxodo 20:10", "opciones": ["Toda obra laboral", "De todo", "De nada", "No sé"], "correcta": 0 },
+    { "n": 5, "pregunta": "¿Dónde debemos asistir el sábado?", "referencia": "Lucas 4:16", "opciones": ["Es como un feriado", "A ningún lugar", "A la iglesia", "No sé"], "correcta": 2 },
+    { "n": 6, "pregunta": "¿Qué se puede hacer el sábado?", "referencia": "Mateo 12:12", "opciones": ["Absolutamente nada", "Hacer el bien", "De todo", "No sé"], "correcta": 1 },
+    { "n": 7, "pregunta": "¿Qué promesa hace Dios al que le es fiel?", "referencia": "Salmos 37:25", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Qué protección brindará Dios a quien le obedece?", "referencia": "Deuteronomio 11:13-15", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Dialogue con su instructor/a y realice una lista de lo que podría realizar a fin de que el sábado sea una bendición para su vida. ¿Qué importancia tiene, para usted, el pedido que Dios hizo de guardar el sábado?",
+  "sugerencias": [
+    { "texto": "Obedecer fielmente lo que Dios manda", "referencia": "Romanos 2:13" },
+    { "texto": "Confiar plenamente en Jesús", "referencia": "Filipenses 4:13" }
+  ],
+  "compromiso": "Decido ser obediente a Dios y guardar fielmente el santo sábado, siguiendo el ejemplo de Jesús."
+}

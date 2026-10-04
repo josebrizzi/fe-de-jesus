@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblia - Fe de Jesús</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f5f5f7; margin: 0; padding: 16px; color: #1d1d1f;
+  }
+  .card {
+    background: white; border-radius: 16px; padding: 24px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-width: 700px; margin: 0 auto;
+  }
+  .referencia {
+    font-size: 26px; font-weight: 700; color: #1e3a8a; margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .version {
+    font-size: 14px; color: #6b7280; margin-bottom: 20px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .versiculo {
+    font-size: 20px; line-height: 1.6; margin-bottom: 14px;
+  }
+  .num {
+    font-size: 13px; font-weight: 700; color: #1e3a8a;
+    vertical-align: super; margin-right: 4px;
+  }
+  .selector {
+    margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb;
+  }
+  .selector label { font-size: 14px; color: #6b7280; display: block; margin-bottom: 8px; }
+  select {
+    width: 100%; padding: 12px; font-size: 16px; border-radius: 10px;
+    border: 1px solid #d1d5db; background: white; color: #1d1d1f;
+  }
+  .error {
+    color: #b91c1c; background: #fee2e2; padding: 16px;
+    border-radius: 10px; font-size: 16px; text-align: center;
+  }
+  .loading { text-align: center; color: #6b7280; padding: 40px 0; }
+  .btn-volver {
+    display: inline-block; margin-top: 24px; padding: 12px 20px;
+    background: #1e3a8a; color: white; text-decoration: none;
+    border-radius: 10px; font-size: 16px; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="loading">Cargando versículo...</div>
+  </div>
+
+  <script>
+    var params = new URLSearchParams(location.search);
+    var ref = params.get("ref") || "Juan 3:16";
+    var versionInicial = params.get("version") || "Dios Habla Hoy";
+    var card = document.getElementById("card");
+
+    async function cargarVersiones() {
+      try {
+        var r = await fetch("/api/biblia/versiones");
+        return await r.json();
+      } catch (e) { return [versionInicial]; }
+    }
+
+    async function cargarVersiculo(version) {
+      card.innerHTML = '<div class="loading">Cargando...</div>';
+      try {
+        var r = await fetch("/api/biblia/versiculo?ref=" + encodeURIComponent(ref) + "&version=" + encodeURIComponent(version));
+        if (!r.ok) {
+          var err = await r.json();
+          throw new Error(err.error || "Error al cargar");
+        }
+        var data = await r.json();
+        render(data);
+      } catch (e) {
+        card.innerHTML = '<div class="error">' + e.message + '</div>' +
+          '<a class="btn-volver" href="javascript:history.back()">← Volver</a>';
+      }
+    }
+
+    function render(data) {
+      var versiones = window._versiones || [data.version];
+      var opciones = versiones.map(function(v) {
+        return '<option value="' + v + '"' + (v === data.version ? ' selected' : '') + '>' + v + '</option>';
+      }).join("");
+
+      var titulo = data.libro + ' ' + data.capitulo;
+      if (data.versiculoInicio === data.versiculoFin) {
+        titulo += ':' + data.versiculoInicio;
+      } else {
+        titulo += ':' + data.versiculoInicio + '-' + data.versiculoFin;
+      }
+
+      var versosHTML = data.versiculos.map(function(v) {
+        return '<div class="versiculo"><span class="num">' + v.n + '</span>' + v.texto + '</div>';
+      }).join("");
+
+      card.innerHTML =
+        '<div class="referencia">' + titulo + '</div>' +
+        '<div class="version">' + data.version + '</div>' +
+        versosHTML +
+        '<div class="selector">' +
+          '<label>Cambiar versión:</label>' +
+          '<select id="selVersion">' + opciones + '</select>' +
+        '</div>' +
+        '<a class="btn-volver" href="javascript:history.back()">← Volver</a>';
+
+      document.getElementById("selVersion").addEventListener("change", function(e) {
+        var nuevaVersion = e.target.value;
+        var url = new URL(location.href);
+        url.searchParams.set("version", nuevaVersion);
+        history.replaceState({}, "", url);
+        cargarVersiculo(nuevaVersion);
+      });
+    }
+
+    (async function() {
+      window._versiones = await cargarVersiones();
+      cargarVersiculo(versionInicial);
+    })();
+  </script>
+</body>
+</html>

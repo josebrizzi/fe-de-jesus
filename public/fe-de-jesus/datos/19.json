@@ -1,0 +1,20 @@
+{
+  "id": 19,
+  "titulo": "¿Qué es el don de profecía?",
+  "subtitulo": "Qué enseña la Biblia acerca del don de profecía en la iglesia verdadera",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿A quién revela Dios sus designios?", "referencia": "Amós 3:7", "opciones": ["A los astrólogos", "A líderes religiosos", "A los profetas", "No sé"], "correcta": 2 },
+    { "n": 2, "pregunta": "¿Cómo se comunica Dios con el profeta?", "referencia": "Números 12:6", "opciones": ["Por visión, sueño o le habla", "Por los astros o cartas", "Por intuición", "No sé"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿Puede una mujer ser profeta?", "referencia": "Joel 2:28", "opciones": ["Antes no, ahora sí", "Sí", "No", "No sé"], "correcta": 1 },
+    { "n": 4, "pregunta": "¿Tuvo profetas la iglesia cristiana apostólica del primer siglo?", "referencia": "1 Corintios 12:28", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Qué estaba predicho acerca del don profético en la iglesia verdadera?", "referencia": "Apocalipsis 12:17; 19:10", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "La promesa del don profético se cumplió en la Iglesia Adventista del Séptimo Día en la persona de Elena de White. Lo animamos a leer un material escrito por Elena de White.",
+  "sugerencias": [
+    { "texto": "Apreciar las profecías", "referencia": "1 Tesalonicenses 5:20" },
+    { "texto": "Estar atento a las profecías", "referencia": "2 Pedro 1:19" },
+    { "texto": "Creer en los profetas", "referencia": "2 Crónicas 20:20" }
+  ],
+  "compromiso": "Acepto el maravilloso don de profecía otorgado por Dios a su iglesia."
+}

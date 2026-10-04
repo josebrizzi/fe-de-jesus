@@ -1,0 +1,22 @@
+{
+  "id": 11,
+  "titulo": "¿Por qué hay una Ley?",
+  "subtitulo": "Qué enseña la Biblia acerca de la santa Ley de Dios",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Quién y cómo los escribió?", "referencia": "Éxodo 31:18", "opciones": ["Moisés en el Sinaí", "Dios, con su dedo", "Los judíos", "No sé"], "correcta": 1 },
+    { "n": 2, "pregunta": "¿Qué otros nombres reciben los Diez Mandamientos y qué revelan?", "referencia": "1 Juan 3:4", "opciones": ["Ley y revela el pecado", "Enseñanza y revela lo bueno", "Ley y acusa al pecador", "No sé"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿A quién nos conduce la Ley?", "referencia": "Gálatas 3:24", "opciones": ["A un guía espiritual", "A mi conciencia", "A Cristo", "No sé"], "correcta": 2 },
+    { "n": 4, "pregunta": "Los Diez Mandamientos (resuma cómo orientan sobre nuestra relación con Dios y el prójimo)", "referencia": "Éxodo 20:3-17", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Cuál fue la actitud de Jesús hacia la Ley?", "referencia": "Juan 15:10", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Realizó cambios Jesús en los mandamientos?", "referencia": "Mateo 5:17, 18", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Puede alguien cambiar los Diez Mandamientos?", "referencia": "Eclesiastés 3:14", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Los Diez Mandamientos son conocidos. ¿Cómo cree que sería la vida en nuestra sociedad si el ser humano respetara más los Diez Mandamientos?",
+  "sugerencias": [
+    { "texto": "Amar a Dios y guardar su Ley", "referencia": "Juan 14:15" },
+    { "texto": "Guardar los mandamientos", "referencia": "Salmos 119:44" },
+    { "texto": "Respetar todos los mandamientos", "referencia": "Santiago 2:10" }
+  ],
+  "compromiso": "Acepto la Santa Ley de Dios. Procuraré, con la ayuda de Dios, respetar los Diez Mandamientos."
+}

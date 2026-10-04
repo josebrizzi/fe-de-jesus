@@ -1,0 +1,24 @@
+{
+  "id": 3,
+  "titulo": "¿Me puedo comunicar con Dios?",
+  "subtitulo": "Qué enseña la Biblia acerca de la comunicación con Dios",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Cómo nos comunicamos con Dios?", "referencia": "Daniel 9:3", "opciones": ["Con sacerdotes", "Rezando", "Orando", "No sé"], "correcta": 2 },
+    { "n": 2, "pregunta": "¿Qué es la oración?", "referencia": "1 Samuel 1:9-15", "opciones": ["Hablar con Dios", "Repetir textos sagrados", "Repetir frases religiosas", "No sé"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿Cuánto poder tiene la oración sincera?", "referencia": "Santiago 5:16", "opciones": ["Ninguno", "Mucho", "Depende", "No sé"], "correcta": 1 },
+    { "n": 4, "pregunta": "¿En nombre de quién debemos orar?", "referencia": "Juan 14:13", "opciones": ["Jesús", "Santos/Ángeles", "Es indistinto", "No sé"], "correcta": 0 },
+    { "n": 5, "pregunta": "¿Contesta Dios las oraciones?", "referencia": "Mateo 7:7-11", "opciones": ["Depende", "Nunca", "Siempre", "No sé"], "correcta": 2 },
+    { "n": 6, "pregunta": "¿De qué manera el ser humano puede percibir el amor de Dios?", "referencia": "Juan 3:16; 1 Juan 4:9, 10", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Cómo se describe la fe?", "referencia": "Hebreos 11:1, 6", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Cómo se desarrolla la fe?", "referencia": "Romanos 10:17", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Escriba su pedido a Dios. Anímese a decírselo a Dios ahora. Ore usted mismo acompañado por su instructor/a. ¿Cómo es su experiencia al orar?",
+  "sugerencias": [
+    { "texto": "Orar tres veces al día", "referencia": "Salmos 55:17" },
+    { "texto": "Practicar la oración privada", "referencia": "Mateo 6:6" },
+    { "texto": "Pedir cosas convenientes", "referencia": "Santiago 4:3" },
+    { "texto": "Pedir con fe", "referencia": "Mateo 21:22" }
+  ],
+  "compromiso": "Creo que Dios escucha y contesta las oraciones. Resuelvo orar con fe todos los días."
+}

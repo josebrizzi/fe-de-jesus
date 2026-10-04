@@ -1,0 +1,22 @@
+{
+  "id": 14,
+  "titulo": "¿Hay una iglesia verdadera?",
+  "subtitulo": "Qué enseña la Biblia acerca de las características de la iglesia verdadera",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Quién fundó la iglesia cristiana?", "referencia": "Mateo 16:16-18", "opciones": ["Pedro", "Cristo", "La Ley", "No sé"], "correcta": 1 },
+    { "n": 2, "pregunta": "¿Quién es el fundamento de la iglesia?", "referencia": "Efesios 2:20", "opciones": ["Cristo", "Un apóstol"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿Quiénes son los dirigentes de la iglesia?", "referencia": "Efesios 4:11, 12", "opciones": [], "correcta": -1 },
+    { "n": 4, "pregunta": "¿Cuál es la triple misión de la iglesia?", "referencia": "Mateo 4:23", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Cómo debe gobernarse la iglesia?", "referencia": "Hechos 6:1-5", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Qué ejemplo debe seguir la iglesia?", "referencia": "Juan 13:15", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Cuál es la norma de conducta de la iglesia?", "referencia": "Apocalipsis 12:17", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Qué don poseerá la iglesia?", "referencia": "Apocalipsis 12:17; 19:10", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "El texto de Apocalipsis 14:6 al 13 presenta el triple mensaje angélico, que es el mensaje final que se da a la humanidad antes de la segunda venida de Cristo y que será predicado por la iglesia fiel. En ese contexto, el versículo 12 identifica a quienes serán miembros de esa iglesia. ¿Qué opina sobre la importancia que Dios otorga a las dos características que identifican a la iglesia verdadera?",
+  "sugerencias": [
+    { "texto": "Unirme a la iglesia verdadera", "referencia": "Hechos 2:41" },
+    { "texto": "Permanecer fiel y firme", "referencia": "2 Pedro 1:10-12" }
+  ],
+  "compromiso": "Creo que Jesús fundó la iglesia. Deseo unirme a ella y ser fiel hasta el fin."
+}

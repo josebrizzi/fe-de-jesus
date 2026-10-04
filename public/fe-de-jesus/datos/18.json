@@ -1,0 +1,24 @@
+{
+  "id": 18,
+  "titulo": "¿Dueño o socio?",
+  "subtitulo": "Qué enseña la Biblia del plan divino para sostener a la iglesia",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿A quién pertenece el Universo?", "referencia": "Salmos 24:1", "opciones": ["A Dios", "A nosotros"], "correcta": 0 },
+    { "n": 2, "pregunta": "¿Qué enormes riquezas posee Dios?", "referencia": "Hageo 2:8", "opciones": ["Todo el oro y la plata"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿Gracias a quién obtenemos nuestros bienes?", "referencia": "Deuteronomio 8:17, 18", "opciones": ["A mi esfuerzo", "A mi familia", "A Dios"], "correcta": 2 },
+    { "n": 4, "pregunta": "¿Qué proporción de nuestros ingresos le pertenece a Dios?", "referencia": "Levítico 27:30, 32", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿De cuánto tenemos que dar el diezmo?", "referencia": "Génesis 28:20-22", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Para qué se emplea el diezmo?", "referencia": "1 Corintios 9:13, 14", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Qué maravillosa bendición promete Dios?", "referencia": "Malaquías 3:10", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Cuál fue la ofrenda que Dios entregó para nuestra salvación?", "referencia": "Juan 3:16; Apocalipsis 13:8", "opciones": [], "correcta": -1 },
+    { "n": 9, "pregunta": "¿Cuál es el resultado de la ofrenda de Cristo en mi vida?", "referencia": "Hebreos 9:28; 10:12, 14", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Diezmar es una respuesta a quien confío, y también testifico del amor de Dios. Ofrendar es una respuesta de gratitud por la salvación y el cumplimiento de la misión. Dios mencionó que lo probemos, al entregar el diezmo y las ofrendas (Malaquías 3:10). ¿Qué significaría eso? ¿Cómo probamos a Dios?",
+  "sugerencias": [
+    { "texto": "Ser un fiel administrador de los bienes de Dios", "referencia": "1 Pedro 4:10" },
+    { "texto": "Ser socio de Dios", "referencia": "Proverbios 11:24, 25" },
+    { "texto": "Dar con alegría", "referencia": "2 Corintios 9:6, 7" }
+  ],
+  "compromiso": "Quiero ser socio de Dios. Prometo dar con alegría lo que le pertenece a Dios."
+}

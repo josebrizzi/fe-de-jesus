@@ -1,0 +1,22 @@
+{
+  "id": 10,
+  "titulo": "¿Cómo funcionará el Juicio?",
+  "subtitulo": "Qué enseña la Biblia acerca del juicio de toda la humanidad",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Sobre qué hará Dios el Juicio?", "referencia": "Eclesiastés 12:14", "opciones": ["Todo, bueno y malo", "Solo lo malo", "Solo lo bueno", "No sé"], "correcta": 0 },
+    { "n": 2, "pregunta": "¿Cuántos comparecerán ante el Juicio?", "referencia": "2 Corintios 5:10", "opciones": ["Los injustos", "Todos", "Quien niega a Dios", "No sé"], "correcta": 1 },
+    { "n": 3, "pregunta": "¿A quién Dios le entregó el Juicio?", "referencia": "Juan 5:22", "opciones": [], "correcta": -1 },
+    { "n": 4, "pregunta": "¿Dónde están registradas nuestras acciones?", "referencia": "Apocalipsis 20:12", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Quiénes son los testigos?", "referencia": "Mateo 18:10", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Quién es el Abogado?", "referencia": "1 Juan 2:1", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Por cuál código seremos juzgados?", "referencia": "Santiago 2:12", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Cuál será la sentencia?", "referencia": "Mateo 25:31-46", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "El Juicio de Dios despierta controversias. Algunos consideran que nunca sucederá y otros están muy atemorizados. Comente lo que usted siente sobre el Juicio al saber que Jesús es su Abogado.",
+  "sugerencias": [
+    { "texto": "Creer y obedecer a Jesús", "referencia": "Juan 5:24" },
+    { "texto": "Amar a Dios y guardar los mandamientos", "referencia": "Eclesiastés 12:13" }
+  ],
+  "compromiso": "Acepto a Jesús como mi Abogado. Deseo ser fiel a Dios y respetar todos sus mandamientos."
+}

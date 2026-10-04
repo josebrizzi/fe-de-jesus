@@ -1,0 +1,22 @@
+{
+  "id": 6,
+  "titulo": "Dios ¿realmente me perdonará?",
+  "subtitulo": "Qué enseña la Biblia acerca del perdón de nuestros pecados",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Gracias a quién y a qué somos salvos?", "referencia": "1 Pedro 2:24", "opciones": ["A la intercesión de santos", "A Cristo y su sacrificio", "A mis buenas obras", "No sé"], "correcta": 1 },
+    { "n": 2, "pregunta": "¿Cuánto cuesta la salvación?", "referencia": "Romanos 3:24", "opciones": ["Muchos sacrificios y privaciones", "Nada", "Es gratis", "No sé"], "correcta": 2 },
+    { "n": 3, "pregunta": "¿Qué reconocimiento sincero debe experimentar el pecador?", "referencia": "Lucas 18:10-14", "opciones": ["Que es pecador", "Que se equivocó", "Ninguno", "No sé"], "correcta": 0 },
+    { "n": 4, "pregunta": "¿Qué sentimiento profundo es indispensable?", "referencia": "Hechos 2:37, 38", "opciones": ["Vergüenza", "Remordimiento", "Arrepentimiento", "No sé"], "correcta": 2 },
+    { "n": 5, "pregunta": "¿Qué se debe hacer con los pecados?", "referencia": "Salmos 32:3-5", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Qué maravilloso ofrecimiento hace Dios?", "referencia": "Isaías 1:18", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Cuán completo es el perdón divino?", "referencia": "Isaías 43:25", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Tener la paz del perdón de Dios ¿cómo nos ayuda para enfrentar los desafíos de la vida?",
+  "sugerencias": [
+    { "texto": "Arrepentirme de todo corazón", "referencia": "Hechos 3:19" },
+    { "texto": "Confesar todos mis pecados", "referencia": "1 Juan 1:9" },
+    { "texto": "Experimentar la conversión", "referencia": "Ezequiel 36:25-27" }
+  ],
+  "compromiso": "Pido perdón por mis pecados. Creo que Dios me perdonará. Quiero vivir una vida santa en Jesús."
+}

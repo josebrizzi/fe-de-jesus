@@ -1,0 +1,25 @@
+{
+  "id": 1,
+  "titulo": "La Santa Biblia",
+  "subtitulo": "Qué enseña la Biblia acerca de las Sagradas Escrituras",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Quién inspiró las Sagradas Escrituras?", "referencia": "2 Timoteo 3:16", "opciones": ["Los santos", "Dios", "Los hombres", "No sé"], "correcta": 1 },
+    { "n": 2, "pregunta": "¿Quiénes recibieron la revelación?", "referencia": "Hebreos 1:1", "opciones": ["Personas comunes", "Sabios", "Profetas", "No sé"], "correcta": 2 },
+    { "n": 3, "pregunta": "¿Cómo se considera las palabras de los Profetas y Apóstoles?", "referencia": "1 Tesalonicenses 2:13", "opciones": ["Palabras de hombres", "Palabra de sabios", "Palabra de Dios", "No sé"], "correcta": 2 },
+    { "n": 4, "pregunta": "¿A qué se compara la Santa Biblia?", "referencia": "Salmos 119:105", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Cuál es la principal razón para haberse escrito la Santa Biblia?", "referencia": "Juan 20:31", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Cuán importante es para Jesús que se entienda la Santa Biblia?", "referencia": "Lucas 24:44-47", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Cuáles son los beneficios de conocer la Santa Biblia?", "referencia": "2 Timoteo 3:15-17", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Qué bendiciones ofrece Dios a los que creen en la Santa Biblia? ¿Cuán importantes son para usted?", "referencia": "Romanos 15:4", "opciones": [], "correcta": -1 },
+    { "n": 9, "pregunta": "¿Qué siente al saber cuánto perdurará la Santa Biblia?", "referencia": "Isaías 40:8", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Defina para usted qué es la Santa Biblia.",
+  "sugerencias": [
+    { "texto": "Estudiarla todos los días", "referencia": "Deuteronomio 17:19; Hechos 17:11" },
+    { "texto": "Aceptar sus consejos con gozo y alegría", "referencia": "Jeremías 15:16" },
+    { "texto": "Vivir sus enseñanzas en forma práctica", "referencia": "Apocalipsis 1:3" },
+    { "texto": "Meditar y profundizar para conocer cada vez más a Jesús", "referencia": "Juan 5:39" }
+  ],
+  "compromiso": "Creo que la Santa Biblia es revelada por Dios. La acepto como regla de fe. Decido leerla diariamente."
+}

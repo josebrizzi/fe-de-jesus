@@ -1,0 +1,78 @@
+{
+  "id": 7,
+  "titulo": "¿Realmente volverá Jesús?",
+  "subtitulo": "Qué enseña la Biblia acerca de la segunda venida",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    {
+      "n": 1,
+      "pregunta": "¿Qué maravillosa promesa hizo Jesús?",
+      "referencia": "Juan 14:1-3",
+      "opciones": ["Que nos ama", "Que nos ayuda"],
+      "correcta": 0
+    },
+    {
+      "n": 2,
+      "pregunta": "¿Cómo debemos considerar esta promesa?",
+      "referencia": "Tito 2:13",
+      "opciones": ["Interesante", "Bendita", "Sin importancia", "No sé"],
+      "correcta": 1
+    },
+    {
+      "n": 3,
+      "pregunta": "¿En qué forma regresará Jesús?",
+      "referencia": "Mateo 24:30",
+      "opciones": ["Nube, poder y gloria", "Invisible", "Como un líder", "No sé"],
+      "correcta": 0
+    },
+    {
+      "n": 4,
+      "pregunta": "¿Cuántos verán su glorioso advenimiento?",
+      "referencia": "Apocalipsis 1:7",
+      "opciones": ["Solo quienes tienen fe", "Algunos", "Sin importancia", "No sé"],
+      "correcta": 0
+    },
+    {
+      "n": 5,
+      "pregunta": "¿Cuál es el propósito de la venida de Jesús?",
+      "referencia": "Mateo 16:27",
+      "opciones": [],
+      "correcta": -1
+    },
+    {
+      "n": 6,
+      "pregunta": "¿Qué sucederá con los muertos justos?",
+      "referencia": "1 Tesalonicenses 4:13-16",
+      "opciones": [],
+      "correcta": -1
+    },
+    {
+      "n": 7,
+      "pregunta": "¿Qué ocurrirá con todos los justos?",
+      "referencia": "1 Tesalonicenses 4:17",
+      "opciones": [],
+      "correcta": -1
+    }
+  ],
+  "dialogo": "Considerando lo que dice el texto de Hebreos 9:28, ¿qué siente al saber que menciona que ya vino por primera vez y que aparecerá por segunda vez?",
+  "sugerencias": [
+    { "texto": "Desear y amar la venida de Jesús", "referencia": "2 Timoteo 4:8" },
+    { "texto": "Prepararme para estar listo", "referencia": "1 Juan 3:2, 3" },
+    { "texto": "Ayudar en la predicación del evangelio", "referencia": "Mateo 24:14" }
+  ],
+  "compromiso": "Creo en el segundo advenimiento de Jesús. Quiero prepararme para estar con él en el cielo.",
+  "alimentando_mi_fe": {
+    "tipo": "texto_diario",
+    "dias": [
+      { "dia": 1, "texto": "Jeremías 33" },
+      { "dia": 2, "texto": "Lamentaciones 1" },
+      { "dia": 3, "texto": "Ezequiel 37" },
+      { "dia": 4, "texto": "Daniel 6" },
+      { "dia": 5, "texto": "Oseas 11" },
+      { "dia": 6, "texto": "Joel 2" },
+      { "dia": 7, "texto": "Amós 3:1-8" }
+    ]
+  },
+  "fortaleciendo_mi_fe": "Apocalipsis 22:20: El que da testimonio de estas cosas dice: Ciertamente vengo en breve. Amén; sí, ven, Señor Jesús. Advenimiento significa: Llegada, venida, aparición de un acontecimiento importante. Por eso, a la segunda venida de Jesús se la llama también advenimiento (2 Pedro 3:4).",
+  "compartiendo_mi_fe": "Al saber que Jesús viene, seguramente anhela que sus seres queridos estén preparados. Siga orando cada día por las personas que están en su tarjeta de oración y coménteles que la Biblia enseña que Jesús viene pronto."
+}

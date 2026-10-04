@@ -1,0 +1,22 @@
+{
+  "id": 8,
+  "titulo": "¿Cómo saber cuándo es pronto?",
+  "subtitulo": "Qué enseña la Biblia acerca de las señales de la segunda venida",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Qué preguntaron los discípulos de Jesús?", "referencia": "Mateo 24:3", "opciones": ["Cuándo termina el sufrimiento"], "correcta": 0 },
+    { "n": 2, "pregunta": "¿Se sabe la fecha del regreso de Jesús?", "referencia": "Mateo 24:36", "opciones": ["No, solo Dios", "Sí, hay profecías"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿Estamos en tinieblas respecto de la venida de Jesús?", "referencia": "1 Tesalonicenses 5:1-4", "opciones": ["Sí", "No"], "correcta": 1 },
+    { "n": 4, "pregunta": "¿Qué señales predijo Jesús?", "referencia": "Mateo 24:6, 7", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Qué condiciones sociales prevalecerían?", "referencia": "Santiago 5:1-5", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Cuál sería la condición moral de la humanidad?", "referencia": "2 Timoteo 3:1-5", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Qué aumentará en el tiempo del fin?", "referencia": "Daniel 12:4", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Qué señales se verían en los astros?", "referencia": "Mateo 24:29", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Juan 16:33: Estas cosas os he hablado para que en mí tengáis paz. En el mundo tendréis aflicción; pero confiad, yo he vencido al mundo. En las noticias de estos días, ¿encontramos señales que indican que Jesús viene pronto? El saber que las aflicciones de este mundo son señales de que Jesús viene ¿cómo lo ayuda a tener paz para enfrentar los problemas diarios?",
+  "sugerencias": [
+    { "texto": "Estar atento a las señales de los tiempos", "referencia": "Lucas 21:28-31" },
+    { "texto": "Velar y estar preparado", "referencia": "Mateo 24:42, 44" }
+  ],
+  "compromiso": "Creo que Jesús vendrá muy pronto. Decido prepararme y estar listo para su inminente regreso."
+}

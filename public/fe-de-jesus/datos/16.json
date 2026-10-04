@@ -1,0 +1,27 @@
+{
+  "id": 16,
+  "titulo": "¿Qué hago después del bautismo?",
+  "subtitulo": "Qué enseña la Biblia acerca del estilo de vida cristiano",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Qué cambio ocurre al aceptar a Jesús?", "referencia": "2 Corintios 5:17", "opciones": ["Soy nueva criatura"], "correcta": 0 },
+    { "n": 2, "pregunta": "¿Qué experiencia maravillosa tendremos?", "referencia": "1 Tesalonicenses 5:23", "opciones": ["La purificación"], "correcta": 0 },
+    { "n": 3, "pregunta": "¿Cuál es la actitud correcta ante las pruebas?", "referencia": "1 Pedro 4:12, 13", "opciones": ["Enojo y desconfianza"], "correcta": 0 },
+    { "n": 4, "pregunta": "¿Cuál es el indispensable alimento espiritual diario?", "referencia": "Deuteronomio 17:18, 19", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Cómo establecemos comunión con Dios?", "referencia": "1 Pedro 4:7", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Qué día es dedicado a la adoración a Dios?", "referencia": "Isaías 58:13, 14", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿En qué lugar se presta la adoración a Dios?", "referencia": "Lucas 4:16", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿En qué otro lugar es importante reunirse para fortalecer la comunidad?", "referencia": "Hechos 2:46, 47", "opciones": [], "correcta": -1 },
+    { "n": 9, "pregunta": "¿Qué misión trascendental nos confió Dios?", "referencia": "Mateo 24:14; 28:19", "opciones": [], "correcta": -1 },
+    { "n": 10, "pregunta": "¿Qué preparación esencial debemos poseer?", "referencia": "1 Pedro 3:15", "opciones": [], "correcta": -1 },
+    { "n": 11, "pregunta": "¿Quiénes son nuestros guías humanos?", "referencia": "1 Tesalonicenses 5:12, 13", "opciones": [], "correcta": -1 },
+    { "n": 12, "pregunta": "¿Quién es nuestro Guía supremo?", "referencia": "Colosenses 2:6, 7", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "La misión que Cristo dejó a su iglesia es haced discípulos (Mateo 28:18-20). Es decir, todos los miembros son discípulos. Y Jesús expresó: En esto es glorificado mi Padre, en que llevéis mucho fruto, y seáis así mis discípulos (Juan 15:8). ¿Qué frutos llevan los discípulos que glorifican a Dios?",
+  "sugerencias": [
+    { "texto": "Vivir para Cristo", "referencia": "Gálatas 2:20" },
+    { "texto": "Buscar la santificación", "referencia": "1 Tesalonicenses 5:23" },
+    { "texto": "Creer que Jesús nos perfecciona", "referencia": "Filipenses 1:6" }
+  ],
+  "compromiso": "Creo en la ayuda de Dios y, siguiendo a Jesús, procuraré vivir como un cristiano íntegro."
+}

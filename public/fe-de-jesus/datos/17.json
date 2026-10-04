@@ -1,0 +1,22 @@
+{
+  "id": 17,
+  "titulo": "¿Le importa a Dios mi salud?",
+  "subtitulo": "Qué enseña la Biblia acerca de los principios de salud y de las normas de vida",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Cómo considera Dios el cuerpo humano?", "referencia": "1 Corintios 6:19, 20", "opciones": ["Templo del Espíritu Santo", "Algo carnal, no le importa cuidarlo"], "correcta": 0 },
+    { "n": 2, "pregunta": "¿En qué dos aspectos de la salud se interesa Dios?", "referencia": "3 Juan 2", "opciones": ["Salud y dinero", "Alma y fe"], "correcta": 1 },
+    { "n": 3, "pregunta": "¿Cuál es el principio básico en la alimentación?", "referencia": "1 Corintios 10:31", "opciones": [], "correcta": -1 },
+    { "n": 4, "pregunta": "¿Qué carnes son inconvenientes?", "referencia": "Levítico 11:3-20", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Por qué prescindimos de las bebidas alcohólicas?", "referencia": "Proverbios 20:1", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Por qué no conviene usar tabaco, café y bebidas estimulantes?", "referencia": "1 Corintios 3:16, 17", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Cómo debe ser el arreglo personal?", "referencia": "1 Timoteo 2:9, 10", "opciones": [], "correcta": -1 },
+    { "n": 8, "pregunta": "¿Por qué no asistimos a espectáculos inconvenientes?", "referencia": "1 Pedro 2:21", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Comer y beber de acuerdo con las leyes de la salud promueve las acciones virtuosas. Pero, si se abusa del estómago... las cosas sagradas no se aprecian (Elena de White, Consejos sobre la salud, 579). ¿Qué opina de este pensamiento? ¿Cree que es importante hacer reformas saludables en su vida?",
+  "sugerencias": [
+    { "texto": "Procurar vivir una vida cristiana perfecta", "referencia": "Mateo 5:48" },
+    { "texto": "Seguir en todo el ejemplo de Jesús", "referencia": "1 Juan 2:6" }
+  ],
+  "compromiso": "Creo que mi cuerpo es templo del Espíritu Santo; me abstendré de todo alimento o bebida perjudicial."
+}

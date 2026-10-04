@@ -1,0 +1,22 @@
+{
+  "id": 9,
+  "titulo": "¿Qué sucede al morir?",
+  "subtitulo": "Qué enseña la Biblia de lo que sucede cuando una persona muere",
+  "tipo": "opcion_multiple",
+  "preguntas": [
+    { "n": 1, "pregunta": "¿Quién creó al hombre y cómo lo hizo?", "referencia": "Génesis 1:27; 2:7", "opciones": ["Dios, con polvo y sopló aliento", "La evolución", "Dios, pero no se sabe cómo", "No sé"], "correcta": 0 },
+    { "n": 2, "pregunta": "¿Por qué morimos?", "referencia": "Romanos 6:23; 5:12", "opciones": [], "correcta": -1 },
+    { "n": 3, "pregunta": "¿Qué es la muerte?", "referencia": "Eclesiastés 12:7", "opciones": [], "correcta": -1 },
+    { "n": 4, "pregunta": "¿A qué compara Jesús la muerte?", "referencia": "Juan 11:11, 13", "opciones": [], "correcta": -1 },
+    { "n": 5, "pregunta": "¿Sabe algo quien ha muerto?", "referencia": "Eclesiastés 9:5, 6", "opciones": [], "correcta": -1 },
+    { "n": 6, "pregunta": "¿Qué ocurre con el alma?", "referencia": "Ezequiel 18:4", "opciones": [], "correcta": -1 },
+    { "n": 7, "pregunta": "¿Debemos consultar a los muertos?", "referencia": "Deuteronomio 18:10, 11", "opciones": [], "correcta": -1 }
+  ],
+  "dialogo": "Lea 1 Corintios 15:12-21. ¿Por qué es importante para los cristianos creer en la resurrección? La promesa para los que son de Cristo de resucitar en su venida ¿cómo lo ayuda a tener consuelo y esperanza?",
+  "sugerencias": [
+    { "texto": "Consolarme en la esperanza de la resurrección", "referencia": "1 Tesalonicenses 4:13-18" },
+    { "texto": "Creer en Jesús", "referencia": "Juan 11:25" },
+    { "texto": "Permanecer en Jesús y en la verdad hasta el día en que Dios nos transforme en inmortales", "referencia": "Romanos 2:7" }
+  ],
+  "compromiso": "Confío en las promesas de Dios. Entrego mi vida a Jesús para obtener la vida eterna."
+}
