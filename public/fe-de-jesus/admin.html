@@ -196,6 +196,16 @@
 </header>
 <main>
   <section class="nombre-instructor">
+    <label for="salaInput">🔑 Código de sala:</label>
+    <input type="text" id="salaInput" maxlength="20" placeholder="Ej: JUEVES1">
+    <button id="btnSala" type="button" style="padding:10px 16px;font-size:14px;background:var(--primary);color:white;">Aplicar</button>
+  </section>
+  <section class="nombre-instructor">
+    <label for="enlaceAlumnos">🔗 Enlace para alumnos:</label>
+    <input type="text" id="enlaceAlumnos" readonly>
+    <button id="btnCopiar" type="button" style="padding:10px 16px;font-size:14px;background:#2f855a;color:white;">Copiar</button>
+  </section>
+  <section class="nombre-instructor">
     <label for="instructorNombre">👤 Tu nombre (instructor):</label>
     <input type="text" id="instructorNombre" placeholder="Ej: Pastor Rodríguez" maxlength="60">
     <span class="estado" id="estadoNombre"></span>
@@ -286,6 +296,7 @@
         if (clave) localStorage.setItem("fe-clave-instructor", clave);
       }
       ws.send(JSON.stringify({ type: "auth", key: clave }));
+      ws.send(JSON.stringify({ type: "join", sala: miSala() }));
 
       // Enviar nombre del instructor si ya está guardado
       var miNombre = localStorage.getItem("fe-nombre-instructor");
@@ -588,5 +599,50 @@
   connectWebSocket();
 
 </script>
+<script>
+  // ============================================================
+  // CÓDIGO DE SALA
+  // ============================================================
+  function limpiarSala(s) {
+    return String(s || "").toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20);
+  }
+  function miSala() {
+    var s = localStorage.getItem("fe-sala");
+    if (!s) {
+      s = Math.random().toString(36).slice(2, 6).toUpperCase();
+      localStorage.setItem("fe-sala", s);
+    }
+    return s;
+  }
+  (function() {
+    var inp = document.getElementById("salaInput");
+    var btn = document.getElementById("btnSala");
+    var enl = document.getElementById("enlaceAlumnos");
+    var cp = document.getElementById("btnCopiar");
+    if (!inp || !btn || !enl || !cp) return;
+
+    function actualizar() {
+      var s = miSala();
+      inp.value = s;
+      enl.value = location.origin + location.pathname.replace(/admin\.html$/, "") + "?sala=" + encodeURIComponent(s);
+    }
+    btn.addEventListener("click", function() {
+      var n = limpiarSala(inp.value);
+      if (!n) { inp.focus(); return; }
+      localStorage.setItem("fe-sala", n);
+      location.reload();
+    });
+    cp.addEventListener("click", function() {
+      var listo = function() { cp.textContent = "✓ Copiado"; setTimeout(function() { cp.textContent = "Copiar"; }, 2000); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(enl.value).then(listo, function() { enl.select(); document.execCommand("copy"); listo(); });
+      } else {
+        enl.select(); document.execCommand("copy"); listo();
+      }
+    });
+    actualizar();
+  })();
+</script>
+
 </body>
 </html>

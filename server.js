@@ -586,21 +586,29 @@ if (INSTRUCTOR_KEY === "cambia-esta-clave") {
 const TIPOS_INSTRUCTOR = ["project", "project-fe", "fe-respuesta-correcta", "fe-nombre-instructor"];
 const TIPOS_ALUMNO = ["fe-respuesta-alumno", "fe-nombre-alumno"];
 
-let connectedClients = 0;
-let ultimaProyeccion = null;       // para quien entra tarde o recarga
-let ultimaCorreccion = null;
-let ultimoNombreInstructor = null;
+// Cada sala (grupo) tiene su propio estado y sus propios mensajes
+const salas = new Map();
+
+function limpiarSala(s) {
+  return String(s || "").toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20) || "GENERAL";
+}
+
+function estadoSala(id) {
+  if (!salas.has(id)) {
+    salas.set(id, { proyeccion: null, correccion: null, instructor: null, actividad: Date.now() });
+  }
+  const st = salas.get(id);
+  st.actividad = Date.now();
+  return st;
+}
 
 wss.on("connection", (ws) => {
-  connectedClients++;
   ws.isInstructor = false;
   ws.isAlive = true;
+  ws.sala = "GENERAL"; // hasta que el cliente mande "join"
   ws.on("pong", () => { ws.isAlive = true; });
 
-  broadcastCount();
-  if (ultimoNombreInstructor) ws.send(JSON.stringify(ultimoNombreInstructor));
-  if (ultimaProyeccion) ws.send(JSON.stringify(ultimaProyeccion));
-  if (ultimaCorreccion) ws.send(JSON.stringify(ultimaCorreccion));
+  broadcastCount(ws.sala);
 
   ws.on("message", (message) => {
     try {
@@ -612,22 +620,36 @@ wss.on("connection", (ws) => {
         return;
       }
 
+      if (data.type === "join") {
+        const anterior = ws.sala;
+        ws.sala = limpiarSala(data.sala);
+        const st = estadoSala(ws.sala);
+        if (st.instructor) ws.send(JSON.stringify(st.instructor));
+        if (st.proyeccion) ws.send(JSON.stringify(st.proyeccion));
+        if (st.correccion) ws.send(JSON.stringify(st.correccion));
+        broadcastCount(ws.sala);
+        if (anterior !== ws.sala) broadcastCount(anterior);
+        return;
+      }
+
       if (TIPOS_INSTRUCTOR.includes(data.type) && !ws.isInstructor) return;
 
+      const st = estadoSala(ws.sala);
+
       if (data.type === "project") {
-        broadcast({ type: "projection", data: data.data });
+        broadcast({ type: "projection", data: data.data }, ws.sala);
       } else if (data.type === "project-fe") {
-        ultimaProyeccion = { type: "fe-projection", data: data.data };
-        ultimaCorreccion = null;
-        broadcast(ultimaProyeccion);
+        st.proyeccion = { type: "fe-projection", data: data.data };
+        st.correccion = null;
+        broadcast(st.proyeccion, ws.sala);
       } else if (data.type === "fe-respuesta-correcta") {
-        ultimaCorreccion = data;
-        broadcast(data);
+        st.correccion = data;
+        broadcast(data, ws.sala);
       } else if (data.type === "fe-nombre-instructor") {
-        ultimoNombreInstructor = data;
-        broadcast(data);
+        st.instructor = data;
+        broadcast(data, ws.sala);
       } else if (TIPOS_ALUMNO.includes(data.type)) {
-        broadcast(data);
+        broadcast(data, ws.sala);
       }
     } catch (error) {
       console.error("Mensaje WebSocket inválido:", error.message);
@@ -635,8 +657,7 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("close", () => {
-    connectedClients--;
-    broadcastCount();
+    broadcastCount(ws.sala);
   });
 });
 
@@ -649,15 +670,30 @@ setInterval(() => {
   });
 }, 30000);
 
-function broadcast(data) {
+// Limpieza: borra salas sin actividad en 12 horas y sin nadie conectado
+setInterval(() => {
+  const limite = Date.now() - 12 * 60 * 60 * 1000;
+  salas.forEach((st, id) => {
+    if (st.actividad > limite) return;
+    let hayGente = false;
+    wss.clients.forEach((c) => { if (c.sala === id) hayGente = true; });
+    if (!hayGente) salas.delete(id);
+  });
+}, 60 * 60 * 1000);
+
+function broadcast(data, sala) {
   const message = JSON.stringify(data);
   wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) client.send(message);
+    if (client.readyState === WebSocket.OPEN && client.sala === sala) client.send(message);
   });
 }
 
-function broadcastCount() {
-  broadcast({ type: "connected", count: connectedClients });
+function broadcastCount(sala) {
+  let n = 0;
+  wss.clients.forEach((c) => {
+    if (c.readyState === WebSocket.OPEN && c.sala === sala) n++;
+  });
+  broadcast({ type: "connected", count: n }, sala);
 }
 
 server.listen(PORT, "0.0.0.0", () => {

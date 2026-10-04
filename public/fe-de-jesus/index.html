@@ -532,6 +532,22 @@
   var versionActual = "Dios Habla Hoy";
   var refActual = null;
 
+  // Código de sala: llega por el enlace (?sala=CODIGO) o se pide una vez
+  function miSala() {
+    var p = new URLSearchParams(location.search).get("sala");
+    if (p) {
+      p = String(p).toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20);
+      if (p) localStorage.setItem("fe-sala", p);
+    }
+    var s = localStorage.getItem("fe-sala");
+    if (!s) {
+      var r = prompt("Código de sala (te lo da el instructor):") || "";
+      s = r.toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20) || "GENERAL";
+      localStorage.setItem("fe-sala", s);
+    }
+    return s;
+  }
+
   // Detectar prefijo /biblia para Tailscale
   var API_BASE = location.pathname.startsWith("/biblia") ? "/biblia" : "";
 
@@ -540,7 +556,9 @@
     var wsBase = location.pathname.startsWith("/biblia") ? "/biblia" : "";
     ws = new WebSocket(protocol + "//" + location.host + wsBase);
     ws.addEventListener("open", function() {
-      statusEl.textContent = "Conectado";
+      var sala = miSala();
+      ws.send(JSON.stringify({ type: "join", sala: sala }));
+      statusEl.textContent = "Conectado · Sala " + sala;
       statusEl.classList.add("connected");
       // Reenviar mi nombre si ya lo tengo
       var miNombre = localStorage.getItem("fe-nombre-alumno");
