@@ -1421,5 +1421,37 @@ h3 { font-size: 1.25em !important; }
 </script>
 <!-- FIN PANEL-LIBRE-V6 -->
 
+<!-- RECORRIDO-UI-V8: limpieza total de la casilla Recorrido libre -->
+<style>.recorrido-libre-card{display:none !important}</style>
+<script>
+(function(){
+  try{
+    function limpiar(){
+      // 1) quitar el cartel azul de reemplazo si existiera
+      var n = document.getElementById("recorrido-info-v7");
+      if (n && n.parentElement) n.parentElement.removeChild(n);
+      // 2) ocultar cualquier elemento cuyo texto propio mencione el recorrido libre
+      var els = document.querySelectorAll("label,div,p,span,small,strong,h3,h4,section");
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        if (el.id === "recorrido-info-v8" || el.closest && el.closest("#recorrido-info-v8")) continue;
+        if (el.children.length === 0) {
+          var t = el.textContent || "";
+          if (/recorrido\s+libre/i.test(t) || /No hay un estudio abierto/i.test(t)) {
+            var target = el.closest(".card") || el.closest("div") || el;
+            target.style.display = "none";
+          }
+        }
+      }
+    }
+    limpiar();
+    document.addEventListener("DOMContentLoaded", limpiar);
+    setTimeout(limpiar, 800);
+    setInterval(limpiar, 1500);
+  }catch(e){}
+})();
+</script>
+<!-- FIN RECORRIDO-UI-V8 -->
+
 </body>
 </html>
