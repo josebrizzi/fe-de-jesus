@@ -557,7 +557,7 @@
     ws = new WebSocket(protocol + "//" + location.host + wsBase);
     ws.addEventListener("open", function() {
       var sala = miSala();
-      ws.send(JSON.stringify({ type: "join", sala: sala, cid: chatCid() }));
+      ws.send(JSON.stringify({ type: "join", sala: sala, cid: window.chatCid ? chatCid() : (function(){ var c = localStorage.getItem("fe-cid"); if (!c) { c = "c" + Math.random().toString(36).slice(2, 10); localStorage.setItem("fe-cid", c); } return c; })() }));
       statusEl.textContent = "Conectado · Sala " + sala;
       statusEl.classList.add("connected");
       // Reenviar mi nombre si ya lo tengo
@@ -571,8 +571,9 @@
     ws.addEventListener("message", function(event) {
       try {
         var msg = JSON.parse(event.data);
-        if (msg.type === "fe-projection") mostrar(msg.data);
+        if (msg.type === "fe-projection" && typeof feRecibir !== "function") mostrar(msg.data);
         if (typeof chatRecibir === "function" && msg.type && msg.type.indexOf("chat-") === 0) chatRecibir(msg);
+        if (typeof feRecibir === "function") feRecibir(msg);
         if (msg.type === "fe-nombre-instructor") {
           localStorage.setItem("fe-nombre-instructor", msg.nombre);
           // Si el modal de resumen está abierto, actualizarlo
@@ -1919,6 +1920,331 @@
 })();
 </script>
 
+
+<script>
+// ============================================================
+// RECORRIDO LIBRE (offline)
+// ============================================================
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function leer(k, def) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
+  function guardar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function conectado() { return typeof ws !== "undefined" && ws && ws.readyState === 1; }
+  function esperaHTML() { return '<div class="waiting">Esperando que el instructor<br>proyecte una pregunta...</div>'; }
+
+  var sesion = leer("fe-sesion", null);   // estudio abierto en este celular
+  var estudio = null;                      // estudio guardado en el celular (sin respuestas correctas)
+  var vista = 1;                           // pregunta que se está viendo
+
+  // El estudio se pide indicando sala y alumno, para que el servidor sepa si ya puede entregar las respuestas
+  var fetchOrig = window.fetch;
+  window.fetch = function (u, o) {
+    try {
+      if (typeof u === "string" && u.indexOf("/api/fe-de-jesus/estudio/") >= 0 && u.indexOf("sala=") < 0) {
+        u += (u.indexOf("?") < 0 ? "?" : "&") + "sala=" + encodeURIComponent(miSala()) + "&cid=" + encodeURIComponent(window.chatCid());
+      }
+    } catch (e) {}
+    return fetchOrig.call(this, u, o);
+  };
+
+  var css = document.createElement("style");
+  css.textContent = ".fe-nav{display:flex;align-items:center;gap:8px;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}\n.fe-nav button{flex:1;padding:13px;font-size:15px;font-weight:bold;border-radius:10px;border:1px solid var(--primary);background:var(--primary-soft);color:var(--primary);cursor:pointer}\n.fe-nav button:disabled{opacity:.35;cursor:not-allowed}\n.fe-nota{font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.45}\n.fe-nota .fe-off{color:#c05621;font-weight:bold}\n.fe-nota .fe-ok{color:#2f855a;font-weight:bold}";
+  document.head.appendChild(css);
+
+  // ---------- datos guardados en el celular ----------
+  function estudioLocal(id) { return leer("fe-estudio-" + id, null); }
+  function reveladas(id) { return leer("fe-reveladas-" + id, {}); }
+  function pdfOk(id) { return localStorage.getItem("fe-pdf-ok-" + id) === "1"; }
+  function libre(id) { return localStorage.getItem("fe-libre-" + id) === "1"; }
+  function bloqueado(id) { return libre(id) && !pdfOk(id); }
+
+  // Guarda la respuesta correcta de una pregunta y corrige la nota de lo que el alumno ya había respondido
+  function registrarReveal(id, n, correcta) {
+    var r = reveladas(id);
+    r[n] = correcta;
+    guardar("fe-reveladas-" + id, r);
+    var clave = "fe-respuestas-" + id;
+    var g = leer(clave, {});
+    if (g[n] && g[n].eleccion !== undefined) {
+      g[n].correcta = (g[n].eleccion === correcta);
+      guardar(clave, g);
+    }
+  }
+  function aplicarClaves(id, claves) {
+    for (var n in (claves || {})) registrarReveal(id, parseInt(n, 10), claves[n]);
+  }
+
+  function descargarEstudio(id, cb) {
+    fetch(API_BASE + "/api/fe-de-jesus/estudio/" + id)
+      .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
+      .then(function (est) { guardar("fe-estudio-" + id, est); cb(est); })
+      .catch(function () { cb(estudioLocal(id)); });
+  }
+
+  // Deja guardados los versículos del estudio para poder leerlos sin conexión
+  function precargarVersiculos(est) {
+    if (localStorage.getItem("fe-prefetch-" + est.id) === "1" || !navigator.onLine) return;
+    localStorage.setItem("fe-prefetch-" + est.id, "1");
+    var refs = [];
+    (est.preguntas || []).forEach(function (p) { if (p.referencia && refs.indexOf(p.referencia) < 0) refs.push(p.referencia); });
+    var i = 0;
+    (function sig() {
+      if (i >= refs.length) return;
+      var url = API_BASE + "/api/biblia/versiculo?ref=" + encodeURIComponent(refs[i++]) + "&version=" + encodeURIComponent(versionActual);
+      fetch(url).then(function () {}, function () {}).then(function () { setTimeout(sig, 150); });
+    })();
+  }
+
+  // ---------- mostrar una pregunta del estudio guardado ----------
+  function dataDe(n) {
+    var p = null;
+    for (var i = 0; i < estudio.preguntas.length; i++) if (estudio.preguntas[i].n === n) p = estudio.preguntas[i];
+    if (!p) p = estudio.preguntas[0];
+    var rev = reveladas(estudio.id)[p.n];
+    return {
+      estudioId: estudio.id, estudioTitulo: estudio.titulo, estudioSubtitulo: estudio.subtitulo,
+      preguntaN: p.n, totalPreguntas: estudio.preguntas.length,
+      pregunta: p.pregunta, referencia: p.referencia, opciones: p.opciones || [],
+      correcta: rev !== undefined ? rev : -1, respuestaRevelada: rev !== undefined
+    };
+  }
+
+  function indiceDe(n) {
+    for (var i = 0; i < estudio.preguntas.length; i++) if (estudio.preguntas[i].n === n) return i;
+    return 0;
+  }
+
+  function mostrarPregunta(n) {
+    var d = dataDe(n);
+    vista = d.preguntaN;
+    guardar("fe-vista-" + estudio.id, vista);
+    mostrar(d);
+    agregarNav();
+  }
+
+  function puedoRepintar() {
+    var a = document.activeElement;
+    return !(a && a.id === "txtRespuestaAbierta");
+  }
+
+  function agregarNav() {
+    var cont = document.createElement("div");
+    cont.innerHTML =
+      '<div class="fe-nav"><button type="button" id="feAnt">◀ Anterior</button><button type="button" id="feSig">Siguiente ▶</button></div>' +
+      '<div class="fe-nota" id="feNota"></div>';
+    card.appendChild(cont);
+    var idx = indiceDe(vista), total = estudio.preguntas.length;
+    $("feAnt").disabled = idx <= 0;
+    $("feSig").disabled = idx >= total - 1;
+    $("feAnt").addEventListener("click", function () { mostrarPregunta(estudio.preguntas[indiceDe(vista) - 1].n); });
+    $("feSig").addEventListener("click", function () { mostrarPregunta(estudio.preguntas[indiceDe(vista) + 1].n); });
+    actualizarNota();
+  }
+
+  function respondidas() {
+    var g = leer("fe-respuestas-" + estudio.id, {});
+    var c = 0;
+    estudio.preguntas.forEach(function (p) {
+      var r = g[p.n];
+      if (r && (r.eleccion !== undefined || r.texto)) c++;
+    });
+    return c;
+  }
+
+  function actualizarNota() {
+    var nota = $("feNota");
+    if (!nota || !sesion || !estudio) return;
+    var partes = [];
+    var hechas = respondidas(), total = estudio.preguntas.length;
+    if (pdfOk(estudio.id)) {
+      partes.push('<span class="fe-ok">✅ El instructor habilitó tu PDF.</span> Toca “Ver mis respuestas”.');
+    } else if (hechas >= total) {
+      partes.push('🎉 Terminaste el estudio. <b>El PDF se habilita cuando el instructor lo autorice.</b>');
+    } else {
+      partes.push('📚 Recorrido libre: avanza a tu ritmo (' + hechas + ' de ' + total + ' respondidas). Tus respuestas se guardan en este celular.');
+    }
+    if (!conectado()) {
+      partes.push('<span class="fe-off">📴 Sin conexión:</span> puedes seguir respondiendo; se enviarán al instructor cuando vuelva la conexión.');
+    }
+    nota.innerHTML = partes.join("<br>");
+  }
+
+  // ---------- sesión ----------
+  function iniciarSesion(d) {
+    var id = d.estudioId;
+    sesion = { estudioId: id, titulo: d.estudioTitulo, subtitulo: d.estudioSubtitulo, total: d.totalPreguntas };
+    guardar("fe-sesion", sesion);
+    localStorage.setItem("fe-libre-" + id, "1");
+    function seguir(est) {
+      if (!est) { sesion = null; localStorage.removeItem("fe-sesion"); mostrar(d); return; }
+      estudio = est;
+      mostrarPregunta(d.preguntaN);
+      precargarVersiculos(est);
+    }
+    var local = estudioLocal(id);
+    if (local) seguir(local); else descargarEstudio(id, seguir);
+  }
+
+  function terminarSesion(irAEspera) {
+    sesion = null;
+    estudio = null;
+    localStorage.removeItem("fe-sesion");
+    if (irAEspera) card.innerHTML = esperaHTML();
+  }
+
+  // Lo llama el WebSocket con cada mensaje
+  window.feRecibir = function (msg) {
+    try {
+      if (msg.type === "fe-projection") {
+        var d = msg.data || {};
+        if (d.respuestaRevelada && d.correcta >= 0) registrarReveal(d.estudioId, d.preguntaN, d.correcta);
+        if (d.recorridoLibre) {
+          var activa = sesion && sesion.estudioId === d.estudioId && estudio;
+          if (d.repetido && activa) { actualizarNota(); return; }   // al reconectar no se mueve al alumno
+          if (activa) { mostrarPregunta(d.preguntaN); return; }
+          iniciarSesion(d);
+          return;
+        }
+        // Proyección clásica (sin recorrido libre)
+        if (sesion) terminarSesion(false);
+        localStorage.removeItem("fe-libre-" + d.estudioId);
+        mostrar(d);
+        return;
+      }
+      if (msg.type === "fe-reveladas") {
+        aplicarClaves(msg.estudioId, msg.claves);
+        if (sesion && estudio && sesion.estudioId === msg.estudioId && puedoRepintar()) mostrarPregunta(vista);
+        return;
+      }
+      if (msg.type === "fe-pdf-habilitado") {
+        localStorage.setItem("fe-pdf-ok-" + msg.estudioId, "1");
+        aplicarClaves(msg.estudioId, msg.claves);
+        actualizarBotonResumen(msg.estudioId);
+        actualizarNota();
+        return;
+      }
+      if (msg.type === "fe-estudio-cerrado") {
+        if (sesion && sesion.estudioId === msg.estudioId) terminarSesion(true);
+        return;
+      }
+    } catch (e) { console.error(e); }
+  };
+
+  // ---------- el PDF queda bloqueado hasta que el instructor lo habilite ----------
+  var botonOriginal = window.actualizarBotonResumen;
+  function aplicarBloqueo(id) {
+    var b = $("btnResumen");
+    if (!b || b.style.display === "none") return;
+    if (bloqueado(id)) {
+      b.setAttribute("data-bloqueado", "1");
+      b.textContent = "🔒 Esperando autorización del instructor";
+      b.style.background = "#718096";
+      b.style.animation = "none";
+    } else if (b.getAttribute("data-bloqueado") === "1") {
+      b.removeAttribute("data-bloqueado");
+      b.textContent = "📄 Ver mis respuestas";
+      b.style.background = "";
+      b.style.animation = "";
+    }
+  }
+  window.actualizarBotonResumen = function (id) {
+    botonOriginal(id);
+    aplicarBloqueo(id);
+  };
+
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var b = $("btnResumen");
+    if (b && b.getAttribute("data-bloqueado") === "1" && (t === b || b.contains(t))) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      alert("Terminaste tus respuestas. El instructor debe habilitar tu PDF para que puedas verlas y descargarlas.");
+      return;
+    }
+    if (sesion && t.closest("#btnAlumno")) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      alert("No puedes cambiar de alumno mientras el estudio esté abierto.");
+      return;
+    }
+    if (t.closest("#btnConfirmarCambio")) {
+      var v = $("cambiarInput");
+      if (v && v.value.trim()) limpiarAlumno();
+    }
+  }, true);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && e.target && e.target.id === "cambiarInput" && e.target.value.trim()) limpiarAlumno();
+  }, true);
+
+  // Un alumno nuevo en el mismo celular empieza de cero (también su permiso de PDF)
+  function limpiarAlumno() {
+    var borrar = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && (/^fe-(pdf-ok|libre|vista|reveladas)-/.test(k) || k === "fe-cid" || k === "fe-sesion")) borrar.push(k);
+    }
+    borrar.forEach(function (k) { localStorage.removeItem(k); });
+  }
+
+  // ---------- al volver la conexión, se envían las respuestas hechas sin conexión ----------
+  function reenviar() {
+    if (!conectado() || !sesion || !estudio) return;
+    var g = leer("fe-respuestas-" + estudio.id, {});
+    var nombre = localStorage.getItem("fe-nombre-alumno") || "Anónimo";
+    estudio.preguntas.forEach(function (p) {
+      var r = g[p.n];
+      if (!r) return;
+      if (p.opciones && p.opciones.length && r.eleccion !== undefined) {
+        ws.send(JSON.stringify({
+          type: "fe-respuesta-alumno", nombre: nombre, estudioId: estudio.id, preguntaN: p.n,
+          eleccion: r.eleccion, opciones: p.opciones, correcta: -1, totalPreguntas: estudio.preguntas.length
+        }));
+      } else if (r.texto) {
+        ws.send(JSON.stringify({
+          type: "fe-respuesta-alumno", nombre: nombre, estudioId: estudio.id, preguntaN: p.n, texto: r.texto
+        }));
+      }
+    });
+  }
+  var estabaConectado = conectado();
+  setInterval(function () {
+    var ahora = conectado();
+    if (ahora && !estabaConectado) setTimeout(reenviar, 800);
+    estabaConectado = ahora;
+    if (sesion && estudio) actualizarNota();
+  }, 1000);
+
+  // ---------- al abrir la página: se retoma el estudio donde estaba ----------
+  if (sesion) {
+    estudio = estudioLocal(sesion.estudioId);
+    if (estudio) {
+      mostrarPregunta(leer("fe-vista-" + sesion.estudioId, 1));
+    } else {
+      sesion = null;
+      localStorage.removeItem("fe-sesion");
+    }
+  }
+
+  // ---------- permite abrir la pantalla sin conexión ----------
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+})();
+</script>
+
+<script>
+// Parche chatCid: respaldo por si el modulo del chat carga tarde o falla
+(function () {
+  if (typeof window.chatCid !== "function") {
+    window.chatCid = function () {
+      var c = localStorage.getItem("fe-cid");
+      if (!c) { c = "c" + Math.random().toString(36).slice(2, 10); localStorage.setItem("fe-cid", c); }
+      return c;
+    };
+  }
+})();
+</script>
 
 </body>
 </html>

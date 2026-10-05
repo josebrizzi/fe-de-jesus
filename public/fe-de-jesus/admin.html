@@ -318,6 +318,7 @@
         const data = JSON.parse(event.data);
         if (data.type === "connected") connectedCount.textContent = data.count;
         if (typeof chatRecibir === "function" && data.type && data.type.indexOf("chat-") === 0) chatRecibir(data);
+        if (typeof controlRecibir === "function") controlRecibir(data);
         if (data.type === "auth-ok") wsStatus.textContent = "Conectado (instructor)";
         if (data.type === "auth-error") {
           localStorage.removeItem("fe-clave-instructor");
@@ -497,7 +498,8 @@
         referencia: preguntaActual.referencia,
         opciones: preguntaActual.opciones || [],
         correcta: revelarRespuesta ? preguntaActual.correcta : -1,
-        respuestaRevelada: revelarRespuesta
+        respuestaRevelada: revelarRespuesta,
+        recorridoLibre: !!(document.getElementById("chkRecorrido") && document.getElementById("chkRecorrido").checked)
       }
     }));
   }
@@ -988,6 +990,135 @@
 })();
 </script>
 
+
+<script>
+// ============================================================
+// RECORRIDO LIBRE (control del instructor)
+// ============================================================
+(function () {
+  var ultimo = null;
+
+  // El estudio se pide con la clave del instructor para recibir las respuestas correctas
+  var fetchOrig = window.fetch;
+  window.fetch = function (u, o) {
+    try {
+      if (typeof u === "string" && u.indexOf("/api/fe-de-jesus/estudio/") >= 0) {
+        o = o || {};
+        o.headers = Object.assign({}, o.headers || {}, { "x-clave": localStorage.getItem("fe-clave-instructor") || "" });
+      }
+    } catch (e) {}
+    return fetchOrig.call(this, u, o);
+  };
+
+  var css = document.createElement("style");
+  css.textContent = "#panelControl label{font-weight:normal;color:var(--text);margin:0;display:flex;gap:10px;align-items:flex-start}\n#panelControl input[type=checkbox]{width:auto;margin-top:4px;flex:none}\n#ctlEstado{margin:10px 0 6px;font-size:14px;color:var(--text-soft,var(--text))}\n.ctl-fila{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:14px}\n.ctl-nombre{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}\n.ctl-avance{font-weight:bold;color:var(--primary)}\n.ctl-ok{color:#2f855a;font-weight:bold;font-size:13px}\n.ctl-btn{padding:8px 12px;font-size:13px;border-radius:8px;border:1px solid var(--primary);background:var(--primary-soft);color:var(--primary);cursor:pointer;font-weight:bold}\n.ctl-btn:disabled{opacity:.45;cursor:not-allowed}\n.ctl-btn.grande{padding:11px 16px;font-size:14px}\n.ctl-btn.rojo{border-color:#c53030;color:#c53030;background:transparent}\n.ctl-acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}";
+  document.head.appendChild(css);
+
+  var sec = document.createElement("section");
+  sec.className = "panel";
+  sec.id = "panelControl";
+  sec.innerHTML =
+    '<label for="chkRecorrido"><input type="checkbox" id="chkRecorrido">' +
+    '<span><b>📚 Recorrido libre</b> — al proyectar una pregunta, cada alumno recibe todo el estudio y puede avanzar a su ritmo, ' +
+    'incluso sin conexión. Las respuestas correctas llegan solo cuando las reveles, y el PDF queda bloqueado hasta que lo habilites.</span></label>' +
+    '<div id="ctlEstado"></div>' +
+    '<div id="ctlLista"></div>' +
+    '<div class="ctl-acciones">' +
+      '<button type="button" id="ctlHabTodos" class="ctl-btn grande">✅ Habilitar PDF a todos</button>' +
+      '<button type="button" id="ctlCerrar" class="ctl-btn grande rojo">⛔ Cerrar estudio</button>' +
+    '</div>';
+  var main = document.querySelector("main");
+  var primero = main ? main.querySelector(".panel") : null;
+  if (main) main.insertBefore(sec, primero);
+
+  var chk = document.getElementById("chkRecorrido");
+  var estado = document.getElementById("ctlEstado");
+  var lista = document.getElementById("ctlLista");
+  var btnTodos = document.getElementById("ctlHabTodos");
+  var btnCerrar = document.getElementById("ctlCerrar");
+
+  chk.checked = localStorage.getItem("fe-recorrido-libre") !== "0";
+  chk.addEventListener("change", function () {
+    localStorage.setItem("fe-recorrido-libre", chk.checked ? "1" : "0");
+  });
+
+  function enviar(obj) {
+    if (typeof ws === "undefined" || !ws || ws.readyState !== 1) { alert("Sin conexión con el servidor."); return false; }
+    ws.send(JSON.stringify(obj));
+    return true;
+  }
+
+  function pintar() {
+    var est = ultimo && ultimo.estudio;
+    var alumnos = (ultimo && ultimo.alumnos) || [];
+    estado.textContent = est
+      ? "📚 Estudio abierto: " + est.titulo + " (" + est.total + " preguntas)"
+      : "No hay un estudio abierto en recorrido libre. Deja la casilla marcada y proyecta una pregunta.";
+    btnTodos.disabled = !est;
+    btnCerrar.disabled = !est;
+    lista.innerHTML = "";
+    if (!est) return;
+    if (!alumnos.length) {
+      var v = document.createElement("div");
+      v.className = "ctl-fila";
+      v.textContent = "Aún no hay alumnos conectados.";
+      lista.appendChild(v);
+      return;
+    }
+    alumnos.forEach(function (a) {
+      var f = document.createElement("div");
+      f.className = "ctl-fila";
+      var n = document.createElement("div");
+      n.className = "ctl-nombre";
+      n.textContent = "🎓 " + a.nombre;
+      var av = document.createElement("div");
+      av.className = "ctl-avance";
+      av.textContent = a.respondidas + "/" + est.total;
+      f.appendChild(n);
+      f.appendChild(av);
+      if (a.pdf) {
+        var ok = document.createElement("div");
+        ok.className = "ctl-ok";
+        ok.textContent = "✓ PDF habilitado";
+        f.appendChild(ok);
+      } else {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "ctl-btn";
+        b.textContent = "Habilitar PDF";
+        b.setAttribute("data-cid", a.cid);
+        f.appendChild(b);
+      }
+      lista.appendChild(f);
+    });
+  }
+
+  lista.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button[data-cid]") : null;
+    if (!b || !ultimo || !ultimo.estudio) return;
+    enviar({ type: "fe-pdf-habilitar", estudioId: ultimo.estudio.id, cid: b.getAttribute("data-cid") });
+  });
+  btnTodos.addEventListener("click", function () {
+    if (!ultimo || !ultimo.estudio) return;
+    if (confirm("¿Habilitar el PDF a todos los alumnos de la sala?")) {
+      enviar({ type: "fe-pdf-habilitar", estudioId: ultimo.estudio.id });
+    }
+  });
+  btnCerrar.addEventListener("click", function () {
+    if (!ultimo || !ultimo.estudio) return;
+    if (confirm("¿Cerrar el estudio? Los alumnos volverán a la pantalla de espera (sus respuestas quedan guardadas).")) {
+      enviar({ type: "fe-cerrar-estudio", estudioId: ultimo.estudio.id });
+    }
+  });
+
+  // Lo llama el WebSocket con cada mensaje
+  window.controlRecibir = function (d) {
+    if (d && d.type === "chat-alumnos") { ultimo = d; pintar(); }
+  };
+
+  pintar();
+})();
+</script>
 
 </body>
 </html>

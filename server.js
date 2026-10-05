@@ -208,7 +208,8 @@ app.get("/api/fe-de-jesus/estudio/:id", (req, res) => {
   if (!fs.existsSync(ruta)) {
     return res.status(404).json({ error: "Estudio no encontrado" });
   }
-  res.json(JSON.parse(fs.readFileSync(ruta, "utf8")));
+  const estudioCompleto = JSON.parse(fs.readFileSync(ruta, "utf8"));
+  res.json(prepararEstudio(estudioCompleto, req));
 });
 
 // ============================================================
@@ -589,7 +590,10 @@ const INSTRUCTOR_KEY = process.env.INSTRUCTOR_KEY || "cambia-esta-clave";
 if (INSTRUCTOR_KEY === "cambia-esta-clave") {
   console.warn("AVISO: usando la clave por defecto. Define la variable INSTRUCTOR_KEY.");
 }
-const TIPOS_INSTRUCTOR = ["project", "project-fe", "fe-respuesta-correcta", "fe-nombre-instructor"];
+const TIPOS_INSTRUCTOR = [
+  "project", "project-fe", "fe-respuesta-correcta", "fe-nombre-instructor",
+  "fe-pdf-habilitar", "fe-cerrar-estudio"
+];
 
 // Límites
 const MAX_AUDIO = 1500000;      // caracteres del audio en base64 (aprox. 1.1 MB)
@@ -606,8 +610,14 @@ function limpiarSala(s) {
 function estadoSala(id) {
   if (!salas.has(id)) {
     salas.set(id, {
-      proyeccion: null, correccion: null, instructor: null,
-      chat: [], respuestas: new Map(), actividad: Date.now()
+      proyeccion: null, instructor: null,
+      chat: [], respuestas: new Map(),
+      reveladas: new Map(),      // "estudio|pregunta" -> { estudioId, preguntaN, correcta }
+      correcciones: new Map(),   // "estudio|pregunta" -> mensaje de corrección del instructor
+      abierto: null,             // estudio abierto en recorrido libre
+      protegidos: new Set(),     // estudios cuyas respuestas correctas no se entregan hasta habilitar el PDF
+      pdf: new Map(),            // estudio -> { estudioId, todos, cids }
+      actividad: Date.now()
     });
   }
   const st = salas.get(id);
@@ -622,6 +632,40 @@ function guardarRespuesta(st, data) {
   while (st.respuestas.size > MAX_RESPUESTAS) {
     st.respuestas.delete(st.respuestas.keys().next().value);
   }
+}
+
+function pdfAutorizado(st, estudioId, cid) {
+  const reg = st.pdf.get(String(estudioId));
+  return !!reg && (reg.todos || (!!cid && reg.cids.has(cid)));
+}
+
+// Respuestas correctas de un estudio (solo opción múltiple)
+function clavesDe(id) {
+  try {
+    const ruta = path.join(__dirname, "public", "fe-de-jesus", "datos", String(id).padStart(2, "0") + ".json");
+    const est = JSON.parse(fs.readFileSync(ruta, "utf8"));
+    const claves = {};
+    (est.preguntas || []).forEach((p) => {
+      if (p.opciones && p.opciones.length && p.correcta >= 0) claves[p.n] = p.correcta;
+    });
+    return claves;
+  } catch (e) {
+    return {};
+  }
+}
+
+// Estudio que se entrega por la web. Mientras un estudio está en recorrido libre,
+// los alumnos lo reciben SIN las respuestas correctas hasta que el instructor habilite el PDF.
+function prepararEstudio(estudio, req) {
+  const k = req.get("x-clave");
+  if (k && k === INSTRUCTOR_KEY) return estudio;
+  const st = salas.get(limpiarSala(req.query.sala));
+  const id = String(estudio.id);
+  if (!st || !st.protegidos.has(id)) return estudio;
+  if (pdfAutorizado(st, id, String(req.query.cid || ""))) return estudio;
+  const copia = JSON.parse(JSON.stringify(estudio));
+  (copia.preguntas || []).forEach((p) => { if (p.correcta !== undefined) p.correcta = -1; });
+  return copia;
 }
 
 wss.on("connection", (ws) => {
@@ -651,8 +695,31 @@ wss.on("connection", (ws) => {
         ws.cid = String(data.cid || "").slice(0, 60);
         const st = estadoSala(ws.sala);
         if (st.instructor) ws.send(JSON.stringify(st.instructor));
-        if (st.proyeccion) ws.send(JSON.stringify(st.proyeccion));
-        if (st.correccion) ws.send(JSON.stringify(st.correccion));
+
+        if (!ws.isInstructor) {
+          // Lo que el instructor ya reveló, corrigió o habilitó mientras el alumno no estaba
+          const porEstudio = new Map();
+          st.reveladas.forEach((r) => {
+            if (!porEstudio.has(r.estudioId)) porEstudio.set(r.estudioId, {});
+            porEstudio.get(r.estudioId)[r.preguntaN] = r.correcta;
+          });
+          porEstudio.forEach((claves, estudioId) => {
+            ws.send(JSON.stringify({ type: "fe-reveladas", estudioId: estudioId, claves: claves }));
+          });
+          st.correcciones.forEach((m) => ws.send(JSON.stringify(m)));
+          st.pdf.forEach((reg, e) => {
+            if (pdfAutorizado(st, e, ws.cid)) {
+              ws.send(JSON.stringify({ type: "fe-pdf-habilitado", estudioId: reg.estudioId, claves: clavesDe(e) }));
+            }
+          });
+        }
+        if (st.proyeccion) {
+          // Se marca como "repetido" para que el alumno no pierda su lugar al reconectarse
+          const copia = JSON.parse(JSON.stringify(st.proyeccion));
+          if (copia.data) copia.data.repetido = true;
+          ws.send(JSON.stringify(copia));
+        }
+
         // Historial del chat: el instructor ve todo; el alumno solo lo del instructor (general o privado para él) y lo suyo
         const cid = ws.cid;
         const historial = st.chat.filter((m) =>
@@ -727,6 +794,7 @@ wss.on("connection", (ws) => {
         if (data.nombre) ws.nombre = String(data.nombre).slice(0, 60);
         guardarRespuesta(estadoSala(ws.sala), data);
         enviarAInstructores(data, ws.sala);
+        enviarRoster(ws.sala);
         return;
       }
       if (data.type === "fe-nombre-alumno") {
@@ -743,15 +811,48 @@ wss.on("connection", (ws) => {
       if (data.type === "project") {
         broadcast({ type: "projection", data: data.data }, ws.sala);
       } else if (data.type === "project-fe") {
-        st.proyeccion = { type: "fe-projection", data: data.data };
-        st.correccion = null;
+        const d = data.data || {};
+        st.proyeccion = { type: "fe-projection", data: d };
+        if (d.respuestaRevelada && d.correcta >= 0) {
+          st.reveladas.set(d.estudioId + "|" + d.preguntaN, {
+            estudioId: d.estudioId, preguntaN: d.preguntaN, correcta: d.correcta
+          });
+        }
+        if (d.recorridoLibre) {
+          st.abierto = { estudioId: d.estudioId, titulo: d.estudioTitulo, subtitulo: d.estudioSubtitulo, total: d.totalPreguntas };
+          st.protegidos.add(String(d.estudioId));
+        } else {
+          st.abierto = null;
+          st.protegidos.delete(String(d.estudioId));
+        }
         broadcast(st.proyeccion, ws.sala);
+        enviarRoster(ws.sala);
       } else if (data.type === "fe-respuesta-correcta") {
-        st.correccion = data;
+        if (JSON.stringify(data).length <= 8000) {
+          st.correcciones.set(data.estudioId + "|" + data.preguntaN, data);
+        }
         broadcast(data, ws.sala);
       } else if (data.type === "fe-nombre-instructor") {
         st.instructor = data;
         broadcast(data, ws.sala);
+      } else if (data.type === "fe-pdf-habilitar") {
+        const id = String(data.estudioId);
+        let reg = st.pdf.get(id);
+        if (!reg) { reg = { estudioId: data.estudioId, todos: false, cids: new Set() }; st.pdf.set(id, reg); }
+        if (data.cid) reg.cids.add(String(data.cid).slice(0, 60)); else reg.todos = true;
+        const aviso = JSON.stringify({ type: "fe-pdf-habilitado", estudioId: data.estudioId, claves: clavesDe(id) });
+        wss.clients.forEach((c) => {
+          if (c.readyState === WebSocket.OPEN && c.sala === ws.sala && !c.isInstructor && (reg.todos || reg.cids.has(c.cid))) {
+            c.send(aviso);
+          }
+        });
+        enviarRoster(ws.sala);
+      } else if (data.type === "fe-cerrar-estudio") {
+        const cerrado = st.abierto ? st.abierto.estudioId : data.estudioId;
+        st.abierto = null;
+        st.proyeccion = null;
+        broadcast({ type: "fe-estudio-cerrado", estudioId: cerrado }, ws.sala);
+        enviarRoster(ws.sala);
       }
     } catch (error) {
       console.error("Mensaje WebSocket inválido:", error.message);
@@ -798,15 +899,31 @@ function enviarAInstructores(data, sala) {
   });
 }
 
-// Lista de alumnos conectados en la sala (solo para los instructores)
+// Alumnos conectados en la sala, con su avance y si tienen el PDF habilitado (solo para los instructores)
 function enviarRoster(sala) {
+  const st = salas.get(sala);
+  const abierto = st && st.abierto ? st.abierto : null;
   const lista = new Map();
   wss.clients.forEach((c) => {
     if (c.readyState === WebSocket.OPEN && c.sala === sala && !c.isInstructor && c.cid) {
-      lista.set(c.cid, { cid: c.cid, nombre: c.nombre || "Alumno" });
+      const nombre = c.nombre || "Alumno";
+      let respondidas = 0;
+      if (abierto) {
+        st.respuestas.forEach((d) => {
+          if (d.estudioId === abierto.estudioId && d.nombre === nombre) respondidas++;
+        });
+      }
+      lista.set(c.cid, {
+        cid: c.cid, nombre: nombre, respondidas: respondidas,
+        pdf: abierto ? pdfAutorizado(st, abierto.estudioId, c.cid) : false
+      });
     }
   });
-  enviarAInstructores({ type: "chat-alumnos", alumnos: Array.from(lista.values()) }, sala);
+  enviarAInstructores({
+    type: "chat-alumnos",
+    alumnos: Array.from(lista.values()),
+    estudio: abierto ? { id: abierto.estudioId, titulo: abierto.titulo, total: abierto.total } : null
+  }, sala);
 }
 
 // Chat: el instructor habla para toda la sala (o en privado a un alumno);
