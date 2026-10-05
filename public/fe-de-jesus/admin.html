@@ -1149,55 +1149,92 @@ h3 { font-size: 1.25em !important; }
 
 
 
-<!-- INTERESADOS-FOLLETO-ADMIN -->
+
+
+
+
+<!-- INTERESADOS-FOLLETO-ADMIN MIS-ALUMNOS-V4 -->
 <style>
 #int-flotante{position:fixed;right:14px;bottom:14px;z-index:99998;background:#1a3a6b;color:#fff;border:none;border-radius:999px;padding:12px 18px;font-size:16px;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer}
 #int-panel{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:none;align-items:center;justify-content:center;padding:14px}
 #int-panel.abierto{display:flex}
-.int-caja{background:#fff;border-radius:12px;max-width:640px;width:100%;max-height:86vh;overflow:auto;padding:16px}
+.int-caja{background:#fff;border-radius:12px;max-width:660px;width:100%;max-height:88vh;overflow:auto;padding:16px}
+.int-tabs{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}
+.int-tabs button{border:1.5px solid #c9d4e3;background:#f6f9fd;border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer}
+.int-tabs button.activo{background:#1a3a6b;color:#fff;border-color:#1a3a6b}
 .int-item{border:1px solid #e3e8ef;border-radius:10px;padding:10px;margin-bottom:8px;font-size:15px}
 .int-item .int-nombre{font-weight:bold}
 .int-badge{font-size:12px;border-radius:999px;padding:2px 8px;margin-left:6px}
 .int-nuevo{background:#fff3cd;color:#7a5b00}
 .int-contactado{background:#d9f2dd;color:#1d6a2e}
+.int-activo{background:#ccf3e4;color:#0b6b4f}
 .int-asignado{background:#dbeafe;color:#1e40af}
 .int-botones button{font-size:14px;padding:6px 10px;margin:6px 6px 0 0;border:none;border-radius:8px;cursor:pointer;background:#eef2f7}
 .int-botones button.int-wa{background:#25d366;color:#fff}
+#int-milink{background:#f2f6fc;border:1.5px dashed #1a3a6b;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px}
+#int-milink code{word-break:break-all;font-size:13px}
+#int-milink button{border:none;background:#1a3a6b;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
 #int-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#222;color:#fff;padding:12px 18px;border-radius:10px;font-size:15px;z-index:100000;display:none;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 </style>
 <button id="int-flotante">📋 Interesados <span id="int-cont">0</span></button>
 <div id="int-panel"><div class="int-caja">
   <div style="display:flex;justify-content:space-between;align-items:center">
-    <h3 style="margin:0">📋 Interesados del folleto</h3>
+    <h3 style="margin:0">📋 Contactos del folleto</h3>
     <button id="int-cerrar" style="border:none;background:#eee;border-radius:8px;padding:6px 12px;cursor:pointer">✕</button>
   </div>
   <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap">
     <button id="int-refrescar" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">🔄 Actualizar</button>
-    <button id="int-copiar-todo" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">📋 Copiar todo (respaldo)</button>
+    <button id="int-copiar-todo" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">📋 Copiar todo</button>
     <button id="int-clave" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">🔑 Cambiar clave</button>
   </div>
-  <div style="margin:10px 0">
-    <select id="int-filtro" style="font-size:15px;padding:8px;border-radius:8px;border:1px solid #c9d4e3;background:#fff">
-      <option value="todos">Mostrar: Todos</option>
-      <option value="sin">Mostrar: Sin asignar</option>
-      <option value="mios">Mostrar: Asignados a mí</option>
-    </select>
+  <div class="int-tabs">
+    <button id="tab-sin">📥 Interesados</button>
+    <button id="tab-mios">👥 Mis alumnos</button>
+    <button id="tab-todos">🌐 Todos</button>
+  </div>
+  <div id="int-milink" style="display:none">
+    🔗 <b>Tu enlace de instructor</b>:<br>
+    <code id="int-link-txt"></code>
+    <button id="int-link-copy">Copiar</button>
+    <div style="font-size:12.5px;color:#556;margin-top:6px">Consejo: mandá siempre el enlace desde cada contacto (📲 WhatsApp), porque ese identifica al alumno y lo marca como 🎓 activo cuando entra.</div>
   </div>
   <div id="int-lista">Cargando…</div>
 </div></div>
 <div id="int-toast"></div>
 <script>
 (function(){
-  var CFG = { instructor: "", iglesia: "Iglesia Adventista del Séptimo Día", link: "https://fe-de-jesus.onrender.com/fe-de-jesus/" };
+  var CFG = { iglesia: "Iglesia Adventista del Séptimo Día", link: "https://fe-de-jesus.onrender.com/fe-de-jesus/" };
   var BASE = location.pathname.indexOf("/biblia") === 0 ? "/biblia" : "";
   var API = BASE + "/api/fe-de-jesus/interesados";
   var APIA = BASE + "/api/fe-de-jesus/interesados-accion";
+  var vista = "sin";
   var vistos = {};
   try { vistos = JSON.parse(localStorage.getItem("fe-int-vistos") || "{}"); } catch(e) { vistos = {}; }
-  function guardarVistos(){ try { var ids = Object.keys(vistos); if (ids.length > 800) { var nv = {}; ids.slice(-800).forEach(function(i){ nv[i] = 1; }); vistos = nv; } localStorage.setItem("fe-int-vistos", JSON.stringify(vistos)); } catch(e){} }
+  function guardarVistos(){ try { localStorage.setItem("fe-int-vistos", JSON.stringify(vistos)); } catch(e){} }
   function $(id){ return document.getElementById(id); }
+  function nombre(){ return localStorage.getItem("fe-nombre-instructor") || ""; }
   function clave(){ var c = localStorage.getItem("fe-clave-instructor"); if (!c) { c = prompt("Clave del instructor (la misma con la que entras al panel):") || ""; if (c) localStorage.setItem("fe-clave-instructor", c); } return c; }
   function cabeceras(){ return { "x-instructor-key": clave() }; }
+  function sanitSala(n){ var s = String(n || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12); return s || "GENERAL"; }
+  function linkBase(nom){
+    var sala = sanitSala(nom);
+    var base = CFG.link;
+    var sep = "=";
+    try {
+      var inputs = Array.prototype.slice.call(document.querySelectorAll("input"));
+      var inp = inputs.filter(function(i){ return /\?sala/i.test(i.value || ""); })[0];
+      if (inp) {
+        var v = inp.value, qi = v.indexOf("?");
+        if (qi > 0) {
+          base = v.slice(0, qi);
+          var m = v.slice(qi + 1).match(/sala([=-])/);
+          if (m) sep = m[1];
+        }
+      }
+    } catch(e){}
+    return base + "?sala" + sep + sala;
+  }
+  function linkDe(it){ var l = linkBase(it.instructor || nombre() || ""); return (it && it.id) ? l + "&alu=" + it.id : l; }
   var listaActual = [];
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   function toast(m){ var t = $("int-toast"); t.textContent = m; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(function(){ t.style.display = "none"; }, 6000); t.onclick = function(){ t.style.display = "none"; abrir(); }; }
@@ -1209,35 +1246,66 @@ h3 { font-size: 1.25em !important; }
       if (!d || !d.ok) return;
       listaActual = d.lista || [];
       listaActual.forEach(function(it){
-        if (!vistos[it.id]) { vistos[it.id] = 1; if (!primeravez && it.estado === "nuevo") toast("📋 Nuevo interesado: " + it.nombre); }
+        if (!vistos[it.id]) { vistos[it.id] = 1; if (!primeravez && !it.instructor) toast("📋 Nuevo interesado: " + it.nombre); }
       });
       guardarVistos();
-      $("int-cont").textContent = listaActual.filter(function(i){ return i.estado === "nuevo"; }).length;
+      var sin = listaActual.filter(function(x){ return !x.instructor; }).length;
+      $("int-cont").textContent = sin;
+      ponerTabs();
       if ($("int-panel").classList.contains("abierto")) render();
     }).catch(function(e){ if (primeravez) $("int-lista").textContent = "Error: " + e.message + " — toca Actualizar para reintentar."; });
   }
+  function mismoInstructor(x, mio){ return !!(mio && x.instructor && String(x.instructor).toLowerCase() === String(mio).toLowerCase()); }
+  function ponerTabs(){
+    var mio = nombre();
+    var sin = listaActual.filter(function(x){ return !x.instructor; }).length;
+    var mios = mio ? listaActual.filter(function(x){ return mismoInstructor(x, mio); }).length : 0;
+    $("tab-sin").textContent = "📥 Interesados (" + sin + ")";
+    $("tab-mios").textContent = "👥 Mis alumnos (" + mios + ")";
+    $("tab-todos").textContent = "🌐 Todos (" + listaActual.length + ")";
+    $("tab-sin").className = vista === "sin" ? "activo" : "";
+    $("tab-mios").className = vista === "mios" ? "activo" : "";
+    $("tab-todos").className = vista === "todos" ? "activo" : "";
+  }
   function render(){
+    ponerTabs();
     var L = $("int-lista");
-    var f = $("int-filtro") ? $("int-filtro").value : "todos";
-    var mio = localStorage.getItem("fe-nombre-instructor") || "";
-    var mostrar = listaActual.filter(function(x){ if (f === "sin") return !x.instructor; if (f === "mios") return mio && x.instructor === mio; return true; });
-    if (!mostrar.length) { L.innerHTML = "<p>" + (listaActual.length ? "No hay interesados en esta vista (proba cambiar el filtro)." : "Todavia no hay interesados.") + "</p>"; return; }
+    $("int-milink").style.display = (vista === "mios" && nombre()) ? "block" : "none";
+    if (vista === "mios" && nombre()) $("int-link-txt").textContent = linkBase(nombre());
+    var mio = nombre();
+    var mostrar = listaActual.filter(function(x){
+      if (vista === "sin") return !x.instructor;
+      if (vista === "mios") return mismoInstructor(x, mio);
+      return true;
+    });
+    if (!mostrar.length) {
+      L.innerHTML = "<p>" + (vista === "sin"
+        ? "No hay interesados sin asignar. Cuando alguien escanee el QR y deje su contacto, aparece acá."
+        : (vista === "mios" ? "Todavía no tomaste ningún contacto. Andá a 📥 Interesados y tocá 🎯 Asignarme." : "No hay contactos."))
+        + "</p>";
+      return;
+    }
     var h = "";
     mostrar.forEach(function(it){
       var esMail = (it.contacto || "").indexOf("@") >= 0;
+      var est = it.estado || "nuevo";
+      var estCls = est === "activo" ? "int-activo" : (est === "nuevo" ? "int-nuevo" : "int-contactado");
+      var estTxt = est === "activo" ? "🎓 activo" : est;
       h += '<div class="int-item">'
         + '<span class="int-nombre">' + esc(it.nombre) + '</span>'
-        + '<span class="int-badge ' + (it.estado === "nuevo" ? "int-nuevo" : "int-contactado") + '">' + (it.estado === "nuevo" ? "nuevo" : "contactado") + '</span>'
+        + '<span class="int-badge ' + estCls + '">' + estTxt + '</span>'
         + (it.instructor ? '<span class="int-badge int-asignado">👤 ' + esc(it.instructor) + '</span>' : "")
         + '<div style="color:#555;font-size:13px">' + esc(it.contacto) + " · " + new Date(it.fecha).toLocaleString("es-AR") + '</div>'
         + (it.mensaje ? '<div style="font-size:13px;margin-top:4px">“' + esc(it.mensaje) + '”</div>' : "")
+        + (it.alumnoNombre && it.alumnoNombre !== it.nombre ? '<div style="font-size:13px;color:#0b6b4f">🎓 entró al estudio como: ' + esc(it.alumnoNombre) + '</div>' : "")
         + '<div class="int-botones">'
         + (esMail
             ? '<button data-a="mail" data-id="' + it.id + '">📧 Copiar correo</button>'
             : '<button class="int-wa" data-a="wa" data-id="' + it.id + '">📲 WhatsApp con el link</button>')
-        + (it.instructor ? '<button data-a="quitar-instructor" data-id="' + it.id + '">✕ Quitar asignación</button>' : '<button data-a="asignar" data-id="' + it.id + '">🎯 Asignarme</button>')
+        + (!it.instructor ? '<button data-a="asignar" data-id="' + it.id + '">🎯 Asignarme</button>' : "")
+        + (mismoInstructor(it, mio) ? '<button data-a="quitar-instructor" data-id="' + it.id + '">✕ Dejar libre</button>' : "")
         + '<button data-a="copiar" data-id="' + it.id + '">🔗 Copiar link</button>'
-        + '<button data-a="' + (it.estado === "nuevo" ? "contactado" : "nuevo") + '" data-id="' + it.id + '">' + (it.estado === "nuevo" ? "✔ Marcar contactado" : "↩ Marcar nuevo") + '</button>'
+        + '<button data-a="' + (est === "nuevo" ? "contactado" : "nuevo") + '" data-id="' + it.id + '">' + (est === "nuevo" ? "✔ Contactado" : "↩ Nuevo") + '</button>'
         + '<button data-a="eliminar" data-id="' + it.id + '">🗑</button>'
         + '</div></div>';
     });
@@ -1245,31 +1313,40 @@ h3 { font-size: 1.25em !important; }
   }
   function copiar(t){ if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t); return; } var ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch(e){} document.body.removeChild(ta); }
   function abrir(){ $("int-panel").classList.add("abierto"); pedir(false); }
-  function enviar(body){ fetch(APIA, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify(body) }).then(function(r){ return r.json(); }).then(function(d){ if (d && d.ok) { listaActual = d.lista || []; $("int-cont").textContent = listaActual.filter(function(i){ return i.estado === "nuevo"; }).length; render(); } }); }
+  function enviar(body, luego){ fetch(APIA, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify(body) }).then(function(r){ return r.json(); }).then(function(d){ if (d && d.ok) { listaActual = d.lista || []; if (luego) luego(); render(); } }); }
   $("int-flotante").addEventListener("click", abrir);
   $("int-cerrar").addEventListener("click", function(){ $("int-panel").classList.remove("abierto"); });
   $("int-panel").addEventListener("click", function(e){ if (e.target === $("int-panel")) $("int-panel").classList.remove("abierto"); });
   $("int-refrescar").addEventListener("click", function(){ pedir(false); });
-  $("int-filtro").addEventListener("change", render);
+  $("tab-sin").addEventListener("click", function(){ vista = "sin"; render(); });
+  $("tab-mios").addEventListener("click", function(){ vista = "mios"; render(); });
+  $("tab-todos").addEventListener("click", function(){ vista = "todos"; render(); });
   $("int-clave").addEventListener("click", function(){ var c = prompt("Clave del instructor:"); if (c != null) { localStorage.setItem("fe-clave-instructor", c); pedir(false); } });
   $("int-copiar-todo").addEventListener("click", function(){
-    var t = listaActual.map(function(i){ return i.nombre + " | " + i.contacto + " | " + (i.estado || "") + (i.instructor ? " | instructor: " + i.instructor : "") + " | " + i.fecha + (i.mensaje ? " | " + i.mensaje : ""); }).join("\n");
+    var t = listaActual.map(function(i){ return i.nombre + " | " + i.contacto + " | " + (i.estado || "") + (i.instructor ? " | instructor: " + i.instructor : "") + (i.alumnoNombre ? " | entra como: " + i.alumnoNombre : "") + " | " + i.fecha + (i.mensaje ? " | " + i.mensaje : ""); }).join("\n");
     copiar(t); toast("Lista copiada (" + listaActual.length + " contactos)");
   });
+  $("int-link-copy").addEventListener("click", function(){ copiar(linkBase(nombre())); toast("Enlace copiado"); });
   $("int-lista").addEventListener("click", function(e){
     var b = (e.target && e.target.closest) ? e.target.closest("button") : null; if (!b) return;
     var it = listaActual.find(function(x){ return x.id === b.getAttribute("data-id"); }); if (!it) return;
     var a = b.getAttribute("data-a");
     if (a === "wa") {
-      var quien = it.instructor || CFG.instructor || "";
+      var quien = it.instructor || nombre() || "";
       var soy = quien ? "Soy " + quien + ", de la iglesia " + CFG.iglesia : "Soy de la iglesia " + CFG.iglesia;
-      var msg = "¡Hola " + it.nombre + "! " + soy + ". ¡Gracias por tu interés en el estudio bíblico Fe de Jesús! Te dejo el enlace para empezar: " + CFG.link + " — cuando entres, escribí tu nombre y avisame, así arrancamos juntos. ¡Dios te bendiga!";
+      var msg = "¡Hola " + it.nombre + "! " + soy + ". ¡Gracias por tu interés en el estudio bíblico Fe de Jesús! Te dejo el enlace para empezar: " + linkDe(it) + " — cuando entres, escribí tu nombre y avisame, así arrancamos juntos. ¡Dios te bendiga!";
       var n2 = prompt("Número de WhatsApp (con código de país, ej: 5491128945261):", String(it.contacto || "").replace(/[^0-9]/g, ""));
       if (n2 === null) return;
       window.open("https://wa.me/" + n2.replace(/[^0-9]/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
-    } else if (a === "asignar") { var nom = prompt("Tu nombre de instructor:", localStorage.getItem("fe-nombre-instructor") || ""); if (nom && nom.trim()) { localStorage.setItem("fe-nombre-instructor", nom.trim()); enviar({ id: it.id, accion: "asignar", instructor: nom.trim() }); } }
+    } else if (a === "asignar") {
+      var nom = prompt("Tu nombre de instructor (siempre el mismo):", nombre() || "");
+      if (nom && nom.trim()) {
+        localStorage.setItem("fe-nombre-instructor", nom.trim());
+        enviar({ id: it.id, accion: "asignar", instructor: nom.trim() }, function(){ vista = "mios"; toast("👥 " + it.nombre + " ahora es tu alumno"); });
+      }
+    }
     else if (a === "mail") { copiar(it.contacto); toast("Correo copiado"); }
-    else if (a === "copiar") { copiar(CFG.link); toast("Link copiado"); }
+    else if (a === "copiar") { copiar(linkDe(it)); toast("Enlace del alumno copiado (identifica al contacto)"); }
     else if (a === "eliminar") { if (confirm("¿Eliminar a " + it.nombre + "?")) enviar({ id: it.id, accion: "eliminar" }); }
     else { enviar({ id: it.id, accion: a }); }
   });
