@@ -215,6 +215,51 @@ h3 { font-size: 1.25em !important; }
 </style>
 </head>
 <body>
+<!-- SALA-AUTO-V5: la sala del panel es la del instructor, automatica -->
+<script>
+(function(){
+  try{
+    function sanitSala(n){ var s = String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,12); return s || ""; }
+    var nom = localStorage.getItem("fe-nombre-instructor") || "";
+    var sala = nom ? sanitSala(nom) : "";
+    if (sala && localStorage.getItem("fe-sala") !== sala) {
+      localStorage.setItem("fe-sala", sala);
+      if (!sessionStorage.getItem("fe-sala-auto-recargo")) {
+        sessionStorage.setItem("fe-sala-auto-recargo", "1");
+        location.reload();
+        return;
+      }
+    }
+    function decorar(){
+      try{
+        var inp = document.getElementById("salaInput");
+        if (inp) {
+          var cont = inp;
+          for (var i = 0; i < 6 && cont && cont.parentElement; i++) {
+            cont = cont.parentElement;
+            if (cont.querySelector && cont.querySelector("button")) break;
+          }
+          if (cont) cont.style.display = "none";
+        }
+        var nom2 = localStorage.getItem("fe-nombre-instructor") || "";
+        var sala2 = nom2 ? sanitSala(nom2) : (localStorage.getItem("fe-sala") || "GENERAL");
+        var b = document.createElement("div");
+        b.style.cssText = "background:#e8f1ff;border:1.5px solid #1a3a6b;border-radius:10px;padding:10px 14px;font-size:15px;margin:10px 0";
+        b.innerHTML = "🏫 <b>Sala automática:</b> " + sala2 + " — entrás siempre a tu propia sala, sin códigos. Tus alumnos entran con el enlace que les mandás desde cada contacto.";
+        if (inp && inp.closest) {
+          var card = inp.closest("div");
+          if (card && card.parentElement) card.parentElement.insertBefore(b, card);
+          else if (document.body) document.body.insertBefore(b, document.body.firstChild);
+        } else if (document.body) document.body.insertBefore(b, document.body.firstChild);
+      }catch(e){}
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", decorar); else decorar();
+  }catch(e){}
+})();
+</script>
+<!-- FIN SALA-AUTO-V5 -->
+
+
 <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">🌙</button>
 <header>
   <h1>✝️ Fe de Jesús — Panel del Instructor</h1>
@@ -1342,7 +1387,7 @@ h3 { font-size: 1.25em !important; }
       var nom = prompt("Tu nombre de instructor (siempre el mismo):", nombre() || "");
       if (nom && nom.trim()) {
         localStorage.setItem("fe-nombre-instructor", nom.trim());
-        enviar({ id: it.id, accion: "asignar", instructor: nom.trim() }, function(){ vista = "mios"; toast("👥 " + it.nombre + " ahora es tu alumno"); });
+        enviar({ id: it.id, accion: "asignar", instructor: nom.trim() }, function(){ vista = "mios"; toast("👥 " + it.nombre + " ahora es tu alumno"); setTimeout(function(){ try { localStorage.setItem("fe-sala", sanitSala(nom.trim())); sessionStorage.removeItem("fe-sala-auto-recargo"); } catch(e){} location.reload(); }, 1200); });
       }
     }
     else if (a === "mail") { copiar(it.contacto); toast("Correo copiado"); }
