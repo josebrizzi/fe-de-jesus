@@ -1401,5 +1401,25 @@ h3 { font-size: 1.25em !important; }
 </script>
 <!-- FIN INTERESADOS-FOLLETO-ADMIN -->
 
+<!-- PANEL-LIBRE-V6: sin Cerrar estudio ni Habilitar PDF (el PDF es libre) -->
+<script>
+(function(){
+  try{
+    function limpiar(){
+      var bs = document.querySelectorAll("button");
+      for (var i=0;i<bs.length;i++){
+        var t = bs[i].textContent || "";
+        if (/Cerrar estudio/i.test(t) || /Habilitar PDF/i.test(t)) {
+          bs[i].style.display = "none";
+        }
+      }
+    }
+    limpiar();
+    setInterval(limpiar, 1500);
+  }catch(e){}
+})();
+</script>
+<!-- FIN PANEL-LIBRE-V6 -->
+
 </body>
 </html>
