@@ -1170,224 +1170,207 @@ h3 { font-size: 1.25em !important; }
     });
 
     function generarPDF(estudio, guardadas) {
+      // PDF-COMPACTO: version ajustada para entrar en una sola hoja A4
       var jsPDF = window.jspdf.jsPDF;
       var doc = new jsPDF({ unit: "mm", format: "a4" });
-      var y = 20;
+      var y = 18;
       var pageH = 297;
-      var margin = 20;
-      var anchoUtil = 170;
+      var margin = 12;
+      var anchoUtil = 186;
 
-      // ---- ENCABEZADO ----
+      // ---- ENCABEZADO (compacto) ----
       doc.setFillColor(26, 58, 107);
-      doc.rect(0, 0, 210, 32, "F");
+      doc.rect(0, 0, 210, 18, "F");
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(18);
+      doc.setFontSize(14);
       doc.setFont(undefined, "bold");
-      doc.text("FE DE JESUS", margin, 14);
-      doc.setFontSize(12);
+      doc.text("FE DE JESUS", margin, 8);
+      doc.setFontSize(10);
       doc.setFont(undefined, "normal");
-      doc.text("Estudio " + String(estudio.id).padStart(2, "0") + " - " + (estudio.titulo || ""), margin, 22);
-      doc.setFontSize(9);
-      doc.text("Guia interactiva de lectura de la Biblia", margin, 28);
+      doc.text("Estudio " + String(estudio.id).padStart(2, "0") + " - " + (estudio.titulo || ""), margin, 14);
+      doc.setFontSize(7);
+      doc.setTextColor(190, 210, 235);
+      doc.text("Guia interactiva de lectura de la Biblia", 198, 8, { align: "right" });
 
-      // ---- DATOS DEL ALUMNO ----
-      y = 45;
+      // ---- DATOS DEL ALUMNO (una sola linea) ----
+      y = 26;
       doc.setTextColor(0, 0, 0);
-      doc.setFontSize(12);
+      doc.setFontSize(10);
       doc.setFont(undefined, "bold");
-      doc.text("Datos del alumno", margin, y);
-      y += 8;
-      doc.setFont(undefined, "normal");
-      doc.setFontSize(11);
-      doc.text("Nombre: " + (inputNombre.value || "___________________________________"), margin, y);
-      y += 7;
-      var fechaTxt = inputFecha.value ? inputFecha.value.split("-").reverse().join("/") : "____/____/______";
-      doc.text("Fecha: " + fechaTxt, margin, y);
-      y += 12;
+      var nombreAl = (inputNombre.value || "____________________");
+      var fechaAl = inputFecha.value ? inputFecha.value.split("-").reverse().join("/") : "____/____/______";
+      doc.text("Nombre: " + nombreAl, margin, y);
+      doc.text("Fecha: " + fechaAl, 198, y, { align: "right" });
 
-      // ---- PUNTAJE ----
+      // ---- PUNTAJE (compacto) ----
       var preguntas = estudio.preguntas || [];
       var totalOp = preguntas.filter(function(p) { return p.opciones && p.opciones.length > 0; }).length;
       var totalAbiertas = preguntas.filter(function(p) { return !p.opciones || p.opciones.length === 0; }).length;
       var correctas = 0;
       var respondidas = 0;
-
       preguntas.forEach(function(p) {
         var r = guardadas[p.n];
         if (!r) return;
         respondidas++;
         if (p.opciones && p.opciones.length > 0 && r.correcta) correctas++;
       });
-
       var pct = totalOp > 0 ? Math.round((correctas / totalOp) * 100) : 0;
 
+      y += 5;
       doc.setFillColor(235, 244, 255);
-      doc.rect(margin, y - 6, anchoUtil, 20, "F");
-      doc.setFontSize(14);
+      doc.rect(margin, y - 4, anchoUtil, 11, "F");
+      doc.setFontSize(11);
       doc.setFont(undefined, "bold");
       doc.setTextColor(26, 58, 107);
-      doc.text("Puntaje: " + correctas + " / " + totalOp + "   (" + pct + "%)", margin + 5, y + 4);
-      doc.setFontSize(10);
+      doc.text("Puntaje: " + correctas + " / " + totalOp + "  (" + pct + "%)", margin + 4, y + 3.5);
+      doc.setFontSize(8);
       doc.setFont(undefined, "normal");
-      doc.text("Preguntas de opcion multiple: " + totalOp + "  |  Preguntas abiertas: " + totalAbiertas + "  |  Respondidas: " + respondidas + "/" + preguntas.length, margin + 5, y + 11);
-      y += 26;
+      doc.text("Opcion multiple: " + totalOp + " | Abiertas: " + totalAbiertas + " | Respondidas: " + respondidas + "/" + preguntas.length, 198, y + 3.5, { align: "right" });
+      y += 15;
 
       // ---- SEPARADOR ----
       doc.setDrawColor(200, 200, 200);
-      doc.line(margin, y, 190, y);
-      y += 8;
+      doc.line(margin, y, 198, y);
+      y += 5;
 
       // ---- PREGUNTAS ----
       preguntas.forEach(function(p) {
-        // Salto de página si es necesario
-        if (y > pageH - 50) { doc.addPage(); y = 20; }
-
+        if (y > pageH - 26) { doc.addPage(); y = 18; }
         var r = guardadas[p.n] || {};
 
-        // Número + pregunta
-        doc.setFontSize(11);
+        doc.setFontSize(9.5);
         doc.setFont(undefined, "bold");
         doc.setTextColor(0, 0, 0);
         var pregTxt = doc.splitTextToSize(p.n + ". " + p.pregunta, anchoUtil);
         doc.text(pregTxt, margin, y);
-        y += pregTxt.length * 5 + 2;
+        y += pregTxt.length * 4.4 + 0.5;
 
-        // Referencia
-        doc.setFontSize(9);
+        doc.setFontSize(7.5);
         doc.setFont(undefined, "italic");
         doc.setTextColor(100, 100, 100);
-        doc.text("Referencia: " + p.referencia, margin + 5, y);
-        y += 6;
+        doc.text("Ref: " + p.referencia, margin + 3, y);
+        y += 3.6;
         doc.setFont(undefined, "normal");
 
         if (p.opciones && p.opciones.length > 0) {
-          // ---- PREGUNTA DE OPCIÓN MÚLTIPLE ----
           if (r.eleccion !== undefined && r.eleccion !== null) {
             var esCorrecta = r.correcta;
             var iconoTxt = esCorrecta ? "[OK]" : "[X]";
             var colorIcono = esCorrecta ? [34, 139, 34] : [197, 48, 48];
-
             doc.setTextColor(colorIcono[0], colorIcono[1], colorIcono[2]);
             doc.setFont(undefined, "bold");
-            doc.setFontSize(10);
-            doc.text(iconoTxt + " Tu respuesta: " + p.opciones[r.eleccion], margin + 5, y);
-            y += 5;
-
+            doc.setFontSize(8.5);
+            var respTxt = doc.splitTextToSize(iconoTxt + " Tu respuesta: " + p.opciones[r.eleccion], anchoUtil - 4);
+            doc.text(respTxt, margin + 3, y);
+            y += respTxt.length * 3.8;
             if (!esCorrecta && p.correcta >= 0 && p.correcta < p.opciones.length) {
               doc.setTextColor(34, 139, 34);
-              doc.text("[OK] Respuesta correcta: " + p.opciones[p.correcta], margin + 5, y);
-              y += 5;
+              var corrTxt = doc.splitTextToSize("[OK] Correcta: " + p.opciones[p.correcta], anchoUtil - 4);
+              doc.text(corrTxt, margin + 3, y);
+              y += corrTxt.length * 3.8;
             }
             doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, "normal");
           } else {
             doc.setTextColor(150, 150, 150);
-            doc.setFontSize(10);
+            doc.setFontSize(8.5);
             doc.setFont(undefined, "italic");
-            doc.text("(Sin responder)", margin + 5, y);
-            y += 5;
+            doc.text("(Sin responder)", margin + 3, y);
+            y += 3.8;
             doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, "normal");
           }
-
         } else {
-          // ---- PREGUNTA ABIERTA ----
-          doc.setFontSize(9);
+          doc.setFontSize(7.5);
           doc.setTextColor(100, 100, 100);
           doc.setFont(undefined, "italic");
-          doc.text("Pregunta abierta - respuesta segun el texto biblico", margin + 5, y);
-          y += 6;
+          doc.text("Pregunta abierta - respuesta segun el texto biblico", margin + 3, y);
+          y += 3.6;
           doc.setFont(undefined, "normal");
 
-          // Respuesta del alumno
           var textoAlumno = r.texto || "";
-          doc.setFontSize(10);
+          doc.setFontSize(8.5);
           doc.setFont(undefined, "bold");
           doc.setTextColor(45, 55, 72);
-          doc.text("Respuesta del alumno:", margin + 5, y);
-          y += 5;
+          doc.text("Respuesta:", margin + 3, y);
+          y += 3.8;
           doc.setFont(undefined, "normal");
           doc.setTextColor(0, 0, 0);
 
           if (textoAlumno) {
-            var lineasAlumno = doc.splitTextToSize(textoAlumno, anchoUtil - 10);
+            var lineasAlumno = doc.splitTextToSize(textoAlumno, anchoUtil - 8);
             doc.setFillColor(247, 250, 252);
-            var altoCaja = lineasAlumno.length * 5 + 4;
-            doc.rect(margin + 5, y - 3, anchoUtil - 10, altoCaja, "F");
-            doc.text(lineasAlumno, margin + 8, y + 1);
-            y += altoCaja + 3;
+            var altoCaja = lineasAlumno.length * 3.8 + 2.5;
+            doc.rect(margin + 3, y - 2.5, anchoUtil - 8, altoCaja, "F");
+            doc.text(lineasAlumno, margin + 5, y + 0.5);
+            y += altoCaja + 1.5;
           } else {
             doc.setTextColor(150, 150, 150);
             doc.setFont(undefined, "italic");
-            doc.text("(sin respuesta)", margin + 8, y);
-            y += 6;
+            doc.text("(sin respuesta)", margin + 5, y);
+            y += 3.8;
             doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, "normal");
           }
 
-          // Corrección del instructor
           var correccion = r.correccion || "";
           if (correccion) {
-            doc.setFontSize(10);
+            doc.setFontSize(8.5);
             doc.setFont(undefined, "bold");
             doc.setTextColor(34, 139, 34);
-            doc.text("Correccion del instructor:", margin + 5, y);
-            y += 5;
+            doc.text("Correccion:", margin + 3, y);
+            y += 3.8;
             doc.setFont(undefined, "normal");
             doc.setTextColor(34, 100, 34);
-
-            var lineasCorr = doc.splitTextToSize(correccion, anchoUtil - 10);
+            var lineasCorr = doc.splitTextToSize(correccion, anchoUtil - 8);
             doc.setFillColor(230, 245, 230);
-            var altoCaja2 = lineasCorr.length * 5 + 4;
-            doc.rect(margin + 5, y - 3, anchoUtil - 10, altoCaja2, "F");
-            doc.text(lineasCorr, margin + 8, y + 1);
-            y += altoCaja2 + 3;
+            var altoCaja2 = lineasCorr.length * 3.8 + 2.5;
+            doc.rect(margin + 3, y - 2.5, anchoUtil - 8, altoCaja2, "F");
+            doc.text(lineasCorr, margin + 5, y + 0.5);
+            y += altoCaja2 + 1.5;
             doc.setTextColor(0, 0, 0);
           }
         }
 
-        // Línea separadora entre preguntas
-        y += 3;
+        y += 1.5;
         doc.setDrawColor(230, 230, 230);
-        doc.line(margin + 5, y, 190 - 5, y);
-        y += 6;
+        doc.line(margin + 3, y, 195, y);
+        y += 3.5;
       });
 
       // ---- COMPROMISO ----
-      if (y > pageH - 60) { doc.addPage(); y = 20; }
-      y += 5;
+      if (y > pageH - 30) { doc.addPage(); y = 18; }
+      y += 2;
       doc.setDrawColor(200, 200, 200);
-      doc.line(margin, y, 190, y);
-      y += 8;
+      doc.line(margin, y, 198, y);
+      y += 4.5;
 
-      doc.setFontSize(12);
+      doc.setFontSize(10);
       doc.setFont(undefined, "bold");
       doc.setTextColor(26, 58, 107);
       doc.text("Compromiso de fe:", margin, y);
-      y += 7;
+      y += 4.5;
 
       doc.setFont(undefined, "italic");
-      doc.setFontSize(10);
+      doc.setFontSize(8.5);
       doc.setTextColor(60, 60, 60);
       var compTxt = doc.splitTextToSize(estudio.compromiso || "", anchoUtil);
       doc.text(compTxt, margin, y);
-      y += compTxt.length * 5 + 15;
+      y += compTxt.length * 3.8 + 6;
 
-      // ---- FIRMA ----
-      if (y > pageH - 40) { doc.addPage(); y = 20; }
+      // ---- FIRMA (las dos en la misma linea) ----
+      if (y > pageH - 22) { doc.addPage(); y = 18; }
       doc.setFont(undefined, "normal");
-      doc.setFontSize(11);
+      doc.setFontSize(9.5);
       doc.setTextColor(0, 0, 0);
-      doc.text("Firma del alumno: ____________________________", margin, y);
-      y += 12;
-      doc.text("Firma del instructor: ____________________________", margin, y);
-      y += 18;
+      doc.text("Firma del alumno: ____________________", margin, y);
+      doc.text("Firma del instructor: ____________________", 112, y);
+      y += 8;
 
       // ---- PIE ----
-      doc.setFontSize(8);
+      doc.setFontSize(7);
       doc.setTextColor(150, 150, 150);
-      doc.text("Generado el " + new Date().toLocaleString("es-AR"), margin, y);
-      doc.text("Fe de Jesus - Guia interactiva de lectura de la Biblia", margin, y + 4);
+      doc.text("Generado el " + new Date().toLocaleString("es-AR") + "  -  Fe de Jesus, guia interactiva de lectura de la Biblia", margin, y);
 
       // ---- GUARDAR ----
       var nombreLimpio = (inputNombre.value || "Alumno").replace(/\s+/g, "_").replace(/[^A-Za-z0-9_-]/g, "");
