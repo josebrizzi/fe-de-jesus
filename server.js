@@ -954,3 +954,49 @@ server.listen(PORT, "0.0.0.0", () => {
   console.log(`http://localhost:${PORT}`);
   console.log();
 });
+
+
+// ===== INTERESADOS-FOLLETO: contactos desde bienvenida.html =====
+(function(){
+  var fs2 = require("fs");
+  var path2 = require("path");
+  var FILE_I = path2.join(__dirname, "data", "interesados.json");
+  function leerI(){ try { return JSON.parse(fs2.readFileSync(FILE_I, "utf8")); } catch(e){ return []; } }
+  function guardarI(a){ try { fs2.mkdirSync(path2.dirname(FILE_I), { recursive: true }); fs2.writeFileSync(FILE_I, JSON.stringify(a, null, 2)); } catch(e){ console.log("[INTERESADOS] error guardando:", e.message); } }
+  function claveOk(req){ var K = String(process.env.INSTRUCTOR_KEY || ""); return !!K && String(req.headers["x-instructor-key"] || "") === K; }
+  app.post("/api/fe-de-jesus/interesados", express.json(), function(req, res){
+    var b = req.body || {};
+    var nombre = String(b.nombre || "").trim().slice(0, 80);
+    var contacto = String(b.contacto || "").trim().slice(0, 40);
+    var mensaje = String(b.mensaje || "").trim().slice(0, 300);
+    if (!nombre || contacto.length < 5) { res.status(400).json({ ok: false, error: "Faltan datos" }); return; }
+    var lista = leerI();
+    lista.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), nombre: nombre, contacto: contacto, mensaje: mensaje, fecha: new Date().toISOString(), estado: "nuevo", instructor: "" });
+    guardarI(lista);
+    console.log("[INTERESADO] " + nombre + " - " + contacto);
+    res.json({ ok: true });
+  });
+  app.get("/api/fe-de-jesus/interesados", function(req, res){
+    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
+    res.json({ ok: true, lista: leerI() });
+  });
+  app.post("/api/fe-de-jesus/interesados-accion", express.json(), function(req, res){
+    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
+    var b = req.body || {};
+    var lista = leerI();
+    if (b.accion === "eliminar") {
+      lista = lista.filter(function(x){ return x.id !== String(b.id || ""); });
+      guardarI(lista); res.json({ ok: true, lista: lista }); return;
+    }
+    var it = lista.find(function(x){ return x.id === String(b.id || ""); });
+    if (!it) { res.status(404).json({ ok: false, error: "No encontrado" }); return; }
+    if (b.accion === "contactado") it.estado = "contactado";
+    if (b.accion === "nuevo") it.estado = "nuevo";
+    if (b.accion === "asignar") it.instructor = String(b.instructor || "").trim().slice(0, 80);
+    if (b.accion === "quitar-instructor") it.instructor = "";
+    guardarI(lista);
+    res.json({ ok: true, lista: lista });
+  });
+})();
+// ===== FIN INTERESADOS-FOLLETO =====
+
