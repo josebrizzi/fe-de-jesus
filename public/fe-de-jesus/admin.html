@@ -187,6 +187,32 @@
     font-size: 13px;
   }
 </style>
+
+<style id="letra-grande-css">
+/* LETRA-GRANDE: fuente más grande para celulares (parche automático) */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { font-size: 17px !important; line-height: 1.5 !important; }
+button, input[type="button"], input[type="submit"], .btn {
+  font-size: 17px !important;
+  min-height: 46px;
+}
+input[type="text"], input[type="search"], input[type="number"],
+input[type="password"], input[type="email"], textarea, select {
+  font-size: 16px !important;
+}
+h1 { font-size: 1.7em !important; }
+h2 { font-size: 1.45em !important; }
+h3 { font-size: 1.25em !important; }
+@media (max-width: 700px) {
+  body { font-size: 18px !important; }
+  button, input[type="button"], input[type="submit"], .btn {
+    font-size: 18px !important;
+    min-height: 48px;
+    padding: 10px 14px !important;
+  }
+  textarea { font-size: 17px !important; }
+}
+</style>
 </head>
 <body>
 <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">🌙</button>
