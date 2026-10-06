@@ -2257,28 +2257,26 @@ h3 { font-size: 1.25em !important; }
 
 
 
-<!-- RESET-POR-ENLACE-V14: si entra un contacto distinto al ultimo, limpiar el dispositivo -->
+<!-- RESET-SIEMPRE-V15: cada apertura del enlace empieza limpio, siempre -->
 <script>
 (function(){
   try{
     var q = new URLSearchParams(location.search);
     var alu = q.get("alu");
     if (!alu) return; // sin enlace de contacto, no toco nada
-    var anterior = localStorage.getItem("fe-alu-id");
-    if (anterior && anterior !== alu) {
-      var ks = [];
-      for (var i = 0; i < localStorage.length; i++) {
-        var k = localStorage.key(i);
-        if (/^fe-(respuestas|pdf-ok|libre|vista|reveladas)-/.test(k) || k === "fe-cid" || k === "fe-sesion" || k === "fe-nombre-alumno") ks.push(k);
-      }
-      ks.forEach(function(k){ localStorage.removeItem(k); });
-      try { sessionStorage.removeItem("fe-alu-recargado"); } catch(e){}
+    var ks = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (/^fe-(respuestas|pdf-ok|libre|vista|reveladas)-/.test(k) || k === "fe-cid" || k === "fe-sesion" || k === "fe-nombre-alumno") ks.push(k);
     }
+    ks.forEach(function(k){ localStorage.removeItem(k); });
+    try { sessionStorage.removeItem("fe-alu-recargado"); } catch(e){}
     localStorage.setItem("fe-alu-id", alu);
   }catch(e){}
 })();
 </script>
-<!-- FIN RESET-POR-ENLACE-V14 -->
+<!-- FIN RESET-SIEMPRE-V15 -->
+
 
 <!-- ALU-ACTIVO-V5: nombre fijo del contacto + salir/cambiar -->
 <script>
