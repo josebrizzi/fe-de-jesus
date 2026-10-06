@@ -1364,7 +1364,7 @@ h3 { font-size: 1.25em !important; }
     <button id="int-copiar-todo" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">📋 Copiar todo</button>
     <button id="int-clave" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">🔑 Cambiar clave</button>
     <button id="int-miclav" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7" title="Define o cambia TU clave personal">🔑 Mi clave</button>
-    <button id="int-def-cod" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7" title="Coordinador: define el codigo para cambiar de iglesia o usar el modo Distrito">🔐 Código de cambio</button>
+    <button id="int-def-cod" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7" title="Solo coordinador (clave maestra): define el codigo de cambio">🔐 Código de cambio</button>
   </div>
   <div id="int-zona-igl"></div>
   <div class="int-tabs">
@@ -1475,8 +1475,7 @@ h3 { font-size: 1.25em !important; }
         fetch(APIC, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify({ accion: "verificar", codigo: cod }) })
         .then(function(r){ return r.json(); })
         .then(function(d){
-          if (d && d.ok && d.valido) { codigoOK = true; localStorage.removeItem("fe-iglesia-instructor"); toast("Código aceptado — elegí tu nueva iglesia"); pintarZonaIglesia(); }
-          else toast("Código incorrecto" + ((d && d.definido === false) ? " (el coordinador todavía no definió el código)" : ""));
+          if (d && d.ok && d.valido) { codigoOK = true; localStorage.removeItem("fe-iglesia-instructor"); toast("Código aceptado — elegí tu nueva iglesia"); pintarZonaIglesia(); } else toast(d && d.definido === false ? "Sin código definido: pedile al coordinador que lo habilite" : "Código incorrecto"); else toast(d && d.definido === false ? "Sin código definido: pedile al coordinador que lo habilite" : "Código incorrecto");
         }).catch(function(){ toast("Error de conexión"); });
       });
     } else {
