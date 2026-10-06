@@ -612,6 +612,7 @@ h3 { font-size: 1.25em !important; }
           var guardadas = JSON.parse(localStorage.getItem(clave) || "{}");
           if (!guardadas[msg.preguntaN]) guardadas[msg.preguntaN] = {};
           guardadas[msg.preguntaN].correccion = msg.texto;
+          if (typeof msg.ok !== "undefined") guardadas[msg.preguntaN].ok = !!msg.ok;
           localStorage.setItem(clave, JSON.stringify(guardadas));
 
           // Si estamos viendo esa pregunta, actualizar
@@ -619,7 +620,7 @@ h3 { font-size: 1.25em !important; }
           if (ctx.estudioId === msg.estudioId && ctx.preguntaN === msg.preguntaN) {
             var corr = document.getElementById("correccionAbierta");
             if (corr) {
-              corr.innerHTML = '<div class="titulo">Respuesta del instructor</div>' + escapeHtml(msg.texto);
+              corr.innerHTML = '<div class="titulo">' + (msg.ok ? "✓ Respuesta correcta" : "(Respuesta del instructor)") + '</div>' + escapeHtml(msg.texto);
               corr.classList.add("visible");
             }
             var txt = document.getElementById("txtRespuestaAbierta");
@@ -665,11 +666,12 @@ h3 { font-size: 1.25em !important; }
       var guardadasA = JSON.parse(localStorage.getItem(claveRespA) || "{}");
       var textoPrevio = guardadasA[data.preguntaN] ? (guardadasA[data.preguntaN].texto || "") : "";
       var correccionPrevia = guardadasA[data.preguntaN] ? (guardadasA[data.preguntaN].correccion || "") : "";
+      var okPrevia = guardadasA[data.preguntaN] ? !!guardadasA[data.preguntaN].ok : false;
 
       opcionesHTML = '<div class="respuesta-abierta" data-pregunta="' + data.preguntaN + '">' +
         '<textarea id="txtRespuestaAbierta" placeholder="Escribí tu respuesta acá..."' + (correccionPrevia ? ' readonly' : '') + '>' + escapeHtml(textoPrevio) + '</textarea>' +
         '<div class="estado-envio" id="estadoEnvio">✓ Respuesta enviada al instructor</div>' +
-        (correccionPrevia ? '<div class="correccion visible"><div class="titulo">Respuesta del instructor</div>' + escapeHtml(correccionPrevia) + '</div>' : '<div class="correccion" id="correccionAbierta"></div>') +
+        (correccionPrevia ? '<div class="correccion visible"><div class="titulo">' + (okPrevia ? "✓ Respuesta correcta" : "(Respuesta del instructor)") + '</div>' + escapeHtml(correccionPrevia) + '</div>' : '<div class="correccion" id="correccionAbierta"></div>') +
       '</div>';
     }
 
@@ -1318,7 +1320,7 @@ h3 { font-size: 1.25em !important; }
             doc.setFontSize(8.5);
             doc.setFont(undefined, "bold");
             doc.setTextColor(34, 139, 34);
-            doc.text("Correccion:", margin + 3, y);
+            doc.text(r.ok ? "[OK] Respuesta correcta (instructor):" : "(Respuesta del instructor):", margin + 3, y);
             y += 3.8;
             doc.setFont(undefined, "normal");
             doc.setTextColor(34, 100, 34);

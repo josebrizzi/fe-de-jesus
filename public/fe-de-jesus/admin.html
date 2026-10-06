@@ -502,6 +502,7 @@ h3 { font-size: 1.25em !important; }
 
       var correccionGuardada = JSON.parse(localStorage.getItem("fe-correcciones") || "{}");
       var correccion = (correccionGuardada[estudioActual.id] && correccionGuardada[estudioActual.id][preguntaActual.n]) || "";
+      var okGuardada = !!(correccionGuardada[estudioActual.id] && correccionGuardada[estudioActual.id]["ok-" + preguntaActual.n]);
 
       var listaHTML = "";
       if (cantAlumnos === 0) {
@@ -521,6 +522,7 @@ h3 { font-size: 1.25em !important; }
         '<div class="lista-alumnos" id="listaAlumnos">' + listaHTML + '</div>' +
         '<label style="margin-top:14px;">Respuesta correcta (instructor)</label>' +
         '<textarea id="txtCorreccion" placeholder="Escribí la respuesta correcta para todos...">' + escapeHtml(correccion) + '</textarea>' +
+        '<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:normal;font-size:15px;cursor:pointer"><input type="checkbox" id="chkCorrecta" style="width:auto"' + (okGuardada ? ' checked' : '') + '> ✓ Respuesta correcta</label>' +
         '<button class="btn-guardar" id="btnGuardarCorreccion">💾 Guardar y enviar a todos</button>' +
         '<span class="estado-guardado" id="estadoGuardado"></span>' +
       '</div>';
@@ -594,7 +596,8 @@ h3 { font-size: 1.25em !important; }
           type: "fe-respuesta-correcta",
           estudioId: estudioActual.id,
           preguntaN: preguntaActual.n,
-          texto: texto
+          texto: texto,
+          ok: !!(chkOk && chkOk.checked)
         }));
       }
 
