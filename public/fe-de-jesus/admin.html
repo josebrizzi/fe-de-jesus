@@ -1452,5 +1452,23 @@ h3 { font-size: 1.25em !important; }
 <!-- FIN RECORRIDO-UI-V8 -->
 
 <!-- RECORRIDO-V9 -->
+<!-- FORZAR-LIBRE-V16: el recorrido libre queda siempre activo en el panel -->
+<script>
+(function(){
+  try{
+    function forzar(){
+      var c = document.getElementById("chkRecorrido");
+      if (c && !c.checked) {
+        c.checked = true;
+        try { c.dispatchEvent(new Event("change", { bubbles: true })); } catch(e){}
+      }
+    }
+    forzar();
+    document.addEventListener("DOMContentLoaded", forzar);
+    setInterval(forzar, 1000);
+  }catch(e){}
+})();
+</script>
+<!-- FIN FORZAR-LIBRE-V16 -->
 </body>
 </html>
