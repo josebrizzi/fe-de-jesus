@@ -1000,3 +1000,49 @@ server.listen(PORT, "0.0.0.0", () => {
 })();
 // ===== FIN INTERESADOS-FOLLETO =====
 
+
+
+// ===== ALUMNO-ACTIVO-V4: marca el contacto del folleto cuando el alumno entra con su enlace =====
+(function(){
+  var fs2 = require("fs");
+  var path2 = require("path");
+  var FILE_I = path2.join(__dirname, "data", "interesados.json");
+  function leerI(){ try { return JSON.parse(fs2.readFileSync(FILE_I, "utf8")); } catch(e){ return []; } }
+  function guardarI(a){ try { fs2.mkdirSync(path2.dirname(FILE_I), { recursive: true }); fs2.writeFileSync(FILE_I, JSON.stringify(a, null, 2)); } catch(e){ console.log("[ALUMNO-ACTIVO] error guardando:", e.message); } }
+  app.post("/api/fe-de-jesus/alumno-activo", express.json(), function(req, res){
+    var b = req.body || {};
+    var id = String(b.id || "").trim().slice(0, 40);
+    var nombre = String(b.nombre || "").trim().slice(0, 80);
+    var sala = String(b.sala || "").trim().slice(0, 20);
+    if (!id) { res.status(400).json({ ok: false, error: "Falta id" }); return; }
+    var lista = leerI();
+    var it = lista.find(function(x){ return x.id === id; });
+    if (it) {
+      var cambio = false;
+      if (it.estado !== "activo") { it.estado = "activo"; cambio = true; }
+      if (nombre && it.alumnoNombre !== nombre) { it.alumnoNombre = nombre; cambio = true; }
+      if (!it.instructor && sala) { it.instructor = sala; cambio = true; }
+      if (cambio) { it.fechaActivo = new Date().toISOString(); guardarI(lista); console.log("[ALUMNO ACTIVO] " + (nombre || id) + (it.instructor ? " -> instructor " + it.instructor : "")); }
+    }
+    res.json({ ok: true });
+  });
+})();
+// ===== FIN ALUMNO-ACTIVO-V4 =====
+
+
+
+// ===== ALUMNO-NOMBRE-V5: devuelve solo el nombre del contacto (para la entrada automatica) =====
+(function(){
+  var fs2 = require("fs");
+  var path2 = require("path");
+  var FILE_I = path2.join(__dirname, "data", "interesados.json");
+  function leerI(){ try { return JSON.parse(fs2.readFileSync(FILE_I, "utf8")); } catch(e){ return []; } }
+  app.get("/api/fe-de-jesus/alumno-nombre", function(req, res){
+    var id = String(req.query.id || "").trim().slice(0, 40);
+    var it = leerI().find(function(x){ return x.id === id; });
+    if (!it) { res.status(404).json({ ok: false, error: "No encontrado" }); return; }
+    res.json({ ok: true, nombre: it.nombre });
+  });
+})();
+// ===== FIN ALUMNO-NOMBRE-V5 =====
+

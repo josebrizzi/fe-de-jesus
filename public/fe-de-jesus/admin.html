@@ -1089,9 +1089,7 @@ h3 { font-size: 1.25em !important; }
   sec.className = "panel";
   sec.id = "panelControl";
   sec.innerHTML =
-    '<label for="chkRecorrido"><input type="checkbox" id="chkRecorrido">' +
-    '<span><b>📚 Recorrido libre</b> — al proyectar una pregunta, cada alumno recibe todo el estudio y puede avanzar a su ritmo, ' +
-    'incluso sin conexión. Las respuestas correctas llegan solo cuando las reveles, y el PDF queda bloqueado hasta que lo habilites.</span></label>' +
+    '<input type="checkbox" id="chkRecorrido" style="display:none" checked>' +
     '<div id="ctlEstado"></div>' +
     '<div id="ctlLista"></div>' +
     '<div class="ctl-acciones">' +
@@ -1124,7 +1122,7 @@ h3 { font-size: 1.25em !important; }
     var alumnos = (ultimo && ultimo.alumnos) || [];
     estado.textContent = est
       ? "📚 Estudio abierto: " + est.titulo + " (" + est.total + " preguntas)"
-      : "No hay un estudio abierto en recorrido libre. Deja la casilla marcada y proyecta una pregunta.";
+      : "Proyectá una pregunta para que cada alumno reciba el estudio completo.";
     btnTodos.disabled = !est;
     btnCerrar.disabled = !est;
     lista.innerHTML = "";
@@ -1453,5 +1451,6 @@ h3 { font-size: 1.25em !important; }
 </script>
 <!-- FIN RECORRIDO-UI-V8 -->
 
+<!-- RECORRIDO-V9 -->
 </body>
 </html>
