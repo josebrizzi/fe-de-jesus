@@ -217,41 +217,7 @@ h3 { font-size: 1.25em !important; }
 <style id="pastillas-separadas">#int-flotante{bottom:78px !important}</style>
 </head>
 <body>
-<!-- SALA-AUTO-V26 -->
-<script>
-(function(){
-  try{
-    function sanitSala(n){ var s = String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,12); return s || ""; }
-    var nom = localStorage.getItem("fe-nombre-instructor") || "";
-    var ig = localStorage.getItem("fe-iglesia-instructor") || "CEN";
-    var sala = nom ? (ig === "TODAS" ? sanitSala(nom) : sanitSala(ig) + "-" + sanitSala(nom)) : "";
-    if (sala && localStorage.getItem("fe-sala") !== sala) {
-      localStorage.setItem("fe-sala", sala);
-      if (!sessionStorage.getItem("fe-sala-auto-recargo")) {
-        sessionStorage.setItem("fe-sala-auto-recargo", "1");
-        location.reload();
-        return;
-      }
-    }
-    function decorar(){
-      try{
-        var inp = document.getElementById("salaInput");
-        if (inp) { var cont = inp; for (var i=0;i<6 && cont && cont.parentElement;i++){ cont = cont.parentElement; if (cont.querySelector && cont.querySelector("button")) break; } if (cont) cont.style.display = "none"; }
-        var b = document.createElement("div");
-        b.style.cssText = "background:#e8f1ff;border:1.5px solid #1a3a6b;border-radius:10px;padding:10px 14px;font-size:15px;margin:10px 0";
-        var nom2 = localStorage.getItem("fe-nombre-instructor") || "";
-        var sala2 = nom2 ? ((ig === "TODAS" ? "" : ig + "-") + (nom2.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,12) || "GENERAL")) : (localStorage.getItem("fe-sala") || "GENERAL");
-        b.innerHTML = "🏫 <b>Sala automática: " + sala2 + "</b> — iglesia: " + (ig === "TODAS" ? "Distrito (todas)" : ig) + ". Tus alumnos entran con el enlace que les mandás.";
-        var anchor = document.getElementById("salaInput") || document.body;
-        if (anchor.closest && anchor.closest("div") && anchor.closest("div").parentElement) anchor.closest("div").parentElement.insertBefore(b, anchor.closest("div"));
-        else if (document.body) document.body.insertBefore(b, document.body.firstChild);
-      }catch(e){}
-    }
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", decorar); else decorar();
-  }catch(e){}
-})();
-</script>
-<!-- FIN SALA-AUTO-V26 -->
+
 
 
 
