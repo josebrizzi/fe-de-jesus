@@ -1,11 +1,6 @@
-node_modules
+aplicar-*.js
+quitar-*.js
+reparar-*.js
+ocultar-*.js
 *.bak
-backups/
-*.backup*
-*.save
-*.sh
-*.log
-*.pyc
-__pycache__/
-aplicar-cambios.js
-/datos/
+data/
