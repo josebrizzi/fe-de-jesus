@@ -971,14 +971,20 @@ server.listen(PORT, "0.0.0.0", () => {
     var mensaje = String(b.mensaje || "").trim().slice(0, 300);
     if (!nombre || contacto.length < 5) { res.status(400).json({ ok: false, error: "Faltan datos" }); return; }
     var lista = leerI();
-    lista.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), nombre: nombre, contacto: contacto, mensaje: mensaje, fecha: new Date().toISOString(), estado: "nuevo", instructor: "" });
+    lista.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), nombre: nombre, contacto: contacto, mensaje: mensaje, fecha: new Date().toISOString(), estado: "nuevo", instructor: "", iglesia: (function(){ var g = String(b.iglesia || "CEN").toUpperCase().trim(); try { var L = (global.__leerIglesias || function(){ return null; })(); if (L && L.length) return L.some(function(x){ return x.codigo === g; }) ? g : "CEN"; } catch(e){} return ["CEN","SUR","FRI","SBR","SFAM"].indexOf(g) >= 0 ? g : "CEN"; })() });
     guardarI(lista);
     console.log("[INTERESADO] " + nombre + " - " + contacto);
     res.json({ ok: true });
   });
   app.get("/api/fe-de-jesus/interesados", function(req, res){
     if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
-    res.json({ ok: true, lista: leerI() });
+    var listaF = leerI();
+    var nomI = String(req.headers["x-instructor-nombre"] || "").trim().toLowerCase();
+    if (nomI && global.__leerInstructores) {
+      var regI = global.__leerInstructores()[nomI];
+      if (regI && regI.iglesia && regI.iglesia !== "TODAS") listaF = listaF.filter(function(x){ return (x.iglesia || "CEN") === regI.iglesia; });
+    }
+    res.json({ ok: true, lista: listaF });
   });
   app.post("/api/fe-de-jesus/interesados-accion", express.json(), function(req, res){
     if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
@@ -992,7 +998,17 @@ server.listen(PORT, "0.0.0.0", () => {
     if (!it) { res.status(404).json({ ok: false, error: "No encontrado" }); return; }
     if (b.accion === "contactado") it.estado = "contactado";
     if (b.accion === "nuevo") it.estado = "nuevo";
-    if (b.accion === "asignar") it.instructor = String(b.instructor || "").trim().slice(0, 80);
+    if (b.accion === "asignar") {
+      var nomA = String(b.instructor || "").trim().slice(0, 80);
+      var regsA = global.__leerInstructores ? global.__leerInstructores() : {};
+      var regA = regsA[nomA.toLowerCase()];
+      if (regA && regA.iglesia && regA.iglesia !== "TODAS") {
+        var iglC = it.iglesia || "CEN";
+        if (iglC !== regA.iglesia) { res.status(403).json({ ok: false, error: "Ese contacto pertenece a la iglesia " + iglC + " — no podés asignarlo desde " + regA.iglesia }); return; }
+      }
+      it.instructor = nomA;
+    }
+    if (b.accion === "asignar" && b.iglesia) { var g2 = String(b.iglesia).toUpperCase().trim(); try { var L2 = (global.__leerIglesias || function(){ return null; })(); if (L2 && L2.length) { if (L2.some(function(x){ return x.codigo === g2; })) it.iglesia = g2; } else if (["CEN","SUR","FRI","SBR","SFAM"].indexOf(g2) >= 0) it.iglesia = g2; } catch(e){} }
     if (b.accion === "quitar-instructor") it.instructor = "";
     guardarI(lista);
     res.json({ ok: true, lista: lista });
@@ -1046,3 +1062,105 @@ server.listen(PORT, "0.0.0.0", () => {
 })();
 // ===== FIN ALUMNO-NOMBRE-V5 =====
 
+
+
+// ===== IGLESIAS-DIST-V27: lista dinamica de iglesias del distrito =====
+(function(){
+  var fs2 = require("fs");
+  var path2 = require("path");
+  var FILE_IG = path2.join(__dirname, "data", "iglesias.json");
+  var DEF = [
+    { codigo: "CEN", nombre: "IASD José C. Paz Centro", whatsapp: "5491128945261" },
+    { codigo: "SUR", nombre: "IASD Sur", whatsapp: "5491128945261" },
+    { codigo: "FRI", nombre: "IASD Frino", whatsapp: "5491128945261" },
+    { codigo: "SBR", nombre: "IASD Santa Brígida", whatsapp: "5491128945261" },
+    { codigo: "SFAM", nombre: "IASD Sagrada Familia", whatsapp: "5491128945261" }
+  ];
+  function leerIg(){ try { var a = JSON.parse(fs2.readFileSync(FILE_IG, "utf8")); if (Array.isArray(a) && a.length) return a; } catch(e){} return DEF; }
+  function guardarIg(a){ try { fs2.mkdirSync(path2.dirname(FILE_IG), { recursive: true }); fs2.writeFileSync(FILE_IG, JSON.stringify(a, null, 2)); } catch(e){ console.log("[IGLESIAS] error:", e.message); } }
+  global.__leerIglesias = leerIg;
+  function claveOk(req){ var K = String(process.env.INSTRUCTOR_KEY || ""); return !!K && String(req.headers["x-instructor-key"] || "") === K; }
+  app.get("/api/fe-de-jesus/iglesias", function(req, res){ res.json({ ok: true, lista: leerIg() }); });
+  app.post("/api/fe-de-jesus/iglesias-accion", express.json(), function(req, res){
+    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
+    var b = req.body || {};
+    var lista = leerIg();
+    if (b.accion === "agregar") {
+      var cod = String(b.codigo || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+      var nom = String(b.nombre || "").trim().slice(0, 60);
+      var wha = String(b.whatsapp || "").replace(/[^0-9]/g, "").slice(0, 15);
+      if (!cod || !nom || cod.length < 2) { res.status(400).json({ ok: false, error: "Datos invalidos" }); return; }
+      if (lista.some(function(x){ return x.codigo === cod; })) { res.status(400).json({ ok: false, error: "Ya existe ese codigo" }); return; }
+      lista.push({ codigo: cod, nombre: nom, whatsapp: wha });
+      guardarIg(lista); res.json({ ok: true, lista: lista }); return;
+    }
+    if (b.accion === "editar") {
+      var it = lista.find(function(x){ return x.codigo === String(b.codigo || "").toUpperCase(); });
+      if (!it) { res.status(404).json({ ok: false, error: "No encontrada" }); return; }
+      if (b.nombre) it.nombre = String(b.nombre).trim().slice(0, 60);
+      if (b.whatsapp) it.whatsapp = String(b.whatsapp).replace(/[^0-9]/g, "").slice(0, 15);
+      guardarIg(lista); res.json({ ok: true, lista: lista }); return;
+    }
+    if (b.accion === "eliminar") {
+      var cod2 = String(b.codigo || "").toUpperCase();
+      if (cod2 === "CEN") { res.status(400).json({ ok: false, error: "No se puede eliminar CEN" }); return; }
+      lista = lista.filter(function(x){ return x.codigo !== cod2; });
+      guardarIg(lista); res.json({ ok: true, lista: lista }); return;
+    }
+    res.status(400).json({ ok: false, error: "Accion desconocida" });
+  });
+})();
+// ===== FIN IGLESIAS-DIST-V27 =====
+
+
+// ===== CANDADO-V28: registro instructor-iglesia + codigo de autorizacion =====
+(function(){
+  var fs2 = require("fs");
+  var path2 = require("path");
+  var FILE_R = path2.join(__dirname, "data", "instructores.json");
+  var FILE_C = path2.join(__dirname, "data", "codigo-cambio.json");
+  function leerR(){ try { var a = JSON.parse(fs2.readFileSync(FILE_R, "utf8")); if (a && typeof a === "object") return a; } catch(e){} return {}; }
+  function guardarR(a){ try { fs2.mkdirSync(path2.dirname(FILE_R), { recursive: true }); fs2.writeFileSync(FILE_R, JSON.stringify(a, null, 2)); } catch(e){} }
+  function leerC(){ try { var a = JSON.parse(fs2.readFileSync(FILE_C, "utf8")); if (a && a.codigo) return a; } catch(e){} return null; }
+  global.__leerInstructores = leerR;
+  function claveOk(req){ var K = String(process.env.INSTRUCTOR_KEY || ""); return !!K && String(req.headers["x-instructor-key"] || "") === K; }
+  function codigoValido(c){ var r = leerC(); return !!(r && r.codigo && String(c || "") === String(r.codigo)); }
+  app.post("/api/fe-de-jesus/codigo-cambio", express.json(), function(req, res){
+    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
+    var b = req.body || {};
+    if (b.accion === "definir") {
+      var c = String(b.codigo || "").trim();
+      if (c.length < 4) { res.status(400).json({ ok: false, error: "El codigo debe tener al menos 4 caracteres" }); return; }
+      fs2.mkdirSync(path2.dirname(FILE_C), { recursive: true });
+      fs2.writeFileSync(FILE_C, JSON.stringify({ codigo: c, fecha: new Date().toISOString() }, null, 2));
+      res.json({ ok: true, definido: true }); return;
+    }
+    if (b.accion === "verificar") {
+      if (!leerC()) { res.json({ ok: true, valido: false, definido: false }); return; }
+      res.json({ ok: true, valido: codigoValido(b.codigo), definido: true }); return;
+    }
+    if (b.accion === "estado") { res.json({ ok: true, definido: !!leerC() }); return; }
+    res.status(400).json({ ok: false, error: "Accion desconocida" });
+  });
+  app.post("/api/fe-de-jesus/instructor-registrar", express.json(), function(req, res){
+    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
+    var b = req.body || {};
+    var nom = String(b.nombre || "").trim().slice(0, 80);
+    var igl = String(b.iglesia || "").toUpperCase().trim();
+    if (!nom || !igl) { res.status(400).json({ ok: false, error: "Faltan datos" }); return; }
+    var regs = leerR();
+    var prev = regs[nom.toLowerCase()];
+    if (prev && prev.iglesia !== igl) {
+      if (!codigoValido(b.codigo)) { res.status(403).json({ ok: false, necesitaCodigo: true, error: "Cambio de iglesia requiere codigo de autorizacion" }); return; }
+    }
+    if (igl === "TODAS" && !(prev && prev.iglesia === "TODAS")) {
+      if (!leerC()) { res.status(403).json({ ok: false, necesitaCodigo: true, error: "Primero definí el codigo de cambio (coordinador)" }); return; }
+      if (!codigoValido(b.codigo)) { res.status(403).json({ ok: false, necesitaCodigo: true, error: "Codigo incorrecto" }); return; }
+    }
+    regs[nom.toLowerCase()] = { nombre: nom, iglesia: igl, fecha: new Date().toISOString() };
+    guardarR(regs);
+    console.log("[INSTRUCTOR REGISTRADO] " + nom + " -> " + igl);
+    res.json({ ok: true });
+  });
+})();
+// ===== FIN CANDADO-V28 =====

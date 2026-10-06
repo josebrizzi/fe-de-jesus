@@ -107,7 +107,7 @@ var CONFIG_APP = {
   document.getElementById("v-despues").textContent = generico
     ? "Recibimos tu contacto. Un instructor de la iglesia te va a escribir en breve con el enlace para comenzar."
     : "Recibimos tu contacto. " + quien + " te va a escribir en breve con el enlace para comenzar.";
-  document.getElementById("ok-link").href = CONFIG_APP.link;
+  var olEl = document.getElementById("ok-link"); if (olEl) olEl.href = CONFIG_APP.link;
   document.getElementById("wa-iglesia").href = "https://wa.me/" + CONFIG_APP.telefono.replace(/[^0-9]/g,"");
 
   var BASE = location.pathname.indexOf("/biblia") === 0 ? "/biblia" : "";
@@ -125,7 +125,7 @@ var CONFIG_APP = {
     fetch(BASE + "/api/fe-de-jesus/interesados", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre: nombre, contacto: contacto, mensaje: mensaje })
+      body: JSON.stringify({ nombre: nombre, contacto: contacto, mensaje: mensaje, iglesia: (window.__IGL__ || "CEN") })
     })
     .then(function(r){ return r.json().then(function(d){ return { s: r.status, d: d }; }); })
     .then(function(x){
@@ -144,5 +144,43 @@ var CONFIG_APP = {
 })();
 </script>
 <!-- LOGO-IGLESIA-V25 -->
+
+<!-- DIST-V27-BIENVENIDA: multiparroquial dinamica -->
+<script>
+(function(){
+  try{
+    var FALLBACK = {
+      CEN:{ n: "IASD José C. Paz Centro", t: "5491128945261" },
+      SUR:{ n: "IASD Sur", t: "5491128945261" },
+      FRI:{ n: "IASD Frino", t: "5491128945261" },
+      SBR:{ n: "IASD Santa Brígida", t: "5491128945261" },
+      SFAM:{ n: "IASD Sagrada Familia", t: "5491128945261" }
+    };
+    var BASE = location.pathname.indexOf("/biblia") === 0 ? "/biblia" : "";
+    var q = new URLSearchParams(location.search);
+    var k = (q.get("iglesia") || "CEN").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+    window.__IGL__ = k;
+    var CFGD = FALLBACK[k] || null;
+    function aplicar(){
+      if (!CFGD) return;
+      try { if (typeof CONFIG_APP !== "undefined") { CONFIG_APP.iglesia = CFGD.n; CONFIG_APP.telefono = CFGD.t; } } catch(e){}
+      var vq = document.getElementById("v-quien"); if (vq) vq.textContent = CFGD.n;
+      var hp = document.querySelector(".hero p"); if (hp) hp.textContent = "Estudio bíblico interactivo, paso a paso — " + CFGD.n;
+      var wa = document.getElementById("wa-iglesia"); if (wa) wa.href = "https://wa.me/" + String(CFGD.t).replace(/[^0-9]/g, "");
+      var vd = document.getElementById("v-despues"); if (vd) vd.textContent = "Recibimos tu contacto. Un instructor de " + CFGD.n + " te va a escribir en breve con el enlace para comenzar.";
+      var lg = document.querySelector(".logo-igl"); if (lg) lg.style.display = (k === "CEN") ? "" : "none";
+    }
+    aplicar();
+    fetch(BASE + "/api/fe-de-jesus/iglesias").then(function(r){ return r.json(); }).then(function(d){
+      if (d && d.ok && d.lista) {
+        var f = d.lista.filter(function(x){ return x.codigo === k; })[0];
+        if (f) CFGD = { n: f.nombre, t: f.whatsapp || "" };
+      }
+    }).catch(function(){}).then(function(){ setTimeout(aplicar, 60); });
+    document.addEventListener("DOMContentLoaded", aplicar);
+  }catch(e){}
+})();
+</script>
+<!-- FIN DIST-V27-BIENVENIDA -->
 </body>
 </html>
