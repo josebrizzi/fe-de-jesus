@@ -1355,7 +1355,7 @@ h3 { font-size: 1.25em !important; }
   function guardarVistos(){ try { localStorage.setItem("fe-int-vistos", JSON.stringify(vistos)); } catch(e){} }
   function $(id){ return document.getElementById(id); }
   function nombre(){ return localStorage.getItem("fe-nombre-instructor") || ""; }
-  function clave(){ var c = localStorage.getItem("fe-clave-instructor"); if (!c) { c = prompt("Clave (FDJESUS2026, o la maestra del coordinador):") || ""; if (c) localStorage.setItem("fe-clave-instructor", c); } return c; }
+  function clave(){ return ""; }
   function cabeceras(){ return { "x-instructor-key": clave(), "x-instructor-nombre": nombre() }; }
   function sanitSala(n){ var s = String(n || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12); return s || "GENERAL"; }
   function linkBase(nom){
@@ -1496,5 +1496,11 @@ h3 { font-size: 1.25em !important; }
 })();
 </script>
 <!-- FIN INTERESADOS-FOLLETO-ADMIN -->
+<!-- MODO-LIBRE-V36: sala unica, sin claves -->
+<style>#int-miclav{display:none !important}</style>
+<script>
+(function(){ try{ window.miSala = function(){ return "GENERAL"; }; }catch(e){} })();
+</script>
+<!-- FIN MODO-LIBRE-V36 -->
 </body>
 </html>

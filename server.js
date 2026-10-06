@@ -1200,3 +1200,7 @@ server.listen(PORT, "0.0.0.0", () => {
   });
 })();
 // ===== FIN CANDADO-V34 =====
+
+// ===== MODO-LIBRE-V36: acceso libre (sin claves) =====
+global.__accesoOk = function(req){ return true; };
+// ===== FIN MODO-LIBRE-V36 =====
