@@ -1422,7 +1422,7 @@ h3 { font-size: 1.25em !important; }
   var listaActual = [];
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   function toast(m){ var t = $("int-toast"); t.textContent = m; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(function(){ t.style.display = "none"; }, 6000); t.onclick = function(){ t.style.display = "none"; abrir(); }; }
-  function pedirCod(txt){ return prompt(txt || "Código de autorización del coordinador:") || ""; }
+  function pedirCod(txt){ var nm=nombre(); var p=nm ? "tu código personal (ej: BERNA027) o el del coordinador" : "el código de autorización del coordinador"; return prompt(txt || ("Ingresá " + p + ":")) || ""; }
   function registrar(igl, cb){
     var body = { nombre: nombre(), iglesia: igl };
     if (codVerificado) body.codigo = codVerificado;
