@@ -325,7 +325,7 @@ h3 { font-size: 1.25em !important; }
       // Autenticarse como instructor (siempre ANTES de enviar otra cosa)
       var clave = localStorage.getItem("fe-clave-instructor");
       if (!clave) {
-        clave = prompt("Clave de instructor:") || "";
+        clave = ""; // MODO-LIBRE: sin clave
         if (clave) localStorage.setItem("fe-clave-instructor", clave);
       }
       ws.send(JSON.stringify({ type: "auth", key: clave }));
