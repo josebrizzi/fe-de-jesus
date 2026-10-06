@@ -829,7 +829,7 @@ wss.on("connection", (ws) => {
         enviarRoster(ws.sala);
       } else if (data.type === "fe-respuesta-correcta") {
         if (JSON.stringify(data).length <= 8000) {
-          st.correcciones.set(data.estudioId + "|" + data.preguntaN, data);
+          st.correcciones.set(data.estudioId + "|" + data.preguntaN + (data.para ? "|para:" + String(data.para).toLowerCase() : ""), data);
         }
         broadcast(data, ws.sala);
       } else if (data.type === "fe-nombre-instructor") {

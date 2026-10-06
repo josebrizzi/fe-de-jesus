@@ -508,11 +508,21 @@ h3 { font-size: 1.25em !important; }
       if (cantAlumnos === 0) {
         listaHTML = '<div class="sin-respuestas">Esperando respuestas de los alumnos...</div>';
       } else {
-        listaHTML = nombres.sort().map(function(nombre) {
+        var corrAlu = (function(){ try { return JSON.parse(localStorage.getItem("fe-correcciones-alumno") || "{}"); } catch(e){ return {}; } })();
+        listaHTML = nombres.sort().map(function(nombre, i) {
           var texto = porPregunta[nombre];
+          var prev = (corrAlu[estudioActual.id] && corrAlu[estudioActual.id][preguntaActual.n] && corrAlu[estudioActual.id][preguntaActual.n][nombre]) || null;
+          var rn = "okInd-" + i + "-" + String(nombre).replace(/[^A-Za-z0-9]/g, "");
+          var ini = nombre.split(" ")[0];
           return '<div class="alumno-respuesta">' +
             '<div class="alumno-nombre">👤 ' + escapeHtml(nombre) + '</div>' +
             '<div class="alumno-texto">' + escapeHtml(texto || "(sin respuesta)") + '</div>' +
+            '<div style="display:flex;gap:10px;align-items:flex-start;margin-top:8px;flex-wrap:wrap">' +
+              '<label style="display:flex;gap:4px;align-items:center;font-weight:normal;font-size:13px;cursor:pointer"><input type="radio" name="' + rn + '" value="si" style="width:auto"' + (prev && prev.ok === true ? ' checked' : '') + '> ✓ Correcta</label>' +
+              '<label style="display:flex;gap:4px;align-items:center;font-weight:normal;font-size:13px;cursor:pointer"><input type="radio" name="' + rn + '" value="no" style="width:auto"' + (prev && prev.ok === false ? ' checked' : '') + '> ✗ Incorrecta</label>' +
+              '<textarea class="corr-ind" data-alumno="' + escapeHtml(nombre) + '" placeholder="Corrección personal para este alumno (opcional)" style="flex:1;min-width:180px;min-height:38px;font-size:14px;padding:6px 8px">' + (prev && prev.texto ? escapeHtml(prev.texto) : '') + '</textarea>' +
+              '<button type="button" class="btn-corr-ind" data-alumno="' + escapeHtml(nombre) + '" style="padding:8px 12px;font-size:13px;border:none;border-radius:8px;background:var(--primary);color:#fff;cursor:pointer">💾 Enviar a ' + escapeHtml(ini) + '</button>' +
+            '</div>' +
           '</div>';
         }).join("");
       }
@@ -607,6 +617,36 @@ h3 { font-size: 1.25em !important; }
         setTimeout(() => { estado.textContent = ""; }, 2000);
       }
     }
+  });
+
+  // CORR-IND-V19: envio individual por alumno
+  document.addEventListener("click", function(e) {
+    var b = e.target.closest ? e.target.closest(".btn-corr-ind") : null;
+    if (!b) return;
+    if (!preguntaActual || !estudioActual) return;
+    var nombre = b.getAttribute("data-alumno");
+    var cont = b.closest(".alumno-respuesta");
+    var ta = cont ? cont.querySelector(".corr-ind") : null;
+    var okVal = null;
+    if (cont) {
+      var radios = cont.querySelectorAll('input[type="radio"]');
+      radios.forEach(function(r){ if (r.checked) okVal = (r.value === "si"); });
+    }
+    var comentario = ta ? ta.value.trim() : "";
+    if (okVal === null && !comentario) { alert("Marcá ✓ Correcta o ✗ Incorrecta, o escribí un comentario para " + nombre); return; }
+    var corrAlu2 = JSON.parse(localStorage.getItem("fe-correcciones-alumno") || "{}");
+    if (!corrAlu2[estudioActual.id]) corrAlu2[estudioActual.id] = {};
+    if (!corrAlu2[estudioActual.id][preguntaActual.n]) corrAlu2[estudioActual.id][preguntaActual.n] = {};
+    corrAlu2[estudioActual.id][preguntaActual.n][nombre] = { ok: okVal, texto: comentario };
+    localStorage.setItem("fe-correcciones-alumno", JSON.stringify(corrAlu2));
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      var msg = { type: "fe-respuesta-correcta", estudioId: estudioActual.id, preguntaN: preguntaActual.n, texto: comentario, para: nombre };
+      if (okVal !== null) msg.ok = okVal;
+      ws.send(JSON.stringify(msg));
+    }
+    var ini = nombre.split(" ")[0];
+    b.textContent = "✓ Enviado a " + ini;
+    setTimeout(function(){ b.textContent = "💾 Enviar a " + ini; }, 2000);
   });
 
   btnMostrar.addEventListener("click", () => enviarProyeccion(false));
@@ -1473,5 +1513,18 @@ h3 { font-size: 1.25em !important; }
 })();
 </script>
 <!-- FIN FORZAR-LIBRE-V16 -->
+<!-- FIX-ESP-TEXTO-V20: el teclado global no interviene cuando se escribe en un campo -->
+<script>
+(function(){
+  function guard(e){
+    var t = e.target;
+    if (t && (t.tagName === "TEXTAREA" || t.tagName === "INPUT")) {
+      e.stopImmediatePropagation();
+    }
+  }
+  ["keydown","keyup","keypress"].forEach(function(ev){ document.addEventListener(ev, guard, true); });
+})();
+</script>
+<!-- FIN FIX-ESP-TEXTO-V20 -->
 </body>
 </html>

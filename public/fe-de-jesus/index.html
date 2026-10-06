@@ -607,6 +607,8 @@ h3 { font-size: 1.25em !important; }
           if (inputInstructor) inputInstructor.value = msg.nombre;
         }
         if (msg.type === "fe-respuesta-correcta") {
+          var miNomC = (localStorage.getItem("fe-nombre-alumno") || "").trim();
+          if (msg.para && msg.para !== miNomC) return;
           // Guardar corrección del instructor
           var clave = "fe-respuestas-" + msg.estudioId;
           var guardadas = JSON.parse(localStorage.getItem(clave) || "{}");
@@ -620,7 +622,8 @@ h3 { font-size: 1.25em !important; }
           if (ctx.estudioId === msg.estudioId && ctx.preguntaN === msg.preguntaN) {
             var corr = document.getElementById("correccionAbierta");
             if (corr) {
-              corr.innerHTML = '<div class="titulo">' + (msg.ok ? "✓ Respuesta correcta" : "(Respuesta del instructor)") + '</div>' + escapeHtml(msg.texto);
+              corr.innerHTML = '<div class="titulo">' + (msg.ok === false ? "✗ Respuesta incorrecta" : (msg.ok ? "✓ Respuesta correcta" : "(Respuesta del instructor)")) + '</div>' + escapeHtml(msg.texto);
+            if (msg.ok === false) { corr.style.background = "#fdecec"; corr.style.borderLeftColor = "#c53030"; } else { corr.style.background = ""; corr.style.borderLeftColor = ""; }
               corr.classList.add("visible");
             }
             var txt = document.getElementById("txtRespuestaAbierta");
@@ -671,7 +674,7 @@ h3 { font-size: 1.25em !important; }
       opcionesHTML = '<div class="respuesta-abierta" data-pregunta="' + data.preguntaN + '">' +
         '<textarea id="txtRespuestaAbierta" placeholder="Escribí tu respuesta acá..."' + (correccionPrevia ? ' readonly' : '') + '>' + escapeHtml(textoPrevio) + '</textarea>' +
         '<div class="estado-envio" id="estadoEnvio">✓ Respuesta enviada al instructor</div>' +
-        (correccionPrevia ? '<div class="correccion visible"><div class="titulo">' + (okPrevia ? "✓ Respuesta correcta" : "(Respuesta del instructor)") + '</div>' + escapeHtml(correccionPrevia) + '</div>' : '<div class="correccion" id="correccionAbierta"></div>') +
+        (correccionPrevia ? '<div class="correccion visible"' + (okPrevia === false ? ' style="background:#fdecec;border-left-color:#c53030"' : '') + '><div class="titulo">' + (okPrevia === false ? "✗ Respuesta incorrecta" : (okPrevia ? "✓ Respuesta correcta" : "(Respuesta del instructor)")) + '</div>' + escapeHtml(correccionPrevia) + '</div>' : '<div class="correccion" id="correccionAbierta"></div>') +
       '</div>';
     }
 
@@ -1122,7 +1125,7 @@ h3 { font-size: 1.25em !important; }
                 icono = "⏳"; clase = ""; txtResp = "Sin responder";
               }
             } else {
-              icono = "📖"; clase = "abierta"; txtResp = "Pregunta abierta (respuesta según el texto bíblico)";
+              icono = "📖"; clase = "abierta"; txtResp = "";
             }
 
             listaHTML += '<div class="resumen-item">' +
@@ -1172,209 +1175,170 @@ h3 { font-size: 1.25em !important; }
     });
 
     function generarPDF(estudio, guardadas) {
-      // PDF-COMPACTO: version ajustada para entrar en una sola hoja A4
+      // PDF-ELEGANTE-V22 — diseno moderno con margenes y jerarquia visual
       var jsPDF = window.jspdf.jsPDF;
       var doc = new jsPDF({ unit: "mm", format: "a4" });
-      var y = 18;
-      var pageH = 297;
-      var margin = 12;
-      var anchoUtil = 186;
+      var pageW = 210, pageH = 297;
+      var mL = 18, mR = 18, ancho = pageW - mL - mR;
+      var NAVY=[26,58,107], NAVY2=[128,155,196], DARK=[33,41,54], GRAY=[118,128,140],
+          HAIR=[228,231,237], BG=[246,248,251], OK=[31,128,66], NO=[192,57,57],
+          OKBG=[242,250,245], NOBG=[253,243,243], SOFT=[249,250,252];
 
-      // ---- ENCABEZADO (compacto) ----
-      doc.setFillColor(26, 58, 107);
-      doc.rect(0, 0, 210, 18, "F");
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(14);
-      doc.setFont(undefined, "bold");
-      doc.text("FE DE JESUS", margin, 8);
-      doc.setFontSize(10);
-      doc.setFont(undefined, "normal");
-      doc.text("Estudio " + String(estudio.id).padStart(2, "0") + " - " + (estudio.titulo || ""), margin, 14);
-      doc.setFontSize(7);
-      doc.setTextColor(190, 210, 235);
-      doc.text("Guia interactiva de lectura de la Biblia", 198, 8, { align: "right" });
-
-      // ---- DATOS DEL ALUMNO (una sola linea) ----
-      y = 26;
-      doc.setTextColor(0, 0, 0);
-      doc.setFontSize(10);
-      doc.setFont(undefined, "bold");
-      var nombreAl = (inputNombre.value || "____________________");
-      var fechaAl = inputFecha.value ? inputFecha.value.split("-").reverse().join("/") : "____/____/______";
-      doc.text("Nombre: " + nombreAl, margin, y);
-      doc.text("Fecha: " + fechaAl, 198, y, { align: "right" });
-
-      // ---- PUNTAJE (compacto) ----
       var preguntas = estudio.preguntas || [];
-      var totalOp = preguntas.filter(function(p) { return p.opciones && p.opciones.length > 0; }).length;
-      var totalAbiertas = preguntas.filter(function(p) { return !p.opciones || p.opciones.length === 0; }).length;
-      var correctas = 0;
-      var respondidas = 0;
-      preguntas.forEach(function(p) {
-        var r = guardadas[p.n];
-        if (!r) return;
+      var totalOp = preguntas.filter(function(p){ return p.opciones && p.opciones.length > 0; }).length;
+      var correctas = 0, respondidas = 0;
+      preguntas.forEach(function(p){
+        var r = guardadas[p.n]; if (!r) return;
         respondidas++;
         if (p.opciones && p.opciones.length > 0 && r.correcta) correctas++;
       });
       var pct = totalOp > 0 ? Math.round((correctas / totalOp) * 100) : 0;
 
-      y += 5;
-      doc.setFillColor(235, 244, 255);
-      doc.rect(margin, y - 4, anchoUtil, 11, "F");
-      doc.setFontSize(11);
-      doc.setFont(undefined, "bold");
-      doc.setTextColor(26, 58, 107);
-      doc.text("Puntaje: " + correctas + " / " + totalOp + "  (" + pct + "%)", margin + 4, y + 3.5);
-      doc.setFontSize(8);
-      doc.setFont(undefined, "normal");
-      doc.text("Opcion multiple: " + totalOp + " | Abiertas: " + totalAbiertas + " | Respondidas: " + respondidas + "/" + preguntas.length, 198, y + 3.5, { align: "right" });
-      y += 15;
+      // ---------- ENCABEZADO ----------
+      doc.setFillColor.apply(doc, NAVY); doc.rect(0, 0, pageW, 2.2, "F");
+      doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.setTextColor.apply(doc, NAVY);
+      doc.text("Fe de Jesús", mL, 16);
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor.apply(doc, GRAY);
+      doc.text("Guía interactiva de lectura de la Biblia", mL, 21);
+      doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor.apply(doc, NAVY2);
+      doc.text("ESTUDIO " + String(estudio.id).padStart(2,"0"), pageW - mR, 16, { align: "right" });
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor.apply(doc, GRAY);
+      doc.text((estudio.titulo || "").slice(0, 60), pageW - mR, 21, { align: "right" });
 
-      // ---- SEPARADOR ----
-      doc.setDrawColor(200, 200, 200);
-      doc.line(margin, y, 198, y);
-      y += 5;
+      var y = 26.5;
+      doc.setDrawColor.apply(doc, HAIR); doc.setLineWidth(0.3);
+      doc.line(mL, y, pageW - mR, y);
 
-      // ---- PREGUNTAS ----
-      preguntas.forEach(function(p) {
-        if (y > pageH - 26) { doc.addPage(); y = 18; }
+      // ---------- DATOS DEL ALUMNO ----------
+      y += 6.5;
+      doc.setFillColor.apply(doc, BG);
+      doc.roundedRect(mL, y, ancho, 12.5, 2, 2, "F");
+      doc.setFont("helvetica","bold"); doc.setFontSize(6.3); doc.setTextColor.apply(doc, GRAY);
+      doc.text("A L U M N O", mL + 5, y + 4);
+      doc.text("F E C H A", mL + 78, y + 4);
+      doc.text("P U N T A J E", mL + 126, y + 4);
+      doc.setFont("helvetica","normal"); doc.setFontSize(9.5); doc.setTextColor.apply(doc, DARK);
+      doc.text(inputNombre.value || "—", mL + 5, y + 9.3);
+      doc.text(inputFecha.value ? inputFecha.value.split("-").reverse().join("/") : "—", mL + 78, y + 9.3);
+      doc.text(correctas + " de " + totalOp + "  (" + pct + "%)", mL + 126, y + 9.3);
+      y += 12.5 + 7;
+
+      // ---------- PREGUNTAS (2 renglones por caso) ----------
+      preguntas.forEach(function(p){
+        if (y > pageH - 52) { doc.addPage(); y = 20; }
         var r = guardadas[p.n] || {};
 
-        doc.setFontSize(9.5);
-        doc.setFont(undefined, "bold");
-        doc.setTextColor(0, 0, 0);
-        var pregTxt = doc.splitTextToSize(p.n + ". " + p.pregunta, anchoUtil);
-        doc.text(pregTxt, margin, y);
-        y += pregTxt.length * 4.4 + 0.5;
-
-        doc.setFontSize(7.5);
-        doc.setFont(undefined, "italic");
-        doc.setTextColor(100, 100, 100);
-        doc.text("Ref: " + p.referencia, margin + 3, y);
-        y += 3.6;
-        doc.setFont(undefined, "normal");
-
-        if (p.opciones && p.opciones.length > 0) {
-          if (r.eleccion !== undefined && r.eleccion !== null) {
-            var esCorrecta = r.correcta;
-            var iconoTxt = esCorrecta ? "[OK]" : "[X]";
-            var colorIcono = esCorrecta ? [34, 139, 34] : [197, 48, 48];
-            doc.setTextColor(colorIcono[0], colorIcono[1], colorIcono[2]);
-            doc.setFont(undefined, "bold");
-            doc.setFontSize(8.5);
-            var respTxt = doc.splitTextToSize(iconoTxt + " Tu respuesta: " + p.opciones[r.eleccion], anchoUtil - 4);
-            doc.text(respTxt, margin + 3, y);
-            y += respTxt.length * 3.8;
-            if (!esCorrecta && p.correcta >= 0 && p.correcta < p.opciones.length) {
-              doc.setTextColor(34, 139, 34);
-              var corrTxt = doc.splitTextToSize("[OK] Correcta: " + p.opciones[p.correcta], anchoUtil - 4);
-              doc.text(corrTxt, margin + 3, y);
-              y += corrTxt.length * 3.8;
-            }
-            doc.setTextColor(0, 0, 0);
-            doc.setFont(undefined, "normal");
-          } else {
-            doc.setTextColor(150, 150, 150);
-            doc.setFontSize(8.5);
-            doc.setFont(undefined, "italic");
-            doc.text("(Sin responder)", margin + 3, y);
-            y += 3.8;
-            doc.setTextColor(0, 0, 0);
-            doc.setFont(undefined, "normal");
-          }
+        // -- Renglon 1: numero + pregunta, referencia a la derecha --
+        doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor.apply(doc, NAVY);
+        doc.text(String(p.n).padStart(2,"0"), mL, y);
+        var qx = mL + 9, qw = ancho - 9;
+        var ref = p.referencia ? ("— " + p.referencia) : "";
+        doc.setFontSize(8); doc.setFont("helvetica","italic"); doc.setTextColor.apply(doc, GRAY);
+        var refW = ref ? doc.getTextWidth(ref) : 0;
+        doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor.apply(doc, DARK);
+        var oneW = doc.getTextWidth(p.pregunta);
+        if (ref && oneW + refW + 5 <= qw) {
+          doc.text(p.pregunta, qx, y);
+          doc.setFont("helvetica","italic"); doc.setFontSize(8); doc.setTextColor.apply(doc, GRAY);
+          doc.text(ref, pageW - mR, y, { align: "right" });
+          y += 5;
         } else {
-          doc.setFontSize(7.5);
-          doc.setTextColor(100, 100, 100);
-          doc.setFont(undefined, "italic");
-          doc.text("Pregunta abierta - respuesta segun el texto biblico", margin + 3, y);
-          y += 3.6;
-          doc.setFont(undefined, "normal");
-
-          var textoAlumno = r.texto || "";
-          doc.setFontSize(8.5);
-          doc.setFont(undefined, "bold");
-          doc.setTextColor(45, 55, 72);
-          doc.text("Respuesta:", margin + 3, y);
-          y += 3.8;
-          doc.setFont(undefined, "normal");
-          doc.setTextColor(0, 0, 0);
-
-          if (textoAlumno) {
-            var lineasAlumno = doc.splitTextToSize(textoAlumno, anchoUtil - 8);
-            doc.setFillColor(247, 250, 252);
-            var altoCaja = lineasAlumno.length * 3.8 + 2.5;
-            doc.rect(margin + 3, y - 2.5, anchoUtil - 8, altoCaja, "F");
-            doc.text(lineasAlumno, margin + 5, y + 0.5);
-            y += altoCaja + 1.5;
-          } else {
-            doc.setTextColor(150, 150, 150);
-            doc.setFont(undefined, "italic");
-            doc.text("(sin respuesta)", margin + 5, y);
-            y += 3.8;
-            doc.setTextColor(0, 0, 0);
-            doc.setFont(undefined, "normal");
+          var ql = doc.splitTextToSize(p.pregunta, qw - 6);
+          doc.text(ql, qx, y);
+          var lastBase = y + (ql.length - 1) * 4.8;
+          if (ref) {
+            doc.setFont("helvetica","italic"); doc.setFontSize(8); doc.setTextColor.apply(doc, GRAY);
+            doc.text(ref, pageW - mR, lastBase, { align: "right" });
           }
-
-          var correccion = r.correccion || "";
-          if (correccion) {
-            doc.setFontSize(8.5);
-            doc.setFont(undefined, "bold");
-            doc.setTextColor(34, 139, 34);
-            doc.text(r.ok ? "[OK] Respuesta correcta (instructor):" : "(Respuesta del instructor):", margin + 3, y);
-            y += 3.8;
-            doc.setFont(undefined, "normal");
-            doc.setTextColor(34, 100, 34);
-            var lineasCorr = doc.splitTextToSize(correccion, anchoUtil - 8);
-            doc.setFillColor(230, 245, 230);
-            var altoCaja2 = lineasCorr.length * 3.8 + 2.5;
-            doc.rect(margin + 3, y - 2.5, anchoUtil - 8, altoCaja2, "F");
-            doc.text(lineasCorr, margin + 5, y + 0.5);
-            y += altoCaja2 + 1.5;
-            doc.setTextColor(0, 0, 0);
-          }
+          y = lastBase + 5;
         }
 
-        y += 1.5;
-        doc.setDrawColor(230, 230, 230);
-        doc.line(margin + 3, y, 195, y);
-        y += 3.5;
+        // -- Renglon 2: respuesta del alumno + correccion del instructor --
+        var ay = y, aX = mL + 12.5, accX = mL + 9;
+        var accCol = [200,205,214];
+        var segs = [];
+        if (p.opciones && p.opciones.length > 0) {
+          if (r.eleccion !== undefined && r.eleccion !== null) {
+            if (r.correcta) {
+              accCol = OK;
+              segs.push({ t: "Correcta", col: OK, bold: true });
+              segs.push({ t: p.opciones[r.eleccion], col: DARK });
+            } else {
+              accCol = NO;
+              segs.push({ t: "Incorrecta", col: NO, bold: true });
+              segs.push({ t: p.opciones[r.eleccion], col: DARK });
+              if (p.correcta >= 0 && p.correcta < p.opciones.length) {
+                segs.push({ t: "La correcta: " + p.opciones[p.correcta], col: OK, bold: true });
+              }
+            }
+          } else {
+            segs.push({ t: "Sin responder", col: GRAY, italic: true });
+          }
+        } else {
+          if (r.texto) segs.push({ t: r.texto, col: DARK });
+          else segs.push({ t: "Sin responder", col: GRAY, italic: true });
+          if (r.correccion) {
+            var colI = r.ok === false ? NO : (r.ok ? OK : GRAY);
+            var pal = r.ok === false ? "Incorrecta" : (r.ok ? "Correcta" : "Instructor");
+            segs.push({ t: pal + " · " + r.correccion, col: colI });
+            if (accCol[0] === 200) accCol = colI;
+          }
+        }
+        doc.setFillColor.apply(doc, accCol);
+        doc.rect(accX, ay - 2.6, 1.3, 3.8, "F");
+        var x = aX, extraY = 0;
+        segs.forEach(function(s, i){
+          doc.setFont("helvetica", s.bold ? "bold" : (s.italic ? "italic" : "normal"));
+          doc.setFontSize(8.3);
+          doc.setTextColor.apply(doc, s.col);
+          var full = (i > 0 ? " — " : "") + s.t;
+          if (x + doc.getTextWidth(full) > pageW - mR + 1 && i > 0) { x = aX + 4; extraY += 3.7; }
+          var ls = doc.splitTextToSize(full, pageW - mR - x);
+          doc.text(ls, x, ay + extraY);
+          x += doc.getTextWidth(ls[ls.length - 1]);
+        });
+        y = ay + extraY + 4.4;
+
+        doc.setDrawColor.apply(doc, HAIR); doc.setLineWidth(0.25);
+        doc.line(mL + 9, y, pageW - mR, y);
+        y += 5.4;
       });
 
-      // ---- COMPROMISO ----
-      if (y > pageH - 30) { doc.addPage(); y = 18; }
-      y += 2;
-      doc.setDrawColor(200, 200, 200);
-      doc.line(margin, y, 198, y);
-      y += 4.5;
+      // ---------- COMPROMISO ----------
+      if (estudio.compromiso) {
+        if (y > pageH - 55) { doc.addPage(); y = 22; }
+        y += 2;
+        var ct = doc.splitTextToSize(estudio.compromiso, ancho - 10);
+        var ch = ct.length * 3.9 + 11;
+        doc.setFillColor.apply(doc, OKBG);
+        doc.roundedRect(mL, y, ancho, ch, 2, 2, "F");
+        doc.setFont("helvetica","bold"); doc.setFontSize(7); doc.setTextColor.apply(doc, OK);
+        doc.text("COMPROMISO DE FE", mL + 5, y + 5);
+        doc.setFont("helvetica","italic"); doc.setFontSize(8.5); doc.setTextColor.apply(doc, [55,90,70]);
+        doc.text(ct, mL + 5, y + 10);
+        y += ch + 5;
+      }
 
-      doc.setFontSize(10);
-      doc.setFont(undefined, "bold");
-      doc.setTextColor(26, 58, 107);
-      doc.text("Compromiso de fe:", margin, y);
-      y += 4.5;
+      // ---------- FIRMAS ----------
+      if (y > pageH - 40) { doc.addPage(); y = 24; }
+      y += 6;
+      doc.setDrawColor.apply(doc, [95,105,120]); doc.setLineWidth(0.25);
+      doc.line(mL + 2, y, mL + 72, y);
+      doc.line(mL + 100, y, mL + 170, y);
+      doc.setFont("helvetica","normal"); doc.setFontSize(7.5); doc.setTextColor.apply(doc, GRAY);
+      doc.text("Firma del alumno", mL + 2, y + 3.6);
+      doc.text("Firma del instructor", mL + 100, y + 3.6);
+      y += 9;
 
-      doc.setFont(undefined, "italic");
-      doc.setFontSize(8.5);
-      doc.setTextColor(60, 60, 60);
-      var compTxt = doc.splitTextToSize(estudio.compromiso || "", anchoUtil);
-      doc.text(compTxt, margin, y);
-      y += compTxt.length * 3.8 + 6;
+      // ---------- PIE EN TODAS LAS PAGINAS ----------
+      var tot = doc.getNumberOfPages();
+      for (var pg = 1; pg <= tot; pg++) {
+        doc.setPage(pg);
+        doc.setFont("helvetica","normal"); doc.setFontSize(7); doc.setTextColor.apply(doc, GRAY);
+        doc.text("Fe de Jesús · Estudio " + String(estudio.id).padStart(2,"0") + "  —  Página " + pg + " de " + tot, pageW / 2, 290, { align: "center" });
+      }
 
-      // ---- FIRMA (las dos en la misma linea) ----
-      if (y > pageH - 22) { doc.addPage(); y = 18; }
-      doc.setFont(undefined, "normal");
-      doc.setFontSize(9.5);
-      doc.setTextColor(0, 0, 0);
-      doc.text("Firma del alumno: ____________________", margin, y);
-      doc.text("Firma del instructor: ____________________", 112, y);
-      y += 8;
-
-      // ---- PIE ----
-      doc.setFontSize(7);
-      doc.setTextColor(150, 150, 150);
-      doc.text("Generado el " + new Date().toLocaleString("es-AR") + "  -  Fe de Jesus, guia interactiva de lectura de la Biblia", margin, y);
-
-      // ---- GUARDAR ----
+      // ---------- GUARDAR ----------
       var nombreLimpio = (inputNombre.value || "Alumno").replace(/\s+/g, "_").replace(/[^A-Za-z0-9_-]/g, "");
       var nombreArchivo = "FeDeJesus-Estudio" + String(estudio.id).padStart(2, "0") + "-" + nombreLimpio + ".pdf";
       doc.save(nombreArchivo);
@@ -2430,5 +2394,7 @@ h3 { font-size: 1.25em !important; }
 
 <!-- BTN-ALUMNO-OCULTO-V12 -->
 <!-- FIX-UNDEF-V18 -->
+<!-- PDF-ULTRA-V21 -->
+<!-- PDF-ELEGANTE-V22 -->
 </body>
 </html>

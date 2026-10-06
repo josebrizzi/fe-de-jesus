@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fe de Jesús</title>
+<style>
+  :root {
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #1a202c;
+    --text-soft: #4a5568;
+    --text-muted: #718096;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e0;
+    --primary: #1a3a6b;
+    --primary-soft: #ebf4ff;
+    --accent: #d4a017;
+    --accent-soft: #fffaf0;
+    --accent-hover: #fef3c7;
+    --success-bg: #c6f6d5;
+    --success-border: #2f855a;
+    --success-text: #22543d;
+    --error-bg: #fff5f5;
+    --error-border: #fc8181;
+    --error-text: #c53030;
+    --shadow: rgba(0,0,0,0.10);
+  }
+  body[data-theme="dark"] {
+    --bg: #0f1419;
+    --card: #1a202c;
+    --text: #e2e8f0;
+    --text-soft: #a0aec0;
+    --text-muted: #718096;
+    --border: #2d3748;
+    --border-strong: #4a5568;
+    --primary: #63b3ed;
+    --primary-soft: #1a365d;
+    --accent: #ecc94b;
+    --accent-soft: #2d2410;
+    --accent-hover: #3d3418;
+    --success-bg: #1c4532;
+    --success-border: #48bb78;
+    --success-text: #9ae6b4;
+    --error-bg: #3d1515;
+    --error-border: #fc8181;
+    --error-text: #feb2b2;
+    --shadow: rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
+  header { background: var(--primary); color: white; padding: 16px 20px; text-align: center; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: 0.85; font-size: 13px; }
+  main { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 16px; }
+  .card { width: 100%; max-width: 800px; background: var(--card); border-radius: 18px; padding: 28px 22px; box-shadow: 0 4px 18px var(--shadow); }
+  .estudio-titulo { font-size: 14px; color: var(--primary); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .estudio-sub { font-size: 15px; color: var(--text-soft); margin-bottom: 18px; }
+  .progreso { display: inline-block; background: var(--primary-soft); color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-bottom: 18px; }
+  .pregunta { font-size: 24px; font-weight: bold; line-height: 1.4; margin: 10px 0 18px; color: var(--text); }
+  .referencia { display: inline-block; background: var(--accent-soft); color: var(--primary); padding: 8px 16px; border-radius: 10px; font-size: 17px; font-weight: bold; margin-bottom: 18px; cursor: pointer; border: 1px solid var(--accent); text-decoration: none; }
+  .referencia:hover { background: var(--accent-hover); }
+  .referencia::after { content: " ▾"; font-size: 13px; opacity: 0.6; }
+  .referencia.abierto::after { content: " ▴"; }
+  .opciones { list-style: none; padding: 0; margin: 0; }
+  .opciones li { padding: 14px 18px; border-radius: 10px; margin-bottom: 8px; background: var(--primary-soft); border: 2px solid var(--border); font-size: 17px; }
+  .opciones li.correcta { background: var(--success-bg); border-color: var(--success-border); font-weight: bold; color: var(--success-text); }
+  .opciones li.correcta::before { content: "✓ "; color: var(--success-border); font-weight: bold; font-size: 18px; }
+  .abierta { background: #ebf4ff; border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 8px; color: var(--primary); font-size: 15px; font-style: italic; }
+  .waiting { text-align: center; color: var(--text-muted); font-size: 18px; line-height: 1.5; padding: 40px 20px; }
+
+  /* --- Panel del versículo (inline) --- */
+  .versiculo-panel {
+    margin-top: 20px; padding: 18px 16px;
+    background: var(--accent-soft); border: 2px solid var(--accent);
+    border-radius: 12px;
+  }
+  .versiculo-panel.loading {
+    background: var(--primary-soft); border-color: var(--border);
+    color: var(--text-muted); text-align: center; padding: 24px;
+  }
+  .versiculo-panel.error {
+    background: var(--error-bg); border-color: var(--error-border);
+    color: var(--error-text); text-align: center;
+  }
+  .versiculo-header {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .versiculo-titulo { font-size: 20px; font-weight: bold; color: var(--primary); }
+  .versiculo-version { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .versiculo-texto { font-size: 18px; line-height: 1.6; margin: 10px 0; }
+  .versiculo-texto .num { font-size: 12px; font-weight: bold; color: #1a3a6b; vertical-align: super; margin-right: 4px; }
+  .versiculo-selector { margin-top: 14px; padding-top: 12px; border-top: 1px solid #f0dca8; }
+  .versiculo-selector label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .versiculo-selector select {
+    width: 100%; padding: 10px; font-size: 15px; border-radius: 8px;
+    border: 1px solid var(--accent); background: white; color: #1a202c;
+  }
+  .versiculo-cerrar {
+    background: none; border: none; color: var(--text-muted); font-size: 14px;
+    cursor: pointer; padding: 4px 8px; text-decoration: underline;
+  }
+
+  .status { position: fixed; bottom: 12px; left: 12px; padding: 6px 11px; border-radius: 20px; background: var(--border); color: var(--text-soft); font-size: 12px; }
+  .status.connected { background: var(--success-bg); color: var(--success-text); }
+
+  @media (max-width: 600px) {
+    .pregunta { font-size: 20px; }
+    .opciones li { font-size: 16px; padding: 12px 14px; }
+    .referencia { font-size: 15px; }
+    .versiculo-titulo { font-size: 18px; }
+    .versiculo-texto { font-size: 17px; }
+  }
+
+  .versiculo-bloque {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(0,0,0,0.15);
+  }
+  .versiculo-bloque:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  .versiculo-titulo-bloque {
+    font-weight: 600;
+    font-size: 0.95em;
+    margin: 6px 0 4px;
+    color: var(--text-soft);
+  }
+
+  .theme-toggle {
+    position: fixed; top: 12px; right: 12px; z-index: 1000;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--card); color: var(--text);
+    border: 2px solid var(--border);
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px var(--shadow);
+    transition: transform 0.2s;
+  }
+  .theme-toggle:hover { transform: scale(1.1); }
+  .theme-toggle:active { transform: scale(0.95); }
+
+  /* --- Botón buscador --- */
+  .buscador-toggle {
+    position: fixed; top: 12px; right: 64px; z-index: 1000;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--card); color: var(--text);
+    border: 2px solid var(--border);
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px var(--shadow);
+    transition: transform 0.2s;
+  }
+  .buscador-toggle:hover { transform: scale(1.1); }
+
+  /* --- Modal buscador --- */
+  .buscador-modal {
+    display: none;
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.6);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .buscador-modal.abierto { display: block; }
+  .buscador-panel {
+    background: var(--card); color: var(--text);
+    max-width: 700px; margin: 20px auto;
+    border-radius: 16px; padding: 22px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  }
+  .buscador-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .buscador-titulo { font-size: 20px; font-weight: bold; color: var(--primary); }
+  .buscador-cerrar {
+    background: none; border: none; font-size: 24px;
+    cursor: pointer; color: var(--text-muted); padding: 0 8px;
+  }
+  .buscador-form {
+    display: flex; gap: 8px; margin-bottom: 14px;
+  }
+  .buscador-input {
+    flex: 1; padding: 12px 16px; font-size: 16px;
+    border: 2px solid var(--border); border-radius: 10px;
+    background: var(--bg); color: var(--text);
+  }
+  .buscador-input:focus {
+    outline: none; border-color: var(--primary);
+  }
+  .buscador-btn {
+    background: var(--primary); color: white;
+    border: none; border-radius: 10px;
+    padding: 12px 22px; font-size: 16px; font-weight: bold;
+    cursor: pointer;
+  }
+  .buscador-btn:disabled { opacity: 0.5; cursor: wait; }
+  .buscador-hint {
+    font-size: 13px; color: var(--text-muted);
+    margin-bottom: 12px; line-height: 1.4;
+  }
+  .buscador-hint code {
+    background: var(--border); padding: 2px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+  .buscador-resultados { margin-top: 12px; max-height: 60vh; overflow-y: auto; }
+  .buscador-resultado {
+    padding: 12px 14px; margin-bottom: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .buscador-resultado:hover {
+    border-color: var(--primary); background: var(--primary-soft);
+    transform: translateX(4px);
+  }
+  .buscador-resultado-ref {
+    font-weight: bold; color: var(--primary);
+    font-size: 14px; margin-bottom: 4px;
+  }
+  .buscador-resultado-texto {
+    font-size: 15px; line-height: 1.4; color: var(--text-soft);
+  }
+  .buscador-resultado-texto mark {
+    background: var(--accent); color: var(--text);
+    padding: 0 3px; border-radius: 3px;
+  }
+  .buscador-vacio, .buscador-error {
+    text-align: center; padding: 30px 20px;
+    color: var(--text-muted); font-size: 15px;
+  }
+  .buscador-error { color: var(--error-text); }
+  .buscador-cargando {
+    text-align: center; padding: 20px; color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">🌙</button>
+<header>
+  <h1>✝️ Fe de Jesús</h1>
+  <p>Estudio bíblico sincronizado</p>
+</header>
+<main>
+  <section class="card" id="card">
+    <div class="waiting">Esperando que el instructor<br>proyecte una pregunta...</div>
+  </section>
+</main>
+<div id="status" class="status">Conectando...</div>
+<script>
+  var card = document.getElementById("card");
+  var statusEl = document.getElementById("status");
+  var ws;
+  var versionActual = "Dios Habla Hoy";
+  var refActual = null;
+
+  // Detectar prefijo /biblia para Tailscale
+  var API_BASE = location.pathname.startsWith("/biblia") ? "/biblia" : "";
+
+  function conectar() {
+    var protocol = location.protocol === "https:" ? "wss:" : "ws:";
+    var wsBase = location.pathname.startsWith("/biblia") ? "/biblia" : "";
+    ws = new WebSocket(protocol + "//" + location.host + wsBase);
+    ws.addEventListener("open", function() { statusEl.textContent = "Conectado"; statusEl.classList.add("connected"); });
+    ws.addEventListener("close", function() { statusEl.textContent = "Desconectado"; statusEl.classList.remove("connected"); setTimeout(conectar, 2000); });
+    ws.addEventListener("error", function() { statusEl.textContent = "Error"; statusEl.classList.remove("connected"); });
+    ws.addEventListener("message", function(event) {
+      try {
+        var msg = JSON.parse(event.data);
+        if (msg.type === "fe-projection") mostrar(msg.data);
+      } catch (e) { console.error(e); }
+    });
+  }
+
+  function mostrar(data) {
+    if (!data) return;
+    refActual = data.referencia || null;
+
+    var opcionesHTML = "";
+    if (data.opciones && data.opciones.length > 0) {
+      opcionesHTML = '<ul class="opciones">' +
+        data.opciones.map(function(op, i) {
+          var esCorrecta = data.respuestaRevelada && i === data.correcta;
+          return '<li class="' + (esCorrecta ? "correcta" : "") + '">' + escapeHtml(op) + '</li>';
+        }).join("") + '</ul>';
+    } else {
+      opcionesHTML = '<div class="abierta">Pregunta abierta — respuesta según el texto bíblico</div>';
+    }
+
+    card.innerHTML =
+      '<div class="estudio-titulo">Estudio ' + String(data.estudioId).padStart(2, "0") + '</div>' +
+      '<div class="estudio-sub">' + escapeHtml(data.estudioTitulo || "") + '</div>' +
+      '<div class="progreso">Pregunta ' + data.preguntaN + ' de ' + data.totalPreguntas + '</div>' +
+      '<div class="pregunta">' + escapeHtml(data.pregunta || "") + '</div>' +
+      (data.referencia ? '<button class="referencia" id="btnRef" type="button">📖 ' + escapeHtml(data.referencia) + '</button>' : '') +
+      opcionesHTML +
+      '<div id="versiculoContenedor"></div>';
+
+    var btnRef = document.getElementById("btnRef");
+    if (btnRef) {
+      btnRef.addEventListener("click", toggleVersiculo);
+    }
+  }
+
+  function toggleVersiculo() {
+    var contenedor = document.getElementById("versiculoContenedor");
+    var btnRef = document.getElementById("btnRef");
+
+    // Si ya está abierto, lo cerramos
+    if (contenedor.innerHTML !== "") {
+      contenedor.innerHTML = "";
+      if (btnRef) btnRef.classList.remove("abierto");
+      return;
+    }
+
+    if (!refActual) return;
+    if (btnRef) btnRef.classList.add("abierto");
+
+    contenedor.innerHTML = '<div class="versiculo-panel loading">Cargando versículo...</div>';
+    cargarVersiculo(refActual, versionActual, contenedor);
+  }
+
+  async function cargarVersiculo(ref, version, contenedor) {
+    try {
+      var url = API_BASE + "/api/biblia/versiculo?ref=" + encodeURIComponent(ref) + "&version=" + encodeURIComponent(version);
+      var r = await fetch(url);
+      if (!r.ok) {
+        var txt = await r.text();
+        throw new Error("Error " + r.status);
+      }
+      var data = await r.json();
+      renderVersiculo(data, contenedor);
+    } catch (e) {
+      contenedor.innerHTML = '<div class="versiculo-panel error">No se pudo cargar el versículo.<br><small>' + e.message + '</small></div>';
+    }
+  }
+
+  async function cargarVersiones() {
+    try {
+      var r = await fetch(API_BASE + "/api/biblia/versiones");
+      return await r.json();
+    } catch (e) { return [versionActual]; }
+  }
+
+    async function renderVersiculo(data, contenedor) {
+    // Normalizar: siempre trabajar con un ARRAY de bloques
+    var bloques = Array.isArray(data) ? data : [data];
+    if (bloques.length === 0) return;
+
+    var version = bloques[0].version;
+
+    // Construir TODOS los bloques de versículos
+    var bloquesHTML = bloques.map(function(bloque) {
+      var titulo = bloque.libro + " " + bloque.capitulo;
+      if (bloque.versiculoInicio === bloque.versiculoFin) {
+        titulo += ":" + bloque.versiculoInicio;
+      } else {
+        titulo += ":" + bloque.versiculoInicio + "-" + bloque.versiculoFin;
+      }
+
+      var versos = bloque.versiculos.map(function(v) {
+        return '<div class="versiculo-texto"><span class="num">' + v.n + '</span>' + escapeHtml(v.texto) + '</div>';
+      }).join("");
+
+      return '<div class="versiculo-bloque">' +
+               '<div class="versiculo-titulo-bloque">' + escapeHtml(titulo) + '</div>' +
+               versos +
+             '</div>';
+    }).join("");
+
+    // Cargar versiones para el selector
+    var versiones = await cargarVersiones();
+    var opciones = versiones.map(function(v) {
+      return '<option value="' + escapeHtml(v) + '"' + (v === version ? ' selected' : '') + '>' + escapeHtml(v) + '</option>';
+    }).join("");
+
+    contenedor.innerHTML =
+      '<div class="versiculo-panel">' +
+        '<div class="versiculo-header">' +
+          '<div>' +
+            '<div class="versiculo-version">' + escapeHtml(version) + '</div>' +
+          '</div>' +
+          '<button class="versiculo-cerrar" type="button" id="btnCerrar">✖ Ocultar</button>' +
+        '</div>' +
+        bloquesHTML +
+        '<div class="versiculo-selector">' +
+          '<label>Cambiar versión:</label>' +
+          '<select id="selVersion">' + opciones + '</select>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById("btnCerrar").addEventListener("click", function() {
+      var btnRef = document.getElementById("btnRef");
+      if (btnRef) btnRef.classList.remove("abierto");
+      contenedor.innerHTML = "";
+    });
+
+    document.getElementById("selVersion").addEventListener("change", function(e) {
+      versionActual = e.target.value;
+      cargarVersiculo(refActual, versionActual, contenedor);
+    });
+  }
+
+  function escapeHtml(t) {
+    return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+
+  // ============================================================
+  // MODO OSCURO
+  // ============================================================
+  (function initTema() {
+    var btn = document.getElementById("themeToggle");
+    if (!btn) return;
+    var temaGuardado = localStorage.getItem("fe-tema");
+    var prefiereOscuro = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var tema = temaGuardado || (prefiereOscuro ? "dark" : "light");
+
+    function aplicar(t) {
+      if (t === "dark") {
+        document.body.setAttribute("data-theme", "dark");
+        btn.textContent = "☀️";
+      } else {
+        document.body.removeAttribute("data-theme");
+        btn.textContent = "🌙";
+      }
+    }
+
+    aplicar(tema);
+
+    btn.addEventListener("click", function() {
+      var actual = document.body.getAttribute("data-theme") === "dark" ? "dark" : "light";
+      var nuevo = actual === "dark" ? "light" : "dark";
+      localStorage.setItem("fe-tema", nuevo);
+      aplicar(nuevo);
+    });
+  })();
+
+
+  // ============================================================
+  // BUSCADOR DE VERSÍCULOS
+  // ============================================================
+  document.addEventListener("DOMContentLoaded", function() {
+    var btn = document.getElementById("btnBuscador");
+    var modal = document.getElementById("buscadorModal");
+    var btnCerrar = document.getElementById("btnBuscadorCerrar");
+    var form = document.getElementById("buscadorForm");
+    var input = document.getElementById("buscadorInput");
+    var btnBuscar = document.getElementById("buscadorBtn");
+    var resultados = document.getElementById("buscadorResultados");
+
+    if (!btn || !modal) return;
+
+    btn.addEventListener("click", function() {
+      modal.classList.add("abierto");
+      setTimeout(function() { input.focus(); }, 100);
+    });
+
+    btnCerrar.addEventListener("click", function() {
+      modal.classList.remove("abierto");
+    });
+
+    modal.addEventListener("click", function(e) {
+      if (e.target === modal) modal.classList.remove("abierto");
+    });
+
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && modal.classList.contains("abierto")) {
+        modal.classList.remove("abierto");
+      }
+    });
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function highlight(texto, query) {
+      var safe = escapeHtml(texto);
+      if (!query) return safe;
+      try {
+        var re = new RegExp("(" + query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
+        return safe.replace(re, "<mark>$1</mark>");
+      } catch (e) { return safe; }
+    }
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      var q = input.value.trim();
+      if (!q) return;
+
+      btnBuscar.disabled = true;
+      resultados.innerHTML = '<div class="buscador-cargando">Buscando...</div>';
+
+      var url = API_BASE + "/api/biblia/buscar?q=" + encodeURIComponent(q) + "&version=" + encodeURIComponent(versionActual) + "&limit=50";
+
+      fetch(url)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          btnBuscar.disabled = false;
+
+          if (data.error) {
+            resultados.innerHTML = '<div class="buscador-error">⚠️ ' + escapeHtml(data.error) + '</div>';
+            return;
+          }
+
+          if (!data.resultados || data.resultados.length === 0) {
+            resultados.innerHTML = '<div class="buscador-vacio">Sin resultados para "' + escapeHtml(q) + '"</div>';
+            return;
+          }
+
+          if (data.tipo === "referencia") {
+            // Cada bloque es un libro/capítulo
+            var html = data.resultados.map(function(bloque) {
+              var refTxt = bloque.libro + " " + bloque.capitulo;
+              if (bloque.versiculoInicio !== undefined) {
+                refTxt += ":" + bloque.versiculoInicio;
+                if (bloque.versiculoFin && bloque.versiculoFin !== bloque.versiculoInicio) {
+                  refTxt += "-" + bloque.versiculoFin;
+                }
+              }
+              var versos = bloque.versiculos.map(function(v) {
+                return '<div class="buscador-resultado-texto"><b>' + v.n + '</b> ' + escapeHtml(v.texto) + '</div>';
+              }).join("");
+              return '<div class="buscador-resultado" data-ref="' + escapeHtml(refTxt) + '">' +
+                       '<div class="buscador-resultado-ref">📖 ' + escapeHtml(refTxt) + '</div>' +
+                       versos +
+                     '</div>';
+            }).join("");
+            resultados.innerHTML = html;
+
+          } else {
+            // Modo texto: lista de versículos
+            var html = data.resultados.map(function(r) {
+              var refTxt = r.libro + " " + r.capitulo + ":" + r.versiculo;
+              return '<div class="buscador-resultado" data-ref="' + escapeHtml(refTxt) + '">' +
+                       '<div class="buscador-resultado-ref">' + escapeHtml(refTxt) + '</div>' +
+                       '<div class="buscador-resultado-texto">' + highlight(r.texto, q) + '</div>' +
+                     '</div>';
+            }).join("");
+            resultados.innerHTML = '<div class="buscador-hint">' + data.total + ' resultado(s)</div>' + html;
+          }
+
+          // Click en un resultado → cargar el versículo en el visor
+          Array.prototype.forEach.call(resultados.querySelectorAll(".buscador-resultado"), function(el) {
+            el.addEventListener("click", function() {
+              var ref = el.getAttribute("data-ref");
+              modal.classList.remove("abierto");
+              // Simular que el instructor proyectó esa referencia
+              var contenedor = document.getElementById("versiculoContenedor");
+              if (contenedor) {
+                contenedor.innerHTML = '<div class="versiculo-panel loading">Cargando ' + escapeHtml(ref) + '...</div>';
+                cargarVersiculo(ref, versionActual, contenedor);
+              } else {
+                // Si no hay contenedor (el alumno no está viendo una pregunta)
+                alert("Abrí una pregunta primero para ver el versículo inline.");
+              }
+            });
+          });
+        })
+        .catch(function(err) {
+          btnBuscar.disabled = false;
+          resultados.innerHTML = '<div class="buscador-error">Error: ' + escapeHtml(err.message) + '</div>';
+        });
+    });
+  });
+
+  conectar();
+
+
+</script>
+
+
+<button class="buscador-toggle" id="btnBuscador" type="button" aria-label="Buscar versículo" title="Buscar versículo">🔍</button>
+
+<div class="buscador-modal" id="buscadorModal">
+  <div class="buscador-panel">
+    <div class="buscador-header">
+      <div class="buscador-titulo">🔍 Buscar en la Biblia</div>
+      <button class="buscador-cerrar" id="btnBuscadorCerrar" type="button">✖</button>
+    </div>
+    <div class="buscador-hint">
+      Buscá una <b>referencia</b> (ej: <code>Juan 3:16</code>) o una <b>palabra</b> (ej: <code>amor</code>).
+    </div>
+    <form class="buscador-form" id="buscadorForm">
+      <input type="text" class="buscador-input" id="buscadorInput" placeholder="Juan 3:16 o amor..." autocomplete="off">
+      <button type="submit" class="buscador-btn" id="buscadorBtn">Buscar</button>
+    </form>
+    <div class="buscador-resultados" id="buscadorResultados"></div>
+  </div>
+</div>
+</body>
+</html>

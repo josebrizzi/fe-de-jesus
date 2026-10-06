@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fe de Jesús — Instructor</title>
+<style>
+  :root {
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #1a202c;
+    --text-soft: #4a5568;
+    --text-muted: #718096;
+    --border: #e2e8f0;
+    --primary: #1a3a6b;
+    --primary-soft: #ebf4ff;
+    --accent: #d4a017;
+    --shadow: rgba(0,0,0,0.08);
+  }
+  body[data-theme="dark"] {
+    --bg: #0f1419;
+    --card: #1a202c;
+    --text: #e2e8f0;
+    --text-soft: #a0aec0;
+    --text-muted: #718096;
+    --border: #2d3748;
+    --primary: #63b3ed;
+    --primary-soft: #1a365d;
+    --accent: #ecc94b;
+    --shadow: rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+  header { background: var(--primary); color: white; padding: 18px 24px; }
+  header h1 { margin: 0; font-size: 24px; }
+  header p { margin: 5px 0 0; opacity: 0.85; font-size: 14px; }
+  main { max-width: 1200px; margin: 20px auto; padding: 0 18px; }
+  .panel { background: var(--card); border-radius: 14px; padding: 22px; box-shadow: 0 3px 12px var(--shadow); margin-bottom: 18px; }
+  label { display: block; font-weight: bold; margin-bottom: 6px; color: var(--primary); }
+  select { width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 16px; background: var(--card); }
+  .preguntas-lista { max-height: 280px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; margin-top: 12px; }
+  .pregunta-item { padding: 12px 15px; border-bottom: 1px solid #edf2f7; cursor: pointer; display: flex; gap: 12px; align-items: flex-start; }
+  .pregunta-item:last-child { border-bottom: none; }
+  .pregunta-item:hover { background: var(--primary-soft); }
+  .pregunta-item.selected { background: #bee3f8; border-left: 4px solid #1a3a6b; }
+  .pregunta-num { font-weight: bold; color: #1a3a6b; min-width: 28px; }
+  .preview { background: var(--primary-soft); border: 2px solid var(--border); border-radius: 12px; padding: 22px; margin-top: 18px; }
+  .preview-header { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
+  .preview-titulo { font-size: 14px; color: #1a3a6b; font-weight: bold; margin-bottom: 4px; }
+  .preview-pregunta { font-size: 22px; font-weight: bold; line-height: 1.4; margin: 15px 0; }
+  .preview-referencia { font-size: 17px; color: #1a3a6b; font-weight: bold; margin-bottom: 18px; }
+  .preview-opciones { list-style: none; padding: 0; margin: 0; }
+  .preview-opciones li { padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; background: white; border: 1px solid var(--border); font-size: 16px; }
+  .preview-opciones li.correcta { background: var(--primary-soft); border-color: var(--primary); font-weight: bold; }
+  .preview-opciones li.correcta::before { content: "✓ "; color: #2f855a; font-weight: bold; }
+  .acciones { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  button { border: none; border-radius: 9px; padding: 14px 22px; font-size: 16px; font-weight: bold; cursor: pointer; }
+  button:disabled { background: #cbd5e0 !important; color: #718096 !important; cursor: not-allowed; }
+  #btnMostrar { background: var(--primary); color: white; flex: 2; }
+  #btnRevelar { background: #d4a017; color: white; flex: 1; }
+  #btnBiblia { background: #2c5282; color: white; flex: 1; }
+  #btnAnterior, #btnSiguiente { background: #e2e8f0; color: var(--primary); }
+  .estado { margin-top: 15px; padding: 10px 14px; border-radius: 8px; background: #edf2f7; font-size: 14px; }
+  .estado.connected { background: #c6f6d5; color: #22543d; }
+  .estado.disconnected { background: #fed7d7; color: #742a2a; }
+  .badge-tipo { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; background: #bee3f8; color: #1a3a6b; margin-left: 8px; }
+  @media (max-width: 700px) { .preview-pregunta { font-size: 18px; } }
+
+  .theme-toggle {
+    position: fixed; top: 12px; right: 12px; z-index: 1000;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--card); color: var(--text);
+    border: 2px solid var(--border);
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px var(--shadow);
+    transition: transform 0.2s;
+  }
+  .theme-toggle:hover { transform: scale(1.1); }
+
+  .respuesta-abierta-admin {
+    margin-top: 14px; padding: 14px;
+    background: #f7fafc; border: 1px solid #e2e8f0;
+    border-radius: 10px;
+  }
+  .respuesta-abierta-admin label {
+    font-size: 12px; color: #718096;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .respuesta-abierta-admin textarea {
+    width: 100%; min-height: 70px;
+    padding: 10px 12px; font-size: 15px;
+    font-family: inherit; line-height: 1.4;
+    border: 2px solid #cbd5e0; border-radius: 8px;
+    background: white; resize: vertical;
+    margin-bottom: 10px;
+  }
+  .respuesta-abierta-admin textarea:focus {
+    outline: none; border-color: #1a3a6b;
+  }
+  .respuesta-abierta-admin textarea.respuesta-alumno {
+    background: #edf2f7; color: #2d3748;
+  }
+  .respuesta-abierta-admin .btn-guardar {
+    background: #2f855a; color: white;
+    border: none; border-radius: 8px;
+    padding: 10px 18px; font-size: 14px; font-weight: bold;
+    cursor: pointer;
+  }
+  .respuesta-abierta-admin .btn-guardar:hover { background: #276749; }
+  .respuesta-abierta-admin .estado-guardado {
+    font-size: 12px; color: #2f855a; margin-left: 10px;
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">🌙</button>
+<header>
+  <h1>✝️ Fe de Jesús — Panel del Instructor</h1>
+  <p>Estudios bíblicos sincronizados</p>
+</header>
+<main>
+  <section class="panel">
+    <label for="estudioSelect">Estudio</label>
+    <select id="estudioSelect"><option value="">Cargando estudios...</option></select>
+    <div style="margin-top:18px;">
+      <label>Preguntas</label>
+      <div class="preguntas-lista" id="preguntasLista">
+        <div style="padding:20px;color:#718096;">Seleccione un estudio.</div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="preview" id="preview">
+      <div class="preview-header">Vista previa</div>
+      <div style="color:#718096;">Seleccione una pregunta para previsualizarla.</div>
+    </div>
+    <div class="acciones">
+      <button id="btnMostrar" disabled>📱 MOSTRAR EN CELULARES</button>
+      <button id="btnRevelar" disabled>✓ REVELAR RESPUESTA</button>
+      <button id="btnBiblia" disabled>📖 ABRIR EN BIBLIA</button>
+    </div>
+    <div class="acciones">
+      <button id="btnAnterior" disabled>◀ Anterior</button>
+      <button id="btnSiguiente" disabled>Siguiente ▶</button>
+    </div>
+    <div class="estado" id="estado">
+      Estado WebSocket: <span id="wsStatus">Conectando...</span>
+      | Celulares conectados: <span id="connectedCount">0</span>
+    </div>
+  </section>
+</main>
+<script>
+  const estudioSelect = document.getElementById("estudioSelect");
+  const preguntasLista = document.getElementById("preguntasLista");
+  const preview = document.getElementById("preview");
+  const btnMostrar = document.getElementById("btnMostrar");
+  const btnRevelar = document.getElementById("btnRevelar");
+  const btnBiblia = document.getElementById("btnBiblia");
+  const btnAnterior = document.getElementById("btnAnterior");
+  const btnSiguiente = document.getElementById("btnSiguiente");
+  const wsStatus = document.getElementById("wsStatus");
+  const connectedCount = document.getElementById("connectedCount");
+  const estado = document.getElementById("estado");
+
+  let ws = null, estudioActual = null, preguntaActual = null, respuestaRevelada = false;
+
+  function connectWebSocket() {
+    const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+    const wsBase = location.pathname.startsWith("/biblia") ? "/biblia" : "";
+    ws = new WebSocket(`${protocol}//${location.host}${wsBase}`);
+    ws.addEventListener("open", () => {
+      wsStatus.textContent = "Conectado";
+      estado.classList.add("connected");
+      estado.classList.remove("disconnected");
+    });
+    ws.addEventListener("close", () => {
+      wsStatus.textContent = "Desconectado";
+      estado.classList.remove("connected");
+      estado.classList.add("disconnected");
+      setTimeout(connectWebSocket, 2000);
+    });
+    ws.addEventListener("error", () => { wsStatus.textContent = "Error"; });
+    ws.addEventListener("message", (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "connected") connectedCount.textContent = data.count;
+        if (data.type === "fe-respuesta-alumno") {
+          // Guardar la respuesta del alumno
+          var todas = JSON.parse(localStorage.getItem("fe-alumnos-respuestas") || "{}");
+          if (!todas[data.estudioId]) todas[data.estudioId] = {};
+          todas[data.estudioId][data.preguntaN] = data.texto;
+          localStorage.setItem("fe-alumnos-respuestas", JSON.stringify(todas));
+
+          // Si estamos viendo esa pregunta, actualizar
+          if (preguntaActual && preguntaActual.n === data.preguntaN && estudioActual && estudioActual.id === data.estudioId) {
+            renderPreview();
+          }
+        }
+      } catch (e) { console.error(e); }
+    });
+  }
+
+  async function cargarEstudios() {
+    try {
+      const res = await fetch("../api/fe-de-jesus/estudios");
+      const estudios = await res.json();
+      if (estudios.length === 0) {
+        estudioSelect.innerHTML = '<option value="">No hay estudios cargados</option>';
+        return;
+      }
+      estudioSelect.innerHTML = '<option value="">Seleccione un estudio</option>';
+      estudios.forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e.id;
+        opt.textContent = `Estudio ${String(e.id).padStart(2, "0")} — ${e.titulo}`;
+        estudioSelect.appendChild(opt);
+      });
+    } catch (err) {
+      estudioSelect.innerHTML = '<option value="">Error al cargar</option>';
+    }
+  }
+
+  async function cargarEstudio(id) {
+    if (!id) {
+      preguntasLista.innerHTML = '<div style="padding:20px;color:#718096;">Seleccione un estudio.</div>';
+      return;
+    }
+    const res = await fetch(`../api/fe-de-jesus/estudio/${id}`);
+    estudioActual = await res.json();
+    preguntaActual = null;
+    respuestaRevelada = false;
+    renderPreguntasLista();
+    limpiarPreview();
+    actualizarBotones();
+  }
+
+  function renderPreguntasLista() {
+    preguntasLista.innerHTML = "";
+    if (!estudioActual || !estudioActual.preguntas) return;
+    estudioActual.preguntas.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "pregunta-item";
+      if (preguntaActual && p.n === preguntaActual.n) div.classList.add("selected");
+      div.innerHTML = `<div class="pregunta-num">${p.n}</div><div>${escapeHtml(p.pregunta)}${p.opciones && p.opciones.length > 0 ? '<span class="badge-tipo">opción múltiple</span>' : ''}</div>`;
+      div.addEventListener("click", () => seleccionarPregunta(p));
+      preguntasLista.appendChild(div);
+    });
+  }
+
+  function seleccionarPregunta(p) {
+    preguntaActual = p;
+    respuestaRevelada = false;
+    renderPreguntasLista();
+    renderPreview();
+    actualizarBotones();
+  }
+
+  function renderPreview() {
+    if (!preguntaActual) { limpiarPreview(); return; }
+    const total = estudioActual.preguntas.length;
+    let opcionesHTML = "";
+    if (preguntaActual.opciones && preguntaActual.opciones.length > 0) {
+      opcionesHTML = '<ul class="preview-opciones">' +
+        preguntaActual.opciones.map((op, i) => {
+          const esCorrecta = respuestaRevelada && i === preguntaActual.correcta;
+          return `<li class="${esCorrecta ? "correcta" : ""}">${escapeHtml(op)}</li>`;
+        }).join("") + "</ul>";
+    } else {
+      // Pregunta abierta → mostrar respuesta del alumno + input para la correcta
+      var claveResp = "fe-respuestas-" + estudioActual.id;
+      var respuestasAlumno = JSON.parse(localStorage.getItem("fe-alumnos-respuestas") || "{}");
+      var respAlumno = (respuestasAlumno[estudioActual.id] && respuestasAlumno[estudioActual.id][preguntaActual.n]) || "";
+      var correccionGuardada = JSON.parse(localStorage.getItem("fe-correcciones") || "{}");
+      var correccion = (correccionGuardada[estudioActual.id] && correccionGuardada[estudioActual.id][preguntaActual.n]) || "";
+
+      opcionesHTML = '<div class="respuesta-abierta-admin">' +
+        '<label>Respuesta del alumno</label>' +
+        '<textarea class="respuesta-alumno" readonly>' + escapeHtml(respAlumno || "(sin respuesta aún)") + '</textarea>' +
+        '<label>Respuesta correcta (instructor)</label>' +
+        '<textarea id="txtCorreccion" placeholder="Escribí la respuesta correcta acá...">' + escapeHtml(correccion) + '</textarea>' +
+        '<button class="btn-guardar" id="btnGuardarCorreccion">💾 Guardar y enviar al alumno</button>' +
+        '<span class="estado-guardado" id="estadoGuardado"></span>' +
+      '</div>';
+    }
+    preview.innerHTML = `
+      <div class="preview-header">Pregunta ${preguntaActual.n} de ${total}</div>
+      <div class="preview-titulo">${escapeHtml(estudioActual.titulo)}</div>
+      <div class="preview-pregunta">${escapeHtml(preguntaActual.pregunta)}</div>
+      <div class="preview-referencia">📖 ${escapeHtml(preguntaActual.referencia)}</div>
+      ${opcionesHTML}
+    `;
+  }
+
+  function limpiarPreview() {
+    preview.innerHTML = '<div class="preview-header">Vista previa</div><div style="color:#718096;">Seleccione una pregunta para previsualizarla.</div>';
+  }
+
+  function actualizarBotones() {
+    const hayPregunta = !!preguntaActual;
+    const hayOpciones = hayPregunta && preguntaActual.opciones && preguntaActual.opciones.length > 0;
+    btnMostrar.disabled = !hayPregunta;
+    btnRevelar.disabled = !hayOpciones || respuestaRevelada;
+    btnBiblia.disabled = !hayPregunta;
+    if (estudioActual && preguntaActual) {
+      const idx = estudioActual.preguntas.findIndex(p => p.n === preguntaActual.n);
+      btnAnterior.disabled = idx <= 0;
+      btnSiguiente.disabled = idx >= estudioActual.preguntas.length - 1;
+    } else {
+      btnAnterior.disabled = true;
+      btnSiguiente.disabled = true;
+    }
+  }
+
+  function enviarProyeccion(revelarRespuesta) {
+    if (!ws || ws.readyState !== WebSocket.OPEN || !preguntaActual) return;
+    ws.send(JSON.stringify({
+      type: "project-fe",
+      reference: `Estudio ${estudioActual.id} - P${preguntaActual.n}`,
+      data: {
+        estudioId: estudioActual.id,
+        estudioTitulo: estudioActual.titulo,
+        estudioSubtitulo: estudioActual.subtitulo,
+        preguntaN: preguntaActual.n,
+        totalPreguntas: estudioActual.preguntas.length,
+        pregunta: preguntaActual.pregunta,
+        referencia: preguntaActual.referencia,
+        opciones: preguntaActual.opciones || [],
+        correcta: revelarRespuesta ? preguntaActual.correcta : -1,
+        respuestaRevelada: revelarRespuesta
+      }
+    }));
+  }
+
+  // Guardar corrección de pregunta abierta
+  document.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "btnGuardarCorreccion") {
+      const txt = document.getElementById("txtCorreccion");
+      if (!txt || !preguntaActual || !estudioActual) return;
+      const texto = txt.value.trim();
+      if (!texto) return;
+
+      var correcciones = JSON.parse(localStorage.getItem("fe-correcciones") || "{}");
+      if (!correcciones[estudioActual.id]) correcciones[estudioActual.id] = {};
+      correcciones[estudioActual.id][preguntaActual.n] = texto;
+      localStorage.setItem("fe-correcciones", JSON.stringify(correcciones));
+
+      // Enviar al alumno por WebSocket
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: "fe-respuesta-correcta",
+          estudioId: estudioActual.id,
+          preguntaN: preguntaActual.n,
+          texto: texto
+        }));
+      }
+
+      var estado = document.getElementById("estadoGuardado");
+      if (estado) {
+        estado.textContent = "✓ Enviado";
+        setTimeout(() => { estado.textContent = ""; }, 2000);
+      }
+    }
+  });
+
+  btnMostrar.addEventListener("click", () => enviarProyeccion(false));
+  btnRevelar.addEventListener("click", () => {
+    respuestaRevelada = true;
+    renderPreview();
+    actualizarBotones();
+    enviarProyeccion(true);
+  });
+  btnBiblia.addEventListener("click", () => {
+    if (!preguntaActual || !preguntaActual.referencia) return;
+    const url = new URL("biblia.html", location.href);
+    url.searchParams.set("ref", preguntaActual.referencia);
+    url.searchParams.set("version", "Dios Habla Hoy");
+    window.open(url.toString(), "_blank");
+  });
+  btnAnterior.addEventListener("click", () => {
+    if (!estudioActual || !preguntaActual) return;
+    const idx = estudioActual.preguntas.findIndex(p => p.n === preguntaActual.n);
+    if (idx > 0) seleccionarPregunta(estudioActual.preguntas[idx - 1]);
+  });
+  btnSiguiente.addEventListener("click", () => {
+    if (!estudioActual || !preguntaActual) return;
+    const idx = estudioActual.preguntas.findIndex(p => p.n === preguntaActual.n);
+    if (idx < estudioActual.preguntas.length - 1) seleccionarPregunta(estudioActual.preguntas[idx + 1]);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") btnSiguiente.click();
+    if (e.key === "ArrowLeft") btnAnterior.click();
+    if (e.key === " ") { e.preventDefault(); btnMostrar.click(); }
+    if (e.key === "r" || e.key === "R") btnRevelar.click();
+  });
+
+  function escapeHtml(t) {
+    return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  estudioSelect.addEventListener("change", () => cargarEstudio(estudioSelect.value));
+  cargarEstudios();
+
+  // ============================================================
+  // MODO OSCURO
+  // ============================================================
+  (function initTema() {
+    var btn = document.getElementById("themeToggle");
+    if (!btn) return;
+    var temaGuardado = localStorage.getItem("fe-tema");
+    var prefiereOscuro = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var tema = temaGuardado || (prefiereOscuro ? "dark" : "light");
+
+    function aplicar(t) {
+      if (t === "dark") {
+        document.body.setAttribute("data-theme", "dark");
+        btn.textContent = "☀️";
+      } else {
+        document.body.removeAttribute("data-theme");
+        btn.textContent = "🌙";
+      }
+    }
+
+    aplicar(tema);
+
+    btn.addEventListener("click", function() {
+      var actual = document.body.getAttribute("data-theme") === "dark" ? "dark" : "light";
+      var nuevo = actual === "dark" ? "light" : "dark";
+      localStorage.setItem("fe-tema", nuevo);
+      aplicar(nuevo);
+    });
+  })();
+
+  connectWebSocket();
+
+</script>
+</body>
+</html>
