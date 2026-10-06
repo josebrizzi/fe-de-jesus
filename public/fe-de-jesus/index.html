@@ -1117,7 +1117,7 @@ h3 { font-size: 1.25em !important; }
               if (resp) {
                 respondidas++;
                 if (resp.correcta) { correctas++; icono = "✅"; clase = "ok"; txtResp = "Tu respuesta: " + p.opciones[resp.eleccion]; }
-                else { icono = "❌"; clase = "no"; txtResp = "Tu respuesta: " + p.opciones[resp.eleccion] + " — Correcta: " + p.opciones[p.correcta]; }
+                else { icono = "❌"; clase = "no"; txtResp = "Tu respuesta: " + p.opciones[resp.eleccion] + (p.correcta >= 0 && p.opciones[p.correcta] ? " — Correcta: " + p.opciones[p.correcta] : " — esperando que el instructor revele la respuesta correcta"); }
               } else {
                 icono = "⏳"; clase = ""; txtResp = "Sin responder";
               }
@@ -2429,5 +2429,6 @@ h3 { font-size: 1.25em !important; }
 <!-- FIN PILL-OCULTA-V11 -->
 
 <!-- BTN-ALUMNO-OCULTO-V12 -->
+<!-- FIX-UNDEF-V18 -->
 </body>
 </html>
