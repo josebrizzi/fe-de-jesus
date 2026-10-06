@@ -963,7 +963,7 @@ server.listen(PORT, "0.0.0.0", () => {
   var FILE_I = path2.join(__dirname, "data", "interesados.json");
   function leerI(){ try { return JSON.parse(fs2.readFileSync(FILE_I, "utf8")); } catch(e){ return []; } }
   function guardarI(a){ try { fs2.mkdirSync(path2.dirname(FILE_I), { recursive: true }); fs2.writeFileSync(FILE_I, JSON.stringify(a, null, 2)); } catch(e){ console.log("[INTERESADOS] error guardando:", e.message); } }
-  function claveOk(req){ var K = String(process.env.INSTRUCTOR_KEY || ""); return !!K && String(req.headers["x-instructor-key"] || "") === K; }
+  function claveOk(req){ return !!(global.__accesoOk && global.__accesoOk(req)); }
   app.post("/api/fe-de-jesus/interesados", express.json(), function(req, res){
     var b = req.body || {};
     var nombre = String(b.nombre || "").trim().slice(0, 80);
@@ -979,11 +979,8 @@ server.listen(PORT, "0.0.0.0", () => {
   app.get("/api/fe-de-jesus/interesados", function(req, res){
     if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
     var listaF = leerI();
-    var nomI = String(req.headers["x-instructor-nombre"] || "").trim().toLowerCase();
-    if (nomI && global.__leerInstructores) {
-      var regI = global.__leerInstructores()[nomI];
-      if (regI && regI.iglesia && regI.iglesia !== "TODAS") listaF = listaF.filter(function(x){ return (x.iglesia || "CEN") === regI.iglesia; });
-    }
+    var mdG = (global.__modo ? global.__modo(req) : { esMaestra: true, iglesia: null });
+    if (!mdG.esMaestra && mdG.iglesia && mdG.iglesia !== "TODAS") listaF = listaF.filter(function(x){ return (x.iglesia || "CEN") === mdG.iglesia; });
     res.json({ ok: true, lista: listaF });
   });
   app.post("/api/fe-de-jesus/interesados-accion", express.json(), function(req, res){
@@ -991,6 +988,9 @@ server.listen(PORT, "0.0.0.0", () => {
     var b = req.body || {};
     var lista = leerI();
     if (b.accion === "eliminar") {
+      var mdE = (global.__modo ? global.__modo(req) : { esMaestra: true, iglesia: null });
+      var tgtE = lista.find(function(x){ return x.id === String(b.id || ""); });
+      if (!mdE.esMaestra && mdE.iglesia && mdE.iglesia !== "TODAS" && tgtE && (tgtE.iglesia || "CEN") !== mdE.iglesia) { res.status(403).json({ ok: false, error: "Ese contacto pertenece a otra iglesia" }); return; }
       lista = lista.filter(function(x){ return x.id !== String(b.id || ""); });
       guardarI(lista); res.json({ ok: true, lista: lista }); return;
     }
@@ -1000,11 +1000,13 @@ server.listen(PORT, "0.0.0.0", () => {
     if (b.accion === "nuevo") it.estado = "nuevo";
     if (b.accion === "asignar") {
       var nomA = String(b.instructor || "").trim().slice(0, 80);
+      var mdA = (global.__modo ? global.__modo(req) : { esMaestra: true, iglesia: null });
       var regsA = global.__leerInstructores ? global.__leerInstructores() : {};
       var regA = regsA[nomA.toLowerCase()];
-      if (regA && regA.iglesia && regA.iglesia !== "TODAS") {
-        var iglC = it.iglesia || "CEN";
-        if (iglC !== regA.iglesia) { res.status(403).json({ ok: false, error: "Ese contacto pertenece a la iglesia " + iglC + " — no podés asignarlo desde " + regA.iglesia }); return; }
+      var iglCaller = mdA.esMaestra ? (regA && regA.iglesia ? regA.iglesia : null) : mdA.iglesia;
+      if (iglCaller && iglCaller !== "TODAS") {
+        var iglC2 = it.iglesia || "CEN";
+        if (iglC2 !== iglCaller) { res.status(403).json({ ok: false, error: "Ese contacto pertenece a la iglesia " + iglC2 }); return; }
       }
       it.instructor = nomA;
     }
@@ -1121,7 +1123,7 @@ server.listen(PORT, "0.0.0.0", () => {
   var FILE_C = path2.join(__dirname, "data", "codigo-cambio.json");
   function leerR(){ try { var a = JSON.parse(fs2.readFileSync(FILE_R, "utf8")); if (a && typeof a === "object") return a; } catch(e){} return {}; }
   function guardarR(a){ try { fs2.mkdirSync(path2.dirname(FILE_R), { recursive: true }); fs2.writeFileSync(FILE_R, JSON.stringify(a, null, 2)); } catch(e){} }
-  function leerC(){ try { var a = JSON.parse(fs2.readFileSync(FILE_C, "utf8")); if (a && a.codigo) return a; } catch(e){} return null; }
+  function leerC(){ try { var a = JSON.parse(fs2.readFileSync(FILE_C, "utf8")); if (a && a.codigo) return a; } catch(e){} return { codigo: "PAZ2026", porDefecto: true }; }
   global.__leerInstructores = leerR;
   function claveOk(req){ var K = String(process.env.INSTRUCTOR_KEY || ""); return !!K && String(req.headers["x-instructor-key"] || "") === K; }
   function codigoValido(c){ var r = leerC(); return !!(r && r.codigo && String(c || "") === String(r.codigo)); }
@@ -1157,10 +1159,74 @@ server.listen(PORT, "0.0.0.0", () => {
       if (!leerC()) { res.status(403).json({ ok: false, necesitaCodigo: true, error: "Primero definí el codigo de cambio (coordinador)" }); return; }
       if (!codigoValido(b.codigo)) { res.status(403).json({ ok: false, necesitaCodigo: true, error: "Codigo incorrecto" }); return; }
     }
-    regs[nom.toLowerCase()] = { nombre: nom, iglesia: igl, fecha: new Date().toISOString() };
+    var regN = { nombre: nom, iglesia: igl, fecha: new Date().toISOString() };
+    {
+      var crR = require("crypto");
+      var __ck = (b.clave && String(b.clave).length >= 6) ? String(b.clave) : "FDJESUS2026";
+      var saltR = crR.randomBytes(16).toString("hex");
+      regN.salt = saltR;
+      regN.hash = crR.createHash("sha256").update(saltR + ":" + __ck).digest("hex");
+    }
+    regs[nom.toLowerCase()] = regN;
     guardarR(regs);
     console.log("[INSTRUCTOR REGISTRADO] " + nom + " -> " + igl);
     res.json({ ok: true });
   });
 })();
 // ===== FIN CANDADO-V28 =====
+
+
+// ===== CLAVES-V29: clave personal por instructor (maestra = coordinador) =====
+(function(){
+  var cr = require("crypto");
+  global.__accesoOk = function(req){
+    var K = String(process.env.INSTRUCTOR_KEY || "");
+    var h = String(req.headers["x-instructor-key"] || "");
+    if (!K || !h) return false;
+    if (h === K) return true;
+    var n = String(req.headers["x-instructor-nombre"] || "").trim().toLowerCase();
+    if (!n) return false;
+    var regs = global.__leerInstructores ? global.__leerInstructores() : {};
+    var r = regs[n];
+    if (!r) return false;
+    if (!r.salt || !r.hash) return h === "FDJESUS2026";
+    return cr.createHash("sha256").update(String(r.salt) + ":" + h).digest("hex") === r.hash;
+  };
+  global.__modo = function(req){
+    var K = String(process.env.INSTRUCTOR_KEY || "");
+    var h = String(req.headers["x-instructor-key"] || "");
+    var n = String(req.headers["x-instructor-nombre"] || "").trim().toLowerCase();
+    var regs = global.__leerInstructores ? global.__leerInstructores() : {};
+    var r = regs[n] || null;
+    return { esMaestra: !!K && h === K, nombre: n, iglesia: r && r.iglesia ? r.iglesia : null };
+  };
+  var FILE_R = require("path").join(__dirname, "data", "instructores.json");
+  function leerR(){ try { var a = JSON.parse(require("fs").readFileSync(FILE_R, "utf8")); if (a && typeof a === "object") return a; } catch(e){} return {}; }
+  function guardarR(a){ try { require("fs").mkdirSync(require("path").dirname(FILE_R), { recursive: true }); require("fs").writeFileSync(FILE_R, JSON.stringify(a, null, 2)); } catch(e){} }
+  app.get("/api/fe-de-jesus/mi-estado", function(req, res){
+    var K = String(process.env.INSTRUCTOR_KEY || "");
+    var h = String(req.headers["x-instructor-key"] || "");
+    var n = String(req.headers["x-instructor-nombre"] || "").trim().toLowerCase();
+    var r = n ? (leerR()[n] || null) : null;
+    res.json({ ok: true, esMaestra: !!K && !!h && h === K, registrado: !!r, tieneClave: !!r, iglesia: r ? r.iglesia : null });
+  });
+  app.post("/api/fe-de-jesus/instructor-clave", express.json(), function(req, res){
+    var b = req.body || {};
+    var nom = String(b.nombre || "").trim().toLowerCase().slice(0, 80);
+    var K = String(process.env.INSTRUCTOR_KEY || "");
+    var act = String(b.claveActual || "");
+    var nue = String(b.claveNueva || "");
+    if (nue.length < 6) { res.status(400).json({ ok: false, error: "La nueva clave debe tener al menos 6 caracteres" }); return; }
+    var regs = leerR();
+    var r = regs[nom];
+    if (!r) { res.status(404).json({ ok: false, error: "Instructor no registrado" }); return; }
+    var okAct = (!!K && act === K) || !!(r.salt && r.hash && cr.createHash("sha256").update(r.salt + ":" + act).digest("hex") === r.hash);
+    if (!okAct) { res.status(403).json({ ok: false, error: "La clave actual es incorrecta" }); return; }
+    r.salt = cr.randomBytes(16).toString("hex");
+    r.hash = cr.createHash("sha256").update(r.salt + ":" + nue).digest("hex");
+    guardarR(regs);
+    console.log("[CLAVE PERSONAL] " + nom + " actualizada");
+    res.json({ ok: true });
+  });
+})();
+// ===== FIN CLAVES-V29 =====
