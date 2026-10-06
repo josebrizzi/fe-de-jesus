@@ -1566,7 +1566,7 @@ h3 { font-size: 1.25em !important; }
 </div>
 
 
-<button class="btn-alumno" id="btnAlumno" type="button" title="Cambiar de alumno">
+<button class="btn-alumno" id="btnAlumno" type="button" title="Cambiar de alumno" style="display:none" aria-hidden="true">
   <span>👤</span>
   <span class="nombre-txt" id="btnAlumnoNombre">—</span>
 </button>
@@ -2372,5 +2372,35 @@ h3 { font-size: 1.25em !important; }
 <!-- FIN PDF-LIBRE-V6 -->
 
 <!-- SALIR-QUITADO-V10 -->
+<!-- PILL-OCULTA-V11: no mostrar la pastilla del nombre del alumno -->
+<script>
+(function(){
+  try{
+    function norm(s){ return String(s||"").replace(/\s+/g," ").trim(); }
+    function limpiar(){
+      var nom = norm(localStorage.getItem("fe-nombre-alumno")).toLowerCase();
+      var cand = document.querySelectorAll("header span, header div, header a, header button, span, div");
+      for (var i=0;i<cand.length;i++){
+        var el = cand[i];
+        var t = norm(el.textContent).toLowerCase();
+        if (!t || t.length > 50) continue;
+        var esPill = (t.indexOf("👤") === 0) || (nom !== "" && t === nom);
+        if (!esPill) continue;
+        var r = el.getBoundingClientRect();
+        if (r.top > 140) continue;               // solo cabecera
+        if (el.querySelector && el.querySelector("button,input,select,textarea")) continue;
+        el.style.display = "none";
+      }
+    }
+    limpiar();
+    document.addEventListener("DOMContentLoaded", limpiar);
+    setTimeout(limpiar, 800);
+    setInterval(limpiar, 2000);
+  }catch(e){}
+})();
+</script>
+<!-- FIN PILL-OCULTA-V11 -->
+
+<!-- BTN-ALUMNO-OCULTO-V12 -->
 </body>
 </html>
