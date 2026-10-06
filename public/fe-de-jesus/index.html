@@ -2321,25 +2321,8 @@ h3 { font-size: 1.25em !important; }
     setTimeout(fijarNombre, 1000);
     setTimeout(fijarNombre, 3000);
 
-    // 4) Boton salir / cambiar de alumno (limpia el dispositivo)
-    var b = document.createElement("button");
-    b.textContent = "🚪 Salir / cambiar de alumno";
-    b.style.cssText = "position:fixed;left:12px;bottom:44px;z-index:99997;background:#fff;color:#1a3a6b;border:1.5px solid #1a3a6b;border-radius:999px;padding:8px 14px;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer";
-    b.addEventListener("click", function(){
-      if (!confirm("Esto borra de ESTE dispositivo el nombre, la sesion y las respuestas guardadas del alumno. Su contacto sigue en la lista del instructor. ¿Continuar?")) return;
-      try {
-        var ks = [];
-        for (var i = 0; i < localStorage.length; i++) {
-          var k = localStorage.key(i);
-          if (/^fe-(respuestas|pdf-ok|libre|vista|reveladas)-/.test(k) || k === "fe-cid" || k === "fe-sesion" || k === "fe-nombre-alumno" || k === "fe-alu-id") ks.push(k);
-        }
-        ks.forEach(function(k){ localStorage.removeItem(k); });
-        sessionStorage.removeItem("fe-alu-recargado");
-      } catch(e){}
-      location.href = location.pathname;
-    });
-    function poner(){ if (document.body) document.body.appendChild(b); else setTimeout(poner, 500); }
-    poner();
+// boton salir/cambiar retirado
+  
   }catch(e){}
 })();
 </script>
@@ -2388,5 +2371,6 @@ h3 { font-size: 1.25em !important; }
 </script>
 <!-- FIN PDF-LIBRE-V6 -->
 
+<!-- SALIR-QUITADO-V10 -->
 </body>
 </html>
