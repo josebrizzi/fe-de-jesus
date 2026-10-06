@@ -1328,12 +1328,14 @@ h3 { font-size: 1.25em !important; }
 
 
 <!-- CLAVES-V29 -->
-<!-- INTERESADOS-FOLLETO-ADMIN CANDADO-V31 -->
+
+
+<!-- INTERESADOS-FOLLETO-ADMIN SOLO-CENTRO-V35 -->
 <style>
 #int-flotante{position:fixed;right:14px;bottom:78px;z-index:99998;background:#1a3a6b;color:#fff;border:none;border-radius:999px;padding:12px 18px;font-size:16px;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer}
 #int-panel{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:none;align-items:center;justify-content:center;padding:14px}
 #int-panel.abierto{display:flex}
-.int-caja{background:#fff;border-radius:12px;max-width:680px;width:100%;max-height:88vh;overflow:auto;padding:16px}
+.int-caja{background:#fff;border-radius:12px;max-width:660px;width:100%;max-height:88vh;overflow:auto;padding:16px}
 .int-tabs{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}
 .int-tabs button{border:1.5px solid #c9d4e3;background:#f6f9fd;border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer}
 .int-tabs button.activo{background:#1a3a6b;color:#fff;border-color:#1a3a6b}
@@ -1344,37 +1346,29 @@ h3 { font-size: 1.25em !important; }
 .int-contactado{background:#d9f2dd;color:#1d6a2e}
 .int-activo{background:#ccf3e4;color:#0b6b4f}
 .int-asignado{background:#dbeafe;color:#1e40af}
-.int-igl{background:#ffe9c7;color:#8a5a00}
 .int-botones button{font-size:14px;padding:6px 10px;margin:6px 6px 0 0;border:none;border-radius:8px;cursor:pointer;background:#eef2f7}
 .int-botones button.int-wa{background:#25d366;color:#fff}
-#int-milink{background:#f2f6fc;border:1.5px dashed #1a3a6b;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px}
+#int-milink{background:#f2f6fc;border:1.5px dashed #1a3a6b;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px;display:none}
 #int-milink code{word-break:break-all;font-size:13px}
 #int-milink button{border:none;background:#1a3a6b;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
-.int-cerrada{background:#e8f1ff;border:1.5px solid #1a3a6b;border-radius:10px;padding:10px 12px;font-size:14.5px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.int-cerrada button{border:none;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px;background:#eef2f7}
 #int-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#222;color:#fff;padding:12px 18px;border-radius:10px;font-size:15px;z-index:100000;display:none;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 </style>
 <button id="int-flotante">📋 Interesados <span id="int-cont">0</span></button>
 <div id="int-panel"><div class="int-caja">
   <div style="display:flex;justify-content:space-between;align-items:center">
-    <h3 style="margin:0">📋 Contactos del distrito</h3>
+    <h3 style="margin:0">📋 Interesados — IASD José C. Paz Centro</h3>
     <button id="int-cerrar" style="border:none;background:#eee;border-radius:8px;padding:6px 12px;cursor:pointer">✕</button>
   </div>
   <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap">
     <button id="int-refrescar" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">🔄 Actualizar</button>
     <button id="int-copiar-todo" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">📋 Copiar todo</button>
-    <button id="int-clave" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7">🔑 Cambiar clave</button>
-    <button id="int-miclav" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7" title="Define o cambia TU clave personal">🔑 Mi clave</button>
-    <button id="int-def-cod" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7" title="Solo coordinador (clave maestra): define el código de cambio">🔐 Código de cambio</button>
-    <button id="int-add-igl" style="border:none;border-radius:8px;padding:8px 12px;cursor:pointer;background:#eef2f7" title="Solo coordinador">➕ Iglesia</button>
   </div>
-  <div id="int-zona-igl"></div>
   <div class="int-tabs">
     <button id="tab-sin">📥 Interesados</button>
     <button id="tab-mios">👥 Mis alumnos</button>
     <button id="tab-todos">🌐 Todos</button>
   </div>
-  <div id="int-milink" style="display:none">
+  <div id="int-milink">
     🔗 <b>Tu enlace de instructor</b>:<br>
     <code id="int-link-txt"></code>
     <button id="int-link-copy">Copiar</button>
@@ -1385,124 +1379,32 @@ h3 { font-size: 1.25em !important; }
 <div id="int-toast"></div>
 <script>
 (function(){
-  var IG = { CEN: "José C. Paz Centro", SUR: "Sur", FRI: "Frino", SBR: "Santa Brígida", SFAM: "Sagrada Familia" };
-  var CFG = { iglesia: "Iglesia Adventista del Séptimo Día", link: "https://fe-de-jesus.onrender.com/fe-de-jesus/" };
+  var CFG = { iglesia: "IASD José C. Paz Centro", link: "https://fe-de-jesus.onrender.com/fe-de-jesus/" };
   var BASE = location.pathname.indexOf("/biblia") === 0 ? "/biblia" : "";
   var API = BASE + "/api/fe-de-jesus/interesados";
   var APIA = BASE + "/api/fe-de-jesus/interesados-accion";
-  var APII = BASE + "/api/fe-de-jesus/iglesias-accion";
-  var APIR = BASE + "/api/fe-de-jesus/instructor-registrar";
-  var APIC = BASE + "/api/fe-de-jesus/codigo-cambio";
-  var APIK = BASE + "/api/fe-de-jesus/instructor-clave";
   var vista = "sin";
-  var codVerificado = "";
   var vistos = {};
   try { vistos = JSON.parse(localStorage.getItem("fe-int-vistos") || "{}"); } catch(e) { vistos = {}; }
   function guardarVistos(){ try { localStorage.setItem("fe-int-vistos", JSON.stringify(vistos)); } catch(e){} }
   function $(id){ return document.getElementById(id); }
   function nombre(){ return localStorage.getItem("fe-nombre-instructor") || ""; }
-  function miIgl(){ return localStorage.getItem("fe-iglesia-instructor") || ""; }
-  function iglDe(x){ return x.iglesia || "CEN"; }
-  function mismaIgl(x){ var m = miIgl(); return m === "TODAS" || !m || iglDe(x) === m; }
-  function clave(){ var c = localStorage.getItem("fe-clave-instructor"); if (!c) { c = prompt("Clave (tu personal — FDJESUS2026 si no la cambiaste — o la maestra del coordinador):") || ""; if (c) localStorage.setItem("fe-clave-instructor", c); } return c; }
+  function clave(){ var c = localStorage.getItem("fe-clave-instructor"); if (!c) { c = prompt("Clave (FDJESUS2026, o la maestra del coordinador):") || ""; if (c) localStorage.setItem("fe-clave-instructor", c); } return c; }
   function cabeceras(){ return { "x-instructor-key": clave(), "x-instructor-nombre": nombre() }; }
   function sanitSala(n){ var s = String(n || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12); return s || "GENERAL"; }
   function linkBase(nom){
-    var pre = (miIgl() && miIgl() !== "TODAS") ? sanitSala(miIgl()) + "-" : "";
-    var sala = pre + sanitSala(nom);
     var base = CFG.link, sep = "=";
     try {
       var inputs = Array.prototype.slice.call(document.querySelectorAll("input"));
       var inp = inputs.filter(function(i){ return /\?sala/i.test(i.value || ""); })[0];
       if (inp) { var v = inp.value, qi = v.indexOf("?"); if (qi > 0) { base = v.slice(0, qi); var m = v.slice(qi + 1).match(/sala([=-])/); if (m) sep = m[1]; } }
     } catch(e){}
-    return base + "?sala" + sep + sala;
+    return base + "?sala" + sep + sanitSala(nom);
   }
   function linkDe(it){ var l = linkBase(it.instructor || nombre() || ""); return (it && it.id) ? l + "&alu=" + it.id : l; }
   var listaActual = [];
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   function toast(m){ var t = $("int-toast"); t.textContent = m; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(function(){ t.style.display = "none"; }, 6000); t.onclick = function(){ t.style.display = "none"; abrir(); }; }
-  function pedirCod(txt){ var nm=nombre(); var p=nm ? "tu código personal (ej: BERNA027) o el del coordinador" : "el código de autorización del coordinador"; return prompt(txt || ("Ingresá " + p + ":")) || ""; }
-  function registrar(igl, cb){
-    var body = { nombre: nombre(), iglesia: igl };
-    if (codVerificado) body.codigo = codVerificado;
-    fetch(APIR, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify(body) })
-    .then(function(r){ return r.json().then(function(d){ return { s: r.status, d: d }; }); })
-    .then(function(x){
-      if (x.s === 200 && x.d && x.d.ok) { cb(true, null); return; }
-      if (x.d && x.d.necesitaCodigo) {
-        var cod = pedirCod();
-        if (!cod) { cb(false, "Necesitás el código del coordinador"); return; }
-        fetch(APIR, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify({ nombre: nombre(), iglesia: igl, codigo: cod }) })
-        .then(function(r2){ return r2.json(); })
-        .then(function(d2){ if (d2 && d2.ok) { codVerificado = cod; cb(true, null); } else cb(false, (d2 && d2.error) || "No se pudo registrar"); })
-        .catch(function(){ cb(false, "Error de conexión"); });
-        return;
-      }
-      cb(false, (x.d && x.d.error) || "No se pudo registrar");
-    })
-    .catch(function(){ cb(false, "Error de conexión"); });
-  }
-  function pintarZonaIglesia(){
-    var z = $("int-zona-igl");
-    var m = miIgl();
-    if (m) {
-      var nom = IG[m] || m;
-      z.innerHTML = '<div class="int-cerrada"><span>🏫 <b>Tu iglesia: ' + esc(nom) + '</b> 🔒 <span style="color:#678;font-size:13px">(registrada — para cambiar, código del coordinador)</span></span>'
-        + '<span><button id="int-cambiar">Cambiar (requiere código)</button></span></div>';
-      $("int-cambiar").addEventListener("click", function(){
-        var cod = pedirCod();
-        if (!cod) return;
-        fetch(APIC, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify({ accion: "verificar", codigo: cod }) })
-        .then(function(r){ return r.json(); })
-        .then(function(d){
-          if (d && d.ok && d.valido) {
-            codVerificado = cod;
-            localStorage.removeItem("fe-iglesia-instructor");
-            toast("Código aceptado — elegí tu nueva iglesia");
-            pintarZonaIglesia();
-          } else {
-            toast(d && d.definido === false ? "Sin código definido: pedile al coordinador que lo habilite" : "Código incorrecto");
-          }
-        }).catch(function(){ toast("Error de conexión"); });
-      });
-    } else {
-      var ops = "";
-      Object.keys(IG).forEach(function(k){ ops += '<option value="' + k + '">' + esc(IG[k]) + '</option>'; });
-      z.innerHTML = '<div class="int-cerrada" style="background:#fff8e6;border-color:#C99327"><span>🏫 <b>Elegí tu iglesia (una sola vez — queda bloqueada):</b></span>'
-        + '<span style="display:flex;gap:8px;align-items:center"><select id="int-igl"><option value="">— elegir —</option><option value="TODAS" title="Solo coordinador, requiere código">🌐 Distrito (todas) 🔐</option>' + ops + '</select></span></div>';
-      $("int-igl").addEventListener("change", function(){
-        var v = $("int-igl").value;
-        if (!v) return;
-        if (!nombre()) {
-          var n = prompt("Tu nombre de instructor (siempre el mismo):");
-          if (!n || !n.trim()) { $("int-igl").value = ""; return; }
-          localStorage.setItem("fe-nombre-instructor", n.trim());
-        }
-        registrar(v, function(ok, err){
-          if (ok) {
-            localStorage.setItem("fe-iglesia-instructor", v);
-            try { sessionStorage.removeItem("fe-sala-auto-recargo"); } catch(e){}
-            location.reload();
-          } else {
-            alert(err || "No se pudo registrar");
-            $("int-igl").value = "";
-          }
-        });
-      });
-    }
-  }
-  function cargarIglesias(){
-    fetch(BASE + "/api/fe-de-jesus/iglesias").then(function(r){ return r.json(); }).then(function(d){
-      if (!d || !d.ok || !d.lista) return;
-      IG = {};
-      d.lista.forEach(function(x){ IG[x.codigo] = x.nombre; });
-      pintarZonaIglesia();
-      try { var lg = document.getElementById("logo-igl-adm"); if (lg) lg.style.display = (miIgl() === "CEN" || miIgl() === "") ? "" : "none"; } catch(e){}
-      ponerTabs();
-      if ($("int-panel").classList.contains("abierto")) render();
-    }).catch(function(){});
-  }
   function pedir(primeravez){
     fetch(API, { headers: cabeceras() }).then(function(r){
       if (r.status === 401) { localStorage.removeItem("fe-clave-instructor"); throw new Error("clave incorrecta"); }
@@ -1511,24 +1413,22 @@ h3 { font-size: 1.25em !important; }
       if (!d || !d.ok) return;
       listaActual = d.lista || [];
       listaActual.forEach(function(it){
-        if (!vistos[it.id]) { vistos[it.id] = 1; if (!primeravez && !it.instructor && mismaIgl(it)) toast("📋 Nuevo interesado (" + (IG[iglDe(it)] || iglDe(it)) + "): " + it.nombre); }
+        if (!vistos[it.id]) { vistos[it.id] = 1; if (!primeravez && !it.instructor) toast("📋 Nuevo interesado: " + it.nombre); }
       });
       guardarVistos();
-      var sin = listaActual.filter(function(x){ return !x.instructor && mismaIgl(x); }).length;
-      $("int-cont").textContent = sin;
+      $("int-cont").textContent = listaActual.filter(function(x){ return !x.instructor; }).length;
       ponerTabs();
       if ($("int-panel").classList.contains("abierto")) render();
     }).catch(function(e){ if (primeravez) $("int-lista").textContent = "Error: " + e.message + " — toca Actualizar para reintentar."; });
   }
   function mismoInstructor(x, mio){ return !!(mio && x.instructor && String(x.instructor).toLowerCase() === String(mio).toLowerCase()); }
   function ponerTabs(){
-    var mio = nombre(), m = miIgl();
-    var sin = listaActual.filter(function(x){ return !x.instructor && mismaIgl(x); }).length;
-    var mios = mio ? listaActual.filter(function(x){ return mismoInstructor(x, mio) && mismaIgl(x); }).length : 0;
-    var tod = listaActual.filter(function(x){ return mismaIgl(x); }).length;
+    var mio = nombre();
+    var sin = listaActual.filter(function(x){ return !x.instructor; }).length;
+    var mios = mio ? listaActual.filter(function(x){ return mismoInstructor(x, mio); }).length : 0;
     $("tab-sin").textContent = "📥 Interesados (" + sin + ")";
     $("tab-mios").textContent = "👥 Mis alumnos (" + mios + ")";
-    $("tab-todos").textContent = (m === "TODAS" ? "🌐 Distrito" : "🌐 Mi iglesia") + " (" + tod + ")";
+    $("tab-todos").textContent = "🌐 Todos (" + listaActual.length + ")";
     $("tab-sin").className = vista === "sin" ? "activo" : "";
     $("tab-mios").className = vista === "mios" ? "activo" : "";
     $("tab-todos").className = vista === "todos" ? "activo" : "";
@@ -1540,14 +1440,14 @@ h3 { font-size: 1.25em !important; }
     if (vista === "mios" && nombre()) $("int-link-txt").textContent = linkBase(nombre());
     var mio = nombre();
     var mostrar = listaActual.filter(function(x){
-      if (vista === "sin") return !x.instructor && mismaIgl(x);
-      if (vista === "mios") return mismoInstructor(x, mio) && mismaIgl(x);
-      return mismaIgl(x);
+      if (vista === "sin") return !x.instructor;
+      if (vista === "mios") return mismoInstructor(x, mio);
+      return true;
     });
     if (!mostrar.length) {
       L.innerHTML = "<p>" + (vista === "sin"
-        ? (!miIgl() ? "Primero elegí tu iglesia arriba 🔒." : "No hay interesados sin asignar" + (miIgl() === "TODAS" ? " en el distrito" : " en " + (IG[miIgl()] || "tu iglesia")) + ".")
-        : (vista === "mios" ? "Todavía no tomaste ningún contacto. Andá a 📥 Interesados y tocá 🎯 Asignarme." : "No hay contactos en esta vista.")) + "</p>";
+        ? "No hay interesados sin asignar. Cuando alguien escanee el QR y deje su contacto, aparece acá."
+        : (vista === "mios" ? "Todavía no tomaste ningún contacto. Andá a 📥 Interesados y tocá 🎯 Asignarme." : "No hay contactos.")) + "</p>";
       return;
     }
     var h = "";
@@ -1560,7 +1460,6 @@ h3 { font-size: 1.25em !important; }
         + '<span class="int-nombre">' + esc(it.nombre) + '</span>'
         + '<span class="int-badge ' + estCls + '">' + estTxt + '</span>'
         + (it.instructor ? '<span class="int-badge int-asignado">👤 ' + esc(it.instructor) + '</span>' : "")
-        + '<span class="int-badge int-igl">🏬 ' + esc(IG[iglDe(it)] || iglDe(it)) + '</span>'
         + '<div style="color:#555;font-size:13px">' + esc(it.contacto) + " · " + new Date(it.fecha).toLocaleString("es-AR") + '</div>'
         + (it.mensaje ? '<div style="font-size:13px;margin-top:4px">“' + esc(it.mensaje) + '”</div>' : "")
         + (it.alumnoNombre && it.alumnoNombre !== it.nombre ? '<div style="font-size:13px;color:#0b6b4f">🎓 entró al estudio como: ' + esc(it.alumnoNombre) + '</div>' : "")
@@ -1587,45 +1486,12 @@ h3 { font-size: 1.25em !important; }
   $("int-flotante").addEventListener("click", abrir);
   $("int-cerrar").addEventListener("click", function(){ $("int-panel").classList.remove("abierto"); });
   $("int-panel").addEventListener("click", function(e){ if (e.target === $("int-panel")) $("int-panel").classList.remove("abierto"); });
-  $("int-refrescar").addEventListener("click", function(){ pedir(false); cargarIglesias(); });
+  $("int-refrescar").addEventListener("click", function(){ pedir(false); });
   $("tab-sin").addEventListener("click", function(){ vista = "sin"; render(); });
   $("tab-mios").addEventListener("click", function(){ vista = "mios"; render(); });
   $("tab-todos").addEventListener("click", function(){ vista = "todos"; render(); });
-  $("int-clave").addEventListener("click", function(){ var c = prompt("Clave (tu personal — FDJESUS2026 si no la cambiaste — o la maestra del coordinador):"); if (c != null) { localStorage.setItem("fe-clave-instructor", c); pedir(false); } });
-  $("int-miclav").addEventListener("click", function(){
-    var a = prompt("Tu clave ACTUAL (FDJESUS2026 si nunca la cambiaste):") || "";
-    var n1 = prompt("Nueva clave personal (mín. 6):") || "";
-    if (n1.length < 6) { alert("Mínimo 6 caracteres"); return; }
-    var n3 = prompt("Repetir la nueva clave:") || "";
-    if (n1 !== n3) { alert("No coinciden"); return; }
-    fetch(APIK, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify({ nombre: nombre(), claveActual: a, claveNueva: n1 }) })
-    .then(function(r){ return r.json(); })
-    .then(function(d){ if (d && d.ok) { localStorage.setItem("fe-clave-instructor", n1); toast("✓ Clave personal actualizada"); } else alert((d && d.error) || "No se pudo cambiar"); })
-    .catch(function(){ alert("Error de conexión"); });
-  });
-  $("int-def-cod").addEventListener("click", function(){
-    var c = prompt("Definí el CÓDIGO DE AUTORIZACIÓN (solo coordinador, mín. 4 caracteres):\nCon este código se puede cambiar de iglesia o usar el modo Distrito:");
-    if (!c) return;
-    fetch(APIC, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify({ accion: "definir", codigo: c }) })
-    .then(function(r){ return r.json(); })
-    .then(function(d){ if (d && d.ok) toast("🔐 Código definido. Comunicalo solo a quien autorices."); else alert((d && d.error) || "No se pudo definir (¿usaste la clave maestra?)"); })
-    .catch(function(){ alert("Error de conexión"); });
-  });
-  $("int-add-igl").addEventListener("click", function(){
-    var nom = prompt("Nombre de la nueva iglesia (ej: IASD Norte):");
-    if (!nom || !nom.trim()) return;
-    var cod = prompt("Código corto (2-6 letras, ej: NOR):", nom.trim().substring(0, 3).toUpperCase().replace(/[^A-Z0-9]/g, ""));
-    if (!cod) return;
-    cod = cod.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
-    if (cod.length < 2) { alert("Código inválido (mínimo 2 letras)"); return; }
-    var wha = prompt("WhatsApp de contacto de esa iglesia (con país, opcional):", "5491128945261") || "";
-    fetch(APII, { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()), body: JSON.stringify({ accion: "agregar", codigo: cod, nombre: nom.trim(), whatsapp: wha }) })
-    .then(function(r){ return r.json(); })
-    .then(function(d){ if (d && d.ok) { toast("🏫 Iglesia agregada: " + nom.trim()); cargarIglesias(); } else alert((d && d.error) || "No se pudo agregar"); })
-    .catch(function(){ alert("Error de conexión"); });
-  });
   $("int-copiar-todo").addEventListener("click", function(){
-    var t = listaActual.map(function(i){ return i.nombre + " | " + i.contacto + " | " + (i.estado || "") + (i.instructor ? " | instructor: " + i.instructor : "") + " | igl: " + iglDe(i) + " | " + i.fecha + (i.mensaje ? " | " + i.mensaje : ""); }).join("\n");
+    var t = listaActual.map(function(i){ return i.nombre + " | " + i.contacto + " | " + (i.estado || "") + (i.instructor ? " | instructor: " + i.instructor : "") + " | " + i.fecha + (i.mensaje ? " | " + i.mensaje : ""); }).join("\n");
     copiar(t); toast("Lista copiada (" + listaActual.length + " contactos)");
   });
   $("int-link-copy").addEventListener("click", function(){ copiar(linkBase(nombre())); toast("Enlace copiado"); });
@@ -1635,23 +1501,19 @@ h3 { font-size: 1.25em !important; }
     var a = b.getAttribute("data-a");
     if (a === "wa") {
       var quien = it.instructor || nombre() || "";
-      var igNom = (miIgl() && IG[miIgl()]) ? IG[miIgl()] : (IG[iglDe(it)] || CFG.iglesia);
-      var soy = quien ? "Soy " + quien + ", de la iglesia " + igNom : "Soy de la iglesia " + igNom;
+      var soy = quien ? "Soy " + quien + ", de la iglesia " + CFG.iglesia : "Soy de la iglesia " + CFG.iglesia;
       var msg = "¡Hola " + it.nombre + "! " + soy + ". ¡Gracias por tu interés en el estudio bíblico Fe de Jesús! Te dejo el enlace para empezar: " + linkDe(it) + " — cuando entres, ya te reconoce con tu nombre. ¡Dios te bendiga!";
-      var n2 = prompt("Número de WhatsApp (con código de país):", String(it.contacto || "").replace(/[^0-9]/g, ""));
+      var n2 = prompt("Número de WhatsApp (con código de país, ej: 5491128945261):", String(it.contacto || "").replace(/[^0-9]/g, ""));
       if (n2 === null) return;
       window.open("https://wa.me/" + n2.replace(/[^0-9]/g, "") + "?text=" + encodeURIComponent(msg), "_blank");
     } else if (a === "asignar") {
       var nom = prompt("Tu nombre de instructor (siempre el mismo):", nombre() || "");
       if (nom && nom.trim()) {
         localStorage.setItem("fe-nombre-instructor", nom.trim());
-        var p = { id: it.id, accion: "asignar", instructor: nom.trim() };
-        if (miIgl() && miIgl() !== "TODAS") p.iglesia = miIgl();
-        enviar(p, function(){
+        enviar({ id: it.id, accion: "asignar", instructor: nom.trim() }, function(){
           vista = "mios"; toast("👥 " + it.nombre + " ahora es tu alumno");
           try {
-            var pre = (miIgl() && miIgl() !== "TODAS") ? sanitSala(miIgl()) + "-" : "";
-            localStorage.setItem("fe-sala", pre + sanitSala(nom.trim()));
+            localStorage.setItem("fe-sala", sanitSala(nom.trim()));
             sessionStorage.removeItem("fe-sala-auto-recargo");
           } catch(e){}
           setTimeout(function(){ location.reload(); }, 1200);
@@ -1664,7 +1526,6 @@ h3 { font-size: 1.25em !important; }
     else { enviar({ id: it.id, accion: a }); }
   });
   pedir(true);
-  cargarIglesias();
   setInterval(function(){ pedir(false); }, 25000);
 })();
 </script>

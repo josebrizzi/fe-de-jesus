@@ -1115,69 +1115,7 @@ server.listen(PORT, "0.0.0.0", () => {
 // ===== FIN IGLESIAS-DIST-V27 =====
 
 
-// ===== CANDADO-V28: registro instructor-iglesia + codigo de autorizacion =====
-(function(){
-  var fs2 = require("fs");
-  var path2 = require("path");
-  var FILE_R = path2.join(__dirname, "data", "instructores.json");
-  var FILE_C = path2.join(__dirname, "data", "codigo-cambio.json");
-  function leerR(){ try { var a = JSON.parse(fs2.readFileSync(FILE_R, "utf8")); if (a && typeof a === "object") return a; } catch(e){} return {}; }
-  function guardarR(a){ try { fs2.mkdirSync(path2.dirname(FILE_R), { recursive: true }); fs2.writeFileSync(FILE_R, JSON.stringify(a, null, 2)); } catch(e){} }
-  function leerC(){ try { var a = JSON.parse(fs2.readFileSync(FILE_C, "utf8")); if (a && a.codigo) return a; } catch(e){} return { codigo: "PAZ2026", fijo: true }; }
-  global.__leerInstructores = leerR;
-  function claveOk(req){ var K = String(process.env.INSTRUCTOR_KEY || ""); return !!K && String(req.headers["x-instructor-key"] || "") === K; }
-  function codigoValido(c){ var r = leerC(); return !!(r && r.codigo && String(c || "") === String(r.codigo)); }
-  app.post("/api/fe-de-jesus/codigo-cambio", express.json(), function(req, res){
-    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
-    var b = req.body || {};
-    if (b.accion === "definir") {
-      var c = String(b.codigo || "").trim();
-      if (c.length < 4) { res.status(400).json({ ok: false, error: "El codigo debe tener al menos 4 caracteres" }); return; }
-      fs2.mkdirSync(path2.dirname(FILE_C), { recursive: true });
-      fs2.writeFileSync(FILE_C, JSON.stringify({ codigo: c, fecha: new Date().toISOString() }, null, 2));
-      res.json({ ok: true, definido: true }); return;
-    }
-    if (b.accion === "verificar") {
-      var codV = String(b.codigo || "").toUpperCase();
-      var okV = codigoValido(codV);
-      if (!okV) { try { var mdV = (global.__modo ? global.__modo(req) : { nombre: "" }); var espV = (global.__codigoDe ? global.__codigoDe(mdV.nombre) : null); if (espV && espV === codV) okV = true; } catch(e){} }
-      res.json({ ok: true, valido: okV, definido: true }); return;
-    }
-    if (b.accion === "estado") { res.json({ ok: true, definido: !!leerC() }); return; }
-    res.status(400).json({ ok: false, error: "Accion desconocida" });
-  });
-  app.post("/api/fe-de-jesus/instructor-registrar", express.json(), function(req, res){
-    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Clave incorrecta" }); return; }
-    var b = req.body || {};
-    var nom = String(b.nombre || "").trim().slice(0, 80);
-    var igl = String(b.iglesia || "").toUpperCase().trim();
-    if (!nom || !igl) { res.status(400).json({ ok: false, error: "Faltan datos" }); return; }
-    var regs = leerR();
-    var prev = regs[nom.toLowerCase()];
-    if (prev && prev.iglesia !== igl) {
-      var okR = codigoValido(b.codigo);
-      if (!okR && global.__codigoDe) { var espR = global.__codigoDe(nom); if (espR && espR === String(b.codigo || "").toUpperCase()) okR = true; }
-      if (!okR) { res.status(403).json({ ok: false, necesitaCodigo: true, error: "Cambio de iglesia requiere codigo de autorizacion" }); return; }
-    }
-    if (igl === "TODAS" && !(prev && prev.iglesia === "TODAS")) {
-      if (!leerC()) { res.status(403).json({ ok: false, necesitaCodigo: true, error: "Primero definí el codigo de cambio (coordinador)" }); return; }
-      if (!codigoValido(b.codigo)) { res.status(403).json({ ok: false, necesitaCodigo: true, error: "Codigo incorrecto" }); return; }
-    }
-    var regN = { nombre: nom, iglesia: igl, fecha: new Date().toISOString() };
-    {
-      var crR = require("crypto");
-      var __ck = (b.clave && String(b.clave).length >= 6) ? String(b.clave) : "FDJESUS2026";
-      var saltR = crR.randomBytes(16).toString("hex");
-      regN.salt = saltR;
-      regN.hash = crR.createHash("sha256").update(saltR + ":" + __ck).digest("hex");
-    }
-    regs[nom.toLowerCase()] = regN;
-    guardarR(regs);
-    console.log("[INSTRUCTOR REGISTRADO] " + nom + " -> " + igl);
-    res.json({ ok: true });
-  });
-})();
-// ===== FIN CANDADO-V28 =====
+
 
 
 // ===== CLAVES-V29: clave personal por instructor (maestra = coordinador) =====
@@ -1188,6 +1126,7 @@ server.listen(PORT, "0.0.0.0", () => {
     var h = String(req.headers["x-instructor-key"] || "");
     if (!K || !h) return false;
     if (h === K) return true;
+    if (h === "FDJESUS2026") return true;
     var n = String(req.headers["x-instructor-nombre"] || "").trim().toLowerCase();
     if (!n) return false;
     var regs = global.__leerInstructores ? global.__leerInstructores() : {};
@@ -1236,37 +1175,28 @@ server.listen(PORT, "0.0.0.0", () => {
 // ===== FIN CLAVES-V29 =====
 
 
-// ===== CODES-INSTR-V33: codigo personal de cambio por instructor =====
+
+
+// ===== CANDADO-V34: registro simple de instructores (sin codigos) =====
 (function(){
-  var fs2 = require("fs");
-  var path2 = require("path");
-  var FILE_X = path2.join(__dirname, "data", "codigos-instructores.json");
-  var FIJOS = { "BERNA027": "BERNARDO", "MARIA027":"MARIA", "PANCHO027":"PANCHO" }; // ← EDITAR: mas codigos aca, formato "CODIGO": "NOMBRE-DE-INSTRUCTOR"
-  function leerX(){ var x = {}; for (var k in FIJOS) x[k] = FIJOS[k]; try { var a = JSON.parse(fs2.readFileSync(FILE_X, "utf8")); if (a && typeof a === "object") for (var k2 in a) x[k2] = a[k2]; } catch(e){} return x; }
-  function guardarX(a){ try { fs2.mkdirSync(path2.dirname(FILE_X), { recursive: true }); fs2.writeFileSync(FILE_X, JSON.stringify(a, null, 2)); } catch(e){} }
-  global.__codigoDe = function(nombre){ var x = leerX(); return x[String(nombre || "").toUpperCase()] || null; };
-  global.__anularCodigo = function(cod){ var x = leerX(); if (x[cod]) { delete x[cod]; guardarX(x); return true; } return false; };
-  function claveOk(req){ var K = String(process.env.INSTRUCTOR_KEY || ""); return !!K && String(req.headers["x-instructor-key"] || "") === K; }
-  app.get("/api/fe-de-jesus/codigos-instructores", function(req, res){
-    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Solo coordinador" }); return; }
-    var x = leerX(); var l = [];
-    for (var k in x) l.push({ codigo: k, instructor: x[k] });
-    res.json({ ok: true, lista: l, fijos: Object.keys(FIJOS) });
-  });
-  app.post("/api/fe-de-jesus/codigos-instructores", express.json(), function(req, res){
-    if (!claveOk(req)) { res.status(401).json({ ok: false, error: "Solo coordinador" }); return; }
-    var b = req.body || {};
-    var cod = String(b.codigo || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12);
-    var nom = String(b.instructor || "").trim().slice(0, 80);
-    if (b.accion === "agregar") {
-      if (cod.length < 4 || !nom) { res.status(400).json({ ok: false, error: "Codigo (min 4) e instructor requeridos" }); return; }
-      var x = leerX(); x[cod] = nom.toUpperCase(); guardarX(x);
-      res.json({ ok: true }); return;
-    }
-    if (b.accion === "anular") {
-      res.json({ ok: global.__anularCodigo(cod) }); return;
-    }
-    res.status(400).json({ ok: false, error: "Accion desconocida" });
+  var fs2=require("fs"),path2=require("path");
+  var FILE_R=path2.join(__dirname,"data","instructores.json");
+  function leerR(){ try { var a=JSON.parse(fs2.readFileSync(FILE_R,"utf8")); if(a&&typeof a==="object") return a; } catch(e){} return {}; }
+  global.__leerInstructores=leerR;
+  function claveOk(rq){ var K=String(process.env.INSTRUCTOR_KEY||""); return !!K&&String(rq.headers["x-instructor-key"]||"")===K; }
+  app.post("/api/fe-de-jesus/instructor-registrar", express.json(), function(rq,res){
+    if(!claveOk(rq)){ res.status(401).json({ok:false,error:"Clave incorrecta"}); return; }
+    var b=rq.body||{};
+    var nom=String(b.nombre||"").trim().slice(0,80);
+    var igl=String(b.iglesia||"").toUpperCase().trim().slice(0,6);
+    if(!nom||!igl){ res.status(400).json({ok:false,error:"Faltan datos"}); return; }
+    var regs=leerR();
+    var prev=regs[nom.toLowerCase()];
+    if(prev&&prev.iglesia&&prev.iglesia!==igl){ console.log("[CAMBIO IGLESIA] "+nom+": "+prev.iglesia+" -> "+igl); }
+    regs[nom.toLowerCase()]={nombre:nom,iglesia:igl,fecha:new Date().toISOString()};
+    try { fs2.mkdirSync(path2.dirname(FILE_R),{recursive:true}); fs2.writeFileSync(FILE_R,JSON.stringify(regs,null,2)); } catch(e){}
+    console.log("[INSTRUCTOR REGISTRADO] "+nom+" -> "+igl);
+    res.json({ok:true});
   });
 })();
-// ===== FIN CODES-INSTR-V33 =====
+// ===== FIN CANDADO-V34 =====
