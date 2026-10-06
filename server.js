@@ -1123,7 +1123,7 @@ server.listen(PORT, "0.0.0.0", () => {
   var FILE_C = path2.join(__dirname, "data", "codigo-cambio.json");
   function leerR(){ try { var a = JSON.parse(fs2.readFileSync(FILE_R, "utf8")); if (a && typeof a === "object") return a; } catch(e){} return {}; }
   function guardarR(a){ try { fs2.mkdirSync(path2.dirname(FILE_R), { recursive: true }); fs2.writeFileSync(FILE_R, JSON.stringify(a, null, 2)); } catch(e){} }
-  function leerC(){ try { var a = JSON.parse(fs2.readFileSync(FILE_C, "utf8")); if (a && a.codigo) return a; } catch(e){} return null; }
+  function leerC(){ try { var a = JSON.parse(fs2.readFileSync(FILE_C, "utf8")); if (a && a.codigo) return a; } catch(e){} return { codigo: "PAZ2026", fijo: true }; }
   global.__leerInstructores = leerR;
   function claveOk(req){ var K = String(process.env.INSTRUCTOR_KEY || ""); return !!K && String(req.headers["x-instructor-key"] || "") === K; }
   function codigoValido(c){ var r = leerC(); return !!(r && r.codigo && String(c || "") === String(r.codigo)); }
