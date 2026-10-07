@@ -577,18 +577,7 @@ h3 { font-size: 1.25em !important; }
 
   // Código de sala: llega por el enlace (?sala=CODIGO) o se pide una vez
   function miSala() {
-    var p = new URLSearchParams(location.search).get("sala");
-    if (p) {
-      p = String(p).toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20);
-      if (p) localStorage.setItem("fe-sala", p);
-    }
-    var s = localStorage.getItem("fe-sala");
-    if (!s) {
-      var r = prompt("Código de sala (te lo da el instructor):") || "";
-      s = r.toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20) || "GENERAL";
-      localStorage.setItem("fe-sala", s);
-    }
-    return s;
+    return "GENERAL";
   }
 
   // Detectar prefijo /biblia para Tailscale
