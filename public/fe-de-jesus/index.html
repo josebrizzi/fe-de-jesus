@@ -2413,30 +2413,30 @@ h3 { font-size: 1.25em !important; }
 </script>
 <!-- FIN LOGO-POR-SALA-V27 -->
 
-<style id="pastillas-v39">
-.pill-ins{position:fixed;top:10px;right:12px;z-index:99990;background:#1a3a6b;color:#fff;border-radius:999px;padding:7px 14px;font-size:13.5px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.pill-alu{position:fixed;top:10px;right:12px;z-index:99989;background:#fff;color:#1a3a6b;border:1.5px solid #1a3a6b;border-radius:999px;padding:6px 14px;font-size:13.5px;box-shadow:0 2px 8px rgba(0,0,0,.18);margin-top:44px}
-</style>
-<div class="pill-ins" id="pi-ins">🎓 Jose Brizzi</div>
-<div class="pill-alu" id="pi-alu">👤 —</div>
+
+<!-- PASTILLA-UNIDA-V42: el nombre del alumno vive en la pastilla del estado -->
 <script>
 (function(){
   try{
-    function norm(s){ return String(s||"").trim(); }
     function poner(){
-      var a = document.getElementById("pi-alu");
-      if (!a) return;
-      var nom = norm(localStorage.getItem("fe-nombre-alumno"));
-      a.textContent = "👤 " + (nom || "Alumno");
+      var nom = String(localStorage.getItem("fe-nombre-alumno")||"").trim();
+      var els = document.querySelectorAll("*");
+      for (var i=0;i<els.length;i++){
+        var el = els[i];
+        if (el.children.length) continue;
+        var t = el.textContent||"";
+        if (t.indexOf("Conectado")===0 || t.indexOf("Conectando")===0 || t.indexOf("Desconectado")===0 || t.indexOf("Error")===0){
+          var base = t.split(" · 👤")[0];
+          if (nom && base.indexOf("Conectado")===0) el.textContent = base + " · 👤 " + nom;
+          else el.textContent = base;
+        }
+      }
     }
     poner();
     setInterval(poner, 1500);
-    // el nombre del instructor: fijo del modo Jose
-    var ins = document.getElementById("pi-ins");
-    if (ins) ins.textContent = "🎓 Jose Brizzi — Instructor";
   }catch(e){}
 })();
 </script>
-<!-- PASTILLAS-V39 -->
+<!-- FIN PASTILLA-UNIDA-V42 -->
 </body>
 </html>
