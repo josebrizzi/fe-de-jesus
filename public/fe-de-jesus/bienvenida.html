@@ -39,7 +39,7 @@
     <div class="rol">INSTRUCTOR BÍBLICO</div>
   </div>
   <div class="wrap">
-    <a class="btn-sala" href="../?sala=JOSEBRIZZI">▶ ENTRAR A LA SALA DE ESTUDIOS<small>empezá ahora — te reconoce por tu nombre</small></a>
+    <a class="btn-sala" href="index.html?sala=JOSEBRIZZI">▶ ENTRAR A LA SALA DE ESTUDIOS<small>empezá ahora — te reconoce por tu nombre</small></a>
     <p class="ayuda">¿Preferís que te contacte yo primero?</p>
     <details>
       <summary>📝 Dejame tu contacto</summary>
@@ -59,34 +59,36 @@
     </details>
     <footer>¿Consultas? <a href="https://wa.me/5491128945261">Escribime por WhatsApp</a></footer>
   </div>
+
 <script>
-(function(){
-  var s = document.getElementById("btn-sala");
-  s.href = "../?sala=" + (window.MI_SALA || "JOSEBRIZZI");
-  var f = document.getElementById("btn-env");
-  f.addEventListener("click", function(){
-    var nom = document.getElementById("c-nombre").value.trim();
-    var wa  = document.getElementById("c-wa").value.trim();
+document.addEventListener("DOMContentLoaded", function(){
+  var b = document.getElementById("btn-env");
+  if (!b) { console.log("WARN: no encuentro btn-env"); return; }
+  b.addEventListener("click", function(){
+    var nom = (document.getElementById("c-nombre")||{}).value || "";
+    var wa  = (document.getElementById("c-wa")||{}).value || "";
     var err = document.getElementById("c-err");
-    err.textContent = "";
-    if (nom.length < 2) { err.textContent = "Escribí tu nombre."; return; }
-    if (wa.length < 6)  { err.textContent = "Escribí tu WhatsApp."; return; }
-    f.disabled = true;
+    nom = nom.trim(); wa = wa.trim();
+    if (err) err.textContent = "";
+    if (nom.length < 2) { if (err) err.textContent = "Escribí tu nombre."; return; }
+    if (wa.length < 6)  { if (err) err.textContent = "Escribí tu WhatsApp."; return; }
+    b.disabled = true;
     fetch("/api/fe-de-jesus/interesados", {
-      method: "POST", headers: { "Content-Type": "application/json" },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nombre: nom, contacto: wa, mensaje: "Quiere estudiar la Biblia" })
     }).then(function(r){ return r.json(); }).then(function(d){
       if (d && d.ok) {
-        document.getElementById("v-nom").textContent = nom.split(" ")[0];
-        document.getElementById("fz").style.display = "none";
-        document.getElementById("fok").style.display = "block";
-      } else throw new Error("x");
+        var vn = document.getElementById("v-nom"); if (vn) vn.textContent = nom.split(" ")[0];
+        var fz = document.getElementById("fz"); if (fz) fz.style.display = "none";
+        var ok = document.getElementById("fok"); if (ok) ok.style.display = "block";
+      } else { throw new Error("servidor rechazo"); }
     }).catch(function(){
-      err.textContent = "Hubo un problema — probá de nuevo o escribinos al WhatsApp.";
-      f.disabled = false;
+      if (err) err.textContent = "Hubo un problema — probá de nuevo o escribinos al WhatsApp.";
+      b.disabled = false;
     });
   });
-})();
+});
 </script>
 </body>
 </html>
