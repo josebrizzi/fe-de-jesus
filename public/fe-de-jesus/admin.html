@@ -222,6 +222,10 @@ h3 { font-size: 1.25em !important; }
 
 <style id="mj-css">#int-miclav{display:none !important}</style>
 <!-- MODO-JOSE-V39: instructor unico -->
+
+<style id="sala-general-fija-v47">#sm-campo,#sm-aplicar,#sm-actual{display:none !important}</style>
+
+<style id="oculta-sala-v48">#salaInput,label[for="salaInput"]{display:none !important}/* OCULTA-SALA-V48 */</style>
 </head>
 <body>
 
@@ -693,7 +697,7 @@ h3 { font-size: 1.25em !important; }
     return String(s || "").toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 20);
   }
   function miSala() {
-    var s = localStorage.getItem("fe-sala");
+    var s = "GENERAL";
     if (!s) {
       s = Math.random().toString(36).slice(2, 6).toUpperCase();
       localStorage.setItem("fe-sala", s);
@@ -1367,7 +1371,7 @@ h3 { font-size: 1.25em !important; }
   function cabeceras(){ return { "x-instructor-key": clave(), "x-instructor-nombre": nombre() }; }
   function sanitSala(n){ var s = String(n || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12); return s || "GENERAL"; }
   function linkBase(nom){
-    var sala = localStorage.getItem("fe-sala") || "GENERAL";
+    var sala = "GENERAL";
     var base = CFG.link, sep = "=";
     try {
       var inputs = Array.prototype.slice.call(document.querySelectorAll("input"));
@@ -1512,12 +1516,16 @@ h3 { font-size: 1.25em !important; }
     function sanit(n){ var s=String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,12); return s||""; }
     var nom=localStorage.getItem("fe-nombre-instructor")||"";
     var sala=nom?sanit(nom):"";
-    if(sala && localStorage.getItem("fe-sala")!==sala){
+    if(sala && "GENERAL"!==sala){
       localStorage.setItem("fe-sala",sala);
       if(!sessionStorage.getItem("v38-r")){ sessionStorage.setItem("v38-r","1"); location.reload(); }
     }
   }catch(e){} })();
 </script>
 <!-- SALA-INSTR-V38 -->
+
+<script>try{window.miSala=function(){return "GENERAL";};}catch(e){}/* MI-SALA-GENERAL-V48 */</script>
+
+<script>(function(){try{function q(){var bs=document.querySelectorAll("button");for(var i=0;i<bs.length;i++){if((bs[i].textContent||"").trim()==="Aplicar")bs[i].style.display="none";}}q();setInterval(q,1500);}catch(e){}})();</script>
 </body>
 </html>
