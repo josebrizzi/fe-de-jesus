@@ -838,7 +838,7 @@ h3 { font-size: 1.25em !important; }
       aviso.textContent = "🔒 Privado: solo lo verá " + (nombres[v] || "el alumno") + ".";
       aviso.className = "chat-aviso privado";
     } else {
-      aviso.textContent = "Tu mensaje o audio llega a tu alumno: cada alumno tiene su propia sala.";
+      aviso.textContent = "Lo que escribas o grabes llega a todos tus alumnos de esta sala (podés elegir uno con Para:)." ;
       aviso.className = "chat-aviso";
     }
   }
@@ -1367,10 +1367,10 @@ h3 { font-size: 1.25em !important; }
       var inp = inputs.filter(function(i){ return /\?sala/i.test(i.value || ""); })[0];
       if (inp) { var v = inp.value, qi = v.indexOf("?"); if (qi > 0) { base = v.slice(0, qi); var m = v.slice(qi + 1).match(/sala([=-])/); if (m) sep = m[1]; } }
     } catch(e){}
-    return base + "?sala" + sep + nom;
+    return base + "?sala" + sep + sanitSala(nom);
   }
   function salaDe(it){ var n = sanitSala((it.nombre || "Alumno")); return n.slice(0,8) + "-" + String(it.id || "").slice(-4); }
-  function linkDe(it){ var l = linkBase(salaDe(it)); return (it && it.id) ? l + "&alu=" + it.id : l; }
+  function linkDe(it){ var l = linkBase(it.instructor || nombre() || ""); return (it && it.id) ? l + "&alu=" + it.id : l; }
   var listaActual = [];
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   function toast(m){ var t = $("int-toast"); t.textContent = m; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(function(){ t.style.display = "none"; }, 6000); t.onclick = function(){ t.style.display = "none"; abrir(); }; }
@@ -1405,7 +1405,8 @@ h3 { font-size: 1.25em !important; }
   function render(){
     ponerTabs();
     var L = $("int-lista");
-    $("int-milink").style.display = "none"; // sala individual por alumno
+    $("int-milink").style.display = (vista === "mios" && nombre()) ? "block" : "none";
+    if (vista === "mios" && nombre()) $("int-link-txt").textContent = linkBase(nombre());
     
     var mio = nombre();
     var mostrar = listaActual.filter(function(x){
@@ -1482,14 +1483,14 @@ h3 { font-size: 1.25em !important; }
       if (nom && nom.trim()) {
         localStorage.setItem("fe-nombre-instructor", nom.trim());
         enviar({ id: it.id, accion: "asignar", instructor: nom.trim() }, function(){
-          vista = "mios"; toast("👥 " + it.nombre + " ahora es tu alumno");
+          vista = "mios"; try { localStorage.setItem("fe-sala", sanitSala(nom.trim())); sessionStorage.removeItem("fe-sala-auto-recargo"); } catch(e){} toast("👥 " + it.nombre + " ahora es tu alumno");
           
           setTimeout(function(){ location.reload(); }, 1200);
         });
       }
     }
     else if (a === "mail") { copiar(it.contacto); toast("Correo copiado"); }
-    else if (a === "copiar") { try { localStorage.setItem("fe-sala", salaDe(it)); sessionStorage.removeItem("fe-sala-auto-recargo"); } catch(e){} copiar(linkDe(it)); toast("Enlace copiado — el panel entra a la sala de este alumno"); setTimeout(function(){ location.reload(); }, 1200); }
+    else if (a === "copiar") { copiar(linkDe(it)); toast("Enlace del alumno copiado"); }
     else if (a === "eliminar") { if (confirm("¿Eliminar a " + it.nombre + "?")) enviar({ id: it.id, accion: "eliminar" }); }
     else { enviar({ id: it.id, accion: a }); }
   });
@@ -1499,5 +1500,17 @@ h3 { font-size: 1.25em !important; }
 </script>
 <!-- FIN INTERESADOS-FOLLETO-ADMIN -->
 
+<script>
+(function(){ try{
+    function sanit(n){ var s=String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,12); return s||""; }
+    var nom=localStorage.getItem("fe-nombre-instructor")||"";
+    var sala=nom?sanit(nom):"";
+    if(sala && localStorage.getItem("fe-sala")!==sala){
+      localStorage.setItem("fe-sala",sala);
+      if(!sessionStorage.getItem("v38-r")){ sessionStorage.setItem("v38-r","1"); location.reload(); }
+    }
+  }catch(e){} })();
+</script>
+<!-- SALA-INSTR-V38 -->
 </body>
 </html>
