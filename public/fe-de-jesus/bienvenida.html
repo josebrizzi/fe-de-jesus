@@ -1,186 +1,92 @@
-<!-- BIENVENIDA-FOLLETO INSTRUCTOR-GENERAL -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fe de Jesús — Bienvenida</title>
+<title>Estudios Bíblicos Fe de Jesús — Jose Brizzi</title>
 <style>
-  * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, sans-serif; background:#eef2f7; color:#222; font-size:17px; line-height:1.55; }
-  .hero { background:linear-gradient(135deg,#1a3a6b,#2c5aa0); color:#fff; padding:34px 18px; text-align:center; }
-  .hero h1 { margin:0 0 6px; font-size:30px; }
-  .hero p { margin:0; opacity:.9; }
-  .wrap { max-width:560px; margin:0 auto; padding:0 14px 40px; }
-  .card { background:#fff; border-radius:14px; padding:20px; margin:18px 0; box-shadow:0 2px 10px rgba(0,0,0,.08); }
-  .card h2 { margin:0 0 10px; font-size:20px; color:#1a3a6b; }
-  .instructor { display:flex; gap:12px; align-items:center; }
-  .instructor .avatar { width:52px; height:52px; border-radius:50%; background:#e3ecf9; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
-  ul { margin:8px 0 0; padding-left:20px; }
-  li { margin-bottom:6px; }
-  label { display:block; font-weight:600; margin:14px 0 4px; font-size:15px; }
-  input, textarea { width:100%; padding:12px; font-size:16px; border:1px solid #c9d4e3; border-radius:10px; }
-  textarea { min-height:70px; resize:vertical; }
-  button { width:100%; margin-top:18px; padding:14px; font-size:18px; font-weight:700; color:#fff; background:#1a3a6b; border:none; border-radius:12px; cursor:pointer; }
-  button:disabled { opacity:.6; }
-  .error { color:#b02a2a; font-size:14px; margin-top:8px; min-height:18px; }
-  .ok-ico { text-align:center; font-size:44px; }
-  .btn2 { display:block; text-align:center; text-decoration:none; background:#25a35a; margin-top:10px; color:#fff; }
-  footer { text-align:center; font-size:13px; color:#667; padding:0 14px 30px; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,sans-serif; background:#eef1f5; color:#222; font-size:16px; line-height:1.5; }
+  .hero { background:linear-gradient(135deg,#1a3a6b,#2c5aa0); color:#fff; padding:36px 18px 28px; text-align:center; }
+  .cruz { font-size:44px; }
+  .hero h1 { margin:8px 0 4px; font-size:27px; }
+  .hero .sub { opacity:.9; font-size:15px; }
+  .autor { margin-top:10px; font-size:17px; font-weight:700; }
+  .rol { font-size:12.5px; letter-spacing:2px; opacity:.85; margin-top:2px; }
+  .wrap { max-width:430px; margin:0 auto; padding:0 14px 30px; }
+  .btn-sala { display:block; margin:-24px auto 0; background:#fff; color:#1a3a6b; border:2.5px solid #1a3a6b; border-radius:14px;
+              padding:16px 20px; font-size:18px; font-weight:800; text-decoration:none; box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .btn-sala small { display:block; font-size:12.5px; font-weight:400; color:#556; margin-top:3px; }
+  .ayuda { text-align:center; color:#556; font-size:13.5px; margin:14px 0 4px; }
+  details { background:#fff; border:1px solid #dfe4ec; border-radius:12px; padding:14px 16px; margin-top:10px; }
+  summary { font-weight:700; color:#1a3a6b; cursor:pointer; font-size:15.5px; }
+  label { display:block; font-weight:600; font-size:13.5px; margin:10px 0 3px; }
+  input { width:100%; padding:11px; font-size:15px; border:1px solid #c9d4e3; border-radius:9px; }
+  button { width:100%; margin-top:14px; padding:13px; font-size:16px; font-weight:700; color:#fff; background:#1a3a6b; border:none; border-radius:10px; cursor:pointer; }
+  .ok { display:none; text-align:center; padding:10px 0; }
+  .ok .e { font-size:40px; }
+  .error { color:#b02a2a; font-size:13px; margin-top:6px; min-height:16px; }
+  footer { text-align:center; font-size:12.5px; color:#667; margin-top:16px; }
   footer a { color:#1a3a6b; }
 </style>
-<script>
-// ================== CONFIGURACIÓN ==================
-var CONFIG_APP = {
-  instructor: "",   // ← dejar VACÍO: la bienvenida es general y luego la iglesia asigna quién toma el contacto
-  iglesia: "IASD JCP Centro",
-  estudio: "Estudios Bíblicos Fe de Jesús",
-  telefono: "5491128945261",
-  link: "https://fe-de-jesus.onrender.com/fe-de-jesus/"
-};
-// ====================================================
-</script>
 </head>
 <body>
-<style id="logo-css">.logo-igl{display:block;margin:0 auto 14px;max-width:110px;height:auto;filter:drop-shadow(0 3px 8px rgba(0,0,0,.18))}</style>
-  <div class="hero" style="position:relative"><img class="logo-igl" src="img/logo.png" alt="Logo de la iglesia" onerror="this.style.display='none'">
-    <h1>📖 Fe de Jesús</h1>
-    <p>Estudio bíblico interactivo, paso a paso</p>
+  <div class="hero">
+    <div class="cruz">✝️</div>
+    <h1>Estudios Bíblicos Fe de Jesús</h1>
+    <div class="sub">Leé la Biblia paso a paso, a tu ritmo y acompañado</div>
+    <div class="autor">Jose Brizzi</div>
+    <div class="rol">INSTRUCTOR BÍBLICO</div>
   </div>
   <div class="wrap">
-
-    <div class="card">
-      <h2>¡Bienvenido/a! 🙌</h2>
-      <p>Nos alegra mucho tu interés en conocer más de la Biblia. <b>Fe de Jesús</b> es una guía de lectura interactiva: leés un pasaje, respondés preguntas sencillas y un instructor de nuestra iglesia te acompaña durante todo el estudio.</p>
-      <ul>
-        <li>✅ Se lee y se responde desde el celular, sin instalar nada</li>
-        <li>✅ Un instructor te guía y te corrige las respuestas</li>
-        <li>✅ Al terminar te llevás tu hoja con el resumen del estudio</li>
-        <li>✅ Es gratuito y para toda la familia</li>
-      </ul>
-    </div>
-
-    <div class="card instructor">
-      <div class="avatar" id="v-avatar">⛪</div>
-      <div>
-        <b id="v-quien"></b><br>
-        <span style="color:#556;font-size:15px" id="v-quien-sub"></span>
+    <a class="btn-sala" href="../?sala=JOSEBRIZZI">▶ ENTRAR A LA SALA DE ESTUDIOS<small>empezá ahora — te reconoce por tu nombre</small></a>
+    <p class="ayuda">¿Preferís que te contacte yo primero?</p>
+    <details>
+      <summary>📝 Dejame tu contacto</summary>
+      <div id="fz">
+        <label>Tu nombre</label>
+        <input id="c-nombre" type="text" autocomplete="name">
+        <label>Tu WhatsApp</label>
+        <input id="c-wa" type="text" autocomplete="tel" placeholder="Ej: 0911 234 567">
+        <button id="btn-env">Quiero que me escribas ✉️</button>
+        <div class="error" id="c-err"></div>
       </div>
-    </div>
-
-    <div class="card" id="zona-form">
-      <h2>Dejanos tu contacto 📲</h2>
-      <p style="margin:6px 0 0;font-size:15px;color:#445">Completá estos datos y <b id="v-quien2"></b> te va a escribir con el enlace para empezar el estudio.</p>
-      <form id="form-int">
-        <label for="c-nombre">Tu nombre y apellido</label>
-        <input id="c-nombre" type="text" autocomplete="name" required>
-        <label for="c-contacto">Tu WhatsApp (o correo)</label>
-        <input id="c-contacto" type="text" autocomplete="tel" placeholder="Ej: 0991 234 567" required>
-        <label for="c-mensaje">¿Algo que quieras contarnos? <span style="font-weight:400;color:#667">(opcional)</span></label>
-        <textarea id="c-mensaje" placeholder="Ej: me interesa estudiar los sábados"></textarea>
-        <button type="submit" id="btn-int">Quiero que me contacten ✉️</button>
-        <div class="error" id="error-int"></div>
-      </form>
-    </div>
-
-    <div class="card" id="zona-ok" style="display:none">
-      <div class="ok-ico">🎉</div>
-      <h2 style="text-align:center">¡Listo, <span id="v-nombre"></span>!</h2>
-      <p style="text-align:center" id="v-despues"></p>
-      <p style="text-align:center;font-size:14.5px;color:#445;background:#f2f6fc;border-radius:10px;padding:12px 14px;margin:12px 0 0">📨 <b>Guardá este contacto:</b> en breve un instructor de la iglesia te va a escribir por WhatsApp con tu <b>enlace personal</b> para empezar el estudio.</p>
-    </div>
-
-    <footer>
-      <p>¿Consultas? Escribinos directo a la iglesia:<br>
-      <a id="wa-iglesia" href="#">💬 Escribir por WhatsApp</a></p>
-    </footer>
+      <div class="ok" id="fok">
+        <div class="e">🎉</div>
+        <b>¡Listo, <span id="v-nom"></span>!</b>
+        <p style="font-size:14px">Te voy a escribir con tu enlace personal. Mientras tanto podés entrar a la sala desde el botón de arriba.</p>
+      </div>
+    </details>
+    <footer>¿Consultas? <a href="https://wa.me/5491128945261">Escribime por WhatsApp</a></footer>
   </div>
-
 <script>
 (function(){
-  var generico = !(CONFIG_APP.instructor && CONFIG_APP.instructor.trim());
-  var quien = generico ? CONFIG_APP.iglesia : CONFIG_APP.instructor;
-  document.getElementById("v-quien").textContent = quien;
-  document.getElementById("v-quien-sub").textContent = generico ? CONFIG_APP.estudio : CONFIG_APP.iglesia;
-  document.getElementById("v-quien2").textContent = generico ? "un instructor de la iglesia" : quien;
-  document.getElementById("v-avatar").textContent = generico ? "⛪" : "🎓";
-  document.getElementById("v-despues").textContent = generico
-    ? "Recibimos tu contacto. Un instructor de la iglesia te va a escribir en breve con el enlace para comenzar."
-    : "Recibimos tu contacto. " + quien + " te va a escribir en breve con el enlace para comenzar.";
-  var olEl = document.getElementById("ok-link"); if (olEl) olEl.href = CONFIG_APP.link;
-  document.getElementById("wa-iglesia").href = "https://wa.me/" + CONFIG_APP.telefono.replace(/[^0-9]/g,"");
-
-  var BASE = location.pathname.indexOf("/biblia") === 0 ? "/biblia" : "";
-  var form = document.getElementById("form-int");
-  var err = document.getElementById("error-int");
-  form.addEventListener("submit", function(e){
-    e.preventDefault();
-    var nombre = document.getElementById("c-nombre").value.trim();
-    var contacto = document.getElementById("c-contacto").value.trim();
-    var mensaje = document.getElementById("c-mensaje").value.trim();
+  var s = document.getElementById("btn-sala");
+  s.href = "../?sala=" + (window.MI_SALA || "JOSEBRIZZI");
+  var f = document.getElementById("btn-env");
+  f.addEventListener("click", function(){
+    var nom = document.getElementById("c-nombre").value.trim();
+    var wa  = document.getElementById("c-wa").value.trim();
+    var err = document.getElementById("c-err");
     err.textContent = "";
-    if (nombre.length < 2) { err.textContent = "Por favor escribí tu nombre."; return; }
-    if (contacto.length < 6) { err.textContent = "Escribí tu número de WhatsApp o tu correo."; return; }
-    document.getElementById("btn-int").disabled = true;
-    fetch(BASE + "/api/fe-de-jesus/interesados", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre: nombre, contacto: contacto, mensaje: mensaje, iglesia: (window.__IGL__ || "CEN") })
-    })
-    .then(function(r){ return r.json().then(function(d){ return { s: r.status, d: d }; }); })
-    .then(function(x){
-      if (x.s === 200 && x.d && x.d.ok) {
-        document.getElementById("v-nombre").textContent = nombre.split(" ")[0];
-        document.getElementById("zona-form").style.display = "none";
-        document.getElementById("zona-ok").style.display = "block";
-        window.scrollTo(0, 0);
-      } else { throw new Error((x.d && x.d.error) || "no se pudo enviar"); }
-    })
-    .catch(function(e2){
-      err.textContent = "Hubo un problema. Probá de nuevo o escribinos directo al contacto de abajo.";
-      document.getElementById("btn-int").disabled = false;
+    if (nom.length < 2) { err.textContent = "Escribí tu nombre."; return; }
+    if (wa.length < 6)  { err.textContent = "Escribí tu WhatsApp."; return; }
+    f.disabled = true;
+    fetch("/api/fe-de-jesus/interesados", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre: nom, contacto: wa, mensaje: "Quiere estudiar la Biblia" })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d && d.ok) {
+        document.getElementById("v-nom").textContent = nom.split(" ")[0];
+        document.getElementById("fz").style.display = "none";
+        document.getElementById("fok").style.display = "block";
+      } else throw new Error("x");
+    }).catch(function(){
+      err.textContent = "Hubo un problema — probá de nuevo o escribinos al WhatsApp.";
+      f.disabled = false;
     });
   });
 })();
 </script>
-<!-- LOGO-IGLESIA-V25 -->
-
-<!-- DIST-V27-BIENVENIDA: multiparroquial dinamica -->
-<script>
-(function(){
-  try{
-    var FALLBACK = {
-      CEN:{ n: "IASD José C. Paz Centro", t: "5491128945261" },
-      SUR:{ n: "IASD Sur", t: "5491128945261" },
-      FRI:{ n: "IASD Frino", t: "5491128945261" },
-      SBR:{ n: "IASD Santa Brígida", t: "5491128945261" },
-      SFAM:{ n: "IASD Sagrada Familia", t: "5491128945261" }
-    };
-    var BASE = location.pathname.indexOf("/biblia") === 0 ? "/biblia" : "";
-    var q = new URLSearchParams(location.search);
-    var k = (q.get("iglesia") || "CEN").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
-    window.__IGL__ = k;
-    var CFGD = FALLBACK[k] || null;
-    function aplicar(){
-      if (!CFGD) return;
-      try { if (typeof CONFIG_APP !== "undefined") { CONFIG_APP.iglesia = CFGD.n; CONFIG_APP.telefono = CFGD.t; } } catch(e){}
-      var vq = document.getElementById("v-quien"); if (vq) vq.textContent = CFGD.n;
-      var hp = document.querySelector(".hero p"); if (hp) hp.textContent = "Estudio bíblico interactivo, paso a paso — " + CFGD.n;
-      var wa = document.getElementById("wa-iglesia"); if (wa) wa.href = "https://wa.me/" + String(CFGD.t).replace(/[^0-9]/g, "");
-      var vd = document.getElementById("v-despues"); if (vd) vd.textContent = "Recibimos tu contacto. Un instructor de " + CFGD.n + " te va a escribir en breve con el enlace para comenzar.";
-      var lg = document.querySelector(".logo-igl"); if (lg) lg.style.display = (k === "CEN") ? "" : "none";
-    }
-    aplicar();
-    fetch(BASE + "/api/fe-de-jesus/iglesias").then(function(r){ return r.json(); }).then(function(d){
-      if (d && d.ok && d.lista) {
-        var f = d.lista.filter(function(x){ return x.codigo === k; })[0];
-        if (f) CFGD = { n: f.nombre, t: f.whatsapp || "" };
-      }
-    }).catch(function(){}).then(function(){ setTimeout(aplicar, 60); });
-    document.addEventListener("DOMContentLoaded", aplicar);
-  }catch(e){}
-})();
-</script>
-<!-- FIN DIST-V27-BIENVENIDA -->
 </body>
 </html>
