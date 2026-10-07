@@ -2455,9 +2455,24 @@ h3 { font-size: 1.25em !important; }
 })();
 </script>
 <!-- FIN PASTILLA-UNIDA-V42 -->
-<script>
-(function(){ try{ window.miSala = function(){ return "GENERAL"; }; }catch(e){} })();
-</script>
+
 <!-- SALA-GENERAL-FIJA-V47 -->
+<script>
+/* OVERRIDE-SALA-V49: sala GENERAL unica - pisa la funcion miSala de la app */
+(function(){
+  try{
+    function fijar(){
+      window.miSala = function(){ return "GENERAL"; };
+      if (typeof miSala !== "undefined") { try { miSala = function(){ return "GENERAL"; }; } catch(e){} }
+    }
+    fijar();
+    document.addEventListener("DOMContentLoaded", fijar);
+    window.addEventListener("load", fijar);
+    setTimeout(fijar, 500);
+    setTimeout(fijar, 2000);
+  }catch(e){}
+})();
+</script>
+<!-- OVERRIDE-SALA-V49 -->
 </body>
 </html>
