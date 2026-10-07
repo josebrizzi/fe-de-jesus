@@ -1367,13 +1367,14 @@ h3 { font-size: 1.25em !important; }
   function cabeceras(){ return { "x-instructor-key": clave(), "x-instructor-nombre": nombre() }; }
   function sanitSala(n){ var s = String(n || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12); return s || "GENERAL"; }
   function linkBase(nom){
+    var sala = localStorage.getItem("fe-sala") || "GENERAL";
     var base = CFG.link, sep = "=";
     try {
       var inputs = Array.prototype.slice.call(document.querySelectorAll("input"));
       var inp = inputs.filter(function(i){ return /\?sala/i.test(i.value || ""); })[0];
       if (inp) { var v = inp.value, qi = v.indexOf("?"); if (qi > 0) { base = v.slice(0, qi); var m = v.slice(qi + 1).match(/sala([=-])/); if (m) sep = m[1]; } }
     } catch(e){}
-    return base + "?sala" + sep + sanitSala(nom);
+    return base + "?sala" + sep + sala;
   }
   function salaDe(it){ var n = sanitSala((it.nombre || "Alumno")); return n.slice(0,8) + "-" + String(it.id || "").slice(-4); }
   function linkDe(it){ var l = linkBase(it.instructor || nombre() || ""); return (it && it.id) ? l + "&alu=" + it.id : l; }
@@ -1489,7 +1490,7 @@ h3 { font-size: 1.25em !important; }
       if (nom && nom.trim()) {
         localStorage.setItem("fe-nombre-instructor", nom.trim());
         enviar({ id: it.id, accion: "asignar", instructor: nom.trim() }, function(){
-          vista = "mios"; try { localStorage.setItem("fe-sala", sanitSala(nom.trim())); sessionStorage.removeItem("fe-sala-auto-recargo"); } catch(e){} toast("👥 " + it.nombre + " ahora es tu alumno");
+          vista = "mios"; try { /* la sala no se toca al asignar */ sessionStorage.removeItem("fe-sala-auto-recargo"); } catch(e){} toast("👥 " + it.nombre + " ahora es tu alumno");
           
           setTimeout(function(){ location.reload(); }, 1200);
         });
