@@ -597,7 +597,8 @@ h3 { font-size: 1.25em !important; }
     ws.addEventListener("message", function(event) {
       try {
         var msg = JSON.parse(event.data);
-        if (msg.type === "fe-projection" && typeof feRecibir !== "function") mostrar(msg.data);
+        if (msg.type === "fe-projection") { if (msg.para && msg.para !== (localStorage.getItem("fe-cid")||"")) return;
+ if (msg.para && msg.para !== (localStorage.getItem("fe-cid")||"")) { /* para otro alumno */ } else if (typeof feRecibir !== "function") mostrar(msg.data); }
         if (typeof chatRecibir === "function" && msg.type && msg.type.indexOf("chat-") === 0) chatRecibir(msg);
         if (typeof feRecibir === "function") feRecibir(msg);
         if (msg.type === "fe-nombre-instructor") {
@@ -2070,7 +2071,8 @@ h3 { font-size: 1.25em !important; }
   // Lo llama el WebSocket con cada mensaje
   window.feRecibir = function (msg) {
     try {
-      if (msg.type === "fe-projection") {
+      if (msg.type === "fe-projection") { if (msg.para && msg.para !== (localStorage.getItem("fe-cid")||"")) return;
+
         var d = msg.data || {};
         if (d.respuestaRevelada && d.correcta >= 0) registrarReveal(d.estudioId, d.preguntaN, d.correcta);
         if (d.recorridoLibre) {

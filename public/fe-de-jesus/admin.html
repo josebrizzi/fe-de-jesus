@@ -217,6 +217,8 @@ h3 { font-size: 1.25em !important; }
 <style id="pastillas-separadas">#int-flotante{bottom:78px !important}</style>
 
 <style id="pill-arriba">#int-flotante{top:70px !important;right:14px !important;bottom:auto !important;left:auto !important}</style>
+
+<style id="oculta-selpara">label:has(#selParaProy),#selParaProy{display:none !important}/* OCULTA-SELPARA */</style>
 </head>
 <body>
 
@@ -1098,6 +1100,7 @@ h3 { font-size: 1.25em !important; }
   sec.innerHTML =
     '<input type="checkbox" id="chkRecorrido" style="display:none" checked>' +
     '<div id="ctlEstado"></div>' +
+      '<div style="margin:6px 0"><label style="font-weight:normal;font-size:14px">Para: <select id="selParaProy" style="font-size:14px;padding:5px 8px;border-radius:8px;border:1px solid #c9d4e3"><option value="">👥 Todos mis alumnos</option></select></label></div>' +
     '<div id="ctlLista"></div>' +
     '<div class="ctl-acciones">' +
       '<button type="button" id="ctlHabTodos" class="ctl-btn grande">✅ Habilitar PDF a todos</button>' +
