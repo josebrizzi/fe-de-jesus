@@ -12,7 +12,7 @@
     --text-soft: #4a5568;
     --text-muted: #718096;
     --border: #e2e8f0;
-    --primary: #1a3a6b;
+    --primary: #6B5B95;
     --primary-soft: #ebf4ff;
     --accent: #d4a017;
     --shadow: rgba(0,0,0,0.08);
@@ -42,13 +42,13 @@
   .pregunta-item { padding: 12px 15px; border-bottom: 1px solid #edf2f7; cursor: pointer; display: flex; gap: 12px; align-items: flex-start; }
   .pregunta-item:last-child { border-bottom: none; }
   .pregunta-item:hover { background: var(--primary-soft); }
-  .pregunta-item.selected { background: #bee3f8; border-left: 4px solid #1a3a6b; }
-  .pregunta-num { font-weight: bold; color: #1a3a6b; min-width: 28px; }
+  .pregunta-item.selected { background: #EFEBF5; border-left: 4px solid #6B5B95; }
+  .pregunta-num { font-weight: bold; color: #6B5B95; min-width: 28px; }
   .preview { background: var(--primary-soft); border: 2px solid var(--border); border-radius: 12px; padding: 22px; margin-top: 18px; }
   .preview-header { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
-  .preview-titulo { font-size: 14px; color: #1a3a6b; font-weight: bold; margin-bottom: 4px; }
+  .preview-titulo { font-size: 14px; color: #6B5B95; font-weight: bold; margin-bottom: 4px; }
   .preview-pregunta { font-size: 22px; font-weight: bold; line-height: 1.4; margin: 15px 0; }
-  .preview-referencia { font-size: 17px; color: #1a3a6b; font-weight: bold; margin-bottom: 18px; }
+  .preview-referencia { font-size: 17px; color: #6B5B95; font-weight: bold; margin-bottom: 18px; }
   .preview-opciones { list-style: none; padding: 0; margin: 0; }
   .preview-opciones li { padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; background: white; border: 1px solid var(--border); font-size: 16px; }
   .preview-opciones li.correcta { background: var(--primary-soft); border-color: var(--primary); font-weight: bold; }
@@ -63,7 +63,7 @@
   .estado { margin-top: 15px; padding: 10px 14px; border-radius: 8px; background: #edf2f7; font-size: 14px; }
   .estado.connected { background: #c6f6d5; color: #22543d; }
   .estado.disconnected { background: #fed7d7; color: #742a2a; }
-  .badge-tipo { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; background: #bee3f8; color: #1a3a6b; margin-left: 8px; }
+  .badge-tipo { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; background: #EFEBF5; color: #6B5B95; margin-left: 8px; }
   @media (max-width: 700px) { .preview-pregunta { font-size: 18px; } }
 
   .theme-toggle {
@@ -97,7 +97,7 @@
     margin-bottom: 10px;
   }
   .respuesta-abierta-admin textarea:focus {
-    outline: none; border-color: #1a3a6b;
+    outline: none; border-color: #6B5B95;
   }
   .respuesta-abierta-admin textarea.respuesta-alumno {
     background: #edf2f7; color: #2d3748;
@@ -121,7 +121,7 @@
     flex-wrap: wrap;
   }
   .nombre-instructor label {
-    font-weight: bold; color: #1a3a6b;
+    font-weight: bold; color: #6B5B95;
     font-size: 14px; margin: 0;
     white-space: nowrap;
   }
@@ -132,7 +132,7 @@
     background: white;
   }
   .nombre-instructor input:focus {
-    outline: none; border-color: #1a3a6b;
+    outline: none; border-color: #6B5B95;
   }
   .nombre-instructor .estado {
     font-size: 12px; color: #2f855a;
@@ -146,11 +146,11 @@
     background: white; border: 1px solid #e2e8f0;
     border-radius: 8px; padding: 10px 12px;
     margin-bottom: 8px;
-    border-left: 4px solid #1a3a6b;
+    border-left: 4px solid #6B5B95;
   }
   .alumno-respuesta .alumno-nombre {
     font-size: 12px; font-weight: bold;
-    color: #1a3a6b; margin-bottom: 4px;
+    color: #6B5B95; margin-bottom: 4px;
     display: flex; align-items: center; gap: 6px;
   }
   .alumno-respuesta .alumno-texto {
@@ -176,7 +176,7 @@
   .alumno-respuesta .alumno-eleccion.no::before { content: "✗ "; }
   .contador-alumnos {
     display: inline-block;
-    background: #1a3a6b; color: white;
+    background: #6B5B95; color: white;
     padding: 3px 10px; border-radius: 12px;
     font-size: 12px; font-weight: bold;
     margin-left: 8px;
@@ -222,6 +222,18 @@ h3 { font-size: 1.25em !important; }
 
 <style id="mj-css">#int-miclav{display:none !important}</style>
 <!-- MODO-JOSE-V39: instructor unico -->
+
+<style id="tema-violeta-v40">
+:root{--v-primary:#6B5B95;--v-primary-soft:#EFEBF5;--v-bg:#F3F2F6;--v-text:#3A3545;--v-soft:#8B8598;--v-border:#DDD9E5;--v-hero1:#7A6BA0;--v-hero2:#9184B3}
+/* TEMA-VIOLETA-V40: base gris/violeta tenue, letra contenida */
+body{background:var(--v-bg)!important;color:var(--v-text)!important;font-size:14px!important}
+button{background:var(--v-primary)!important;border-color:var(--v-primary)!important;font-size:13.5px!important}
+button:hover{opacity:.9}
+input,textarea,select{border-color:var(--v-border)!important;font-size:14px!important}
+h1{font-size:19px!important;color:var(--v-primary)!important}h2{font-size:16px!important;color:var(--v-primary)!important}h3{font-size:14.5px!important}
+.card,.panel,section,.int-caja,.int-item{background:#fff!important;border-color:var(--v-border)!important}
+a{color:var(--v-primary)!important}
+</style>
 </head>
 <body>
 
@@ -1296,7 +1308,7 @@ h3 { font-size: 1.25em !important; }
 </script>
 <!-- FIN FIX-ESP-TEXTO-V20 -->
 <!-- PASTILLAS-SEPARADAS-V23 -->
-<script>(function(){try{function poner(){var h=document.querySelector("header");if(!h||document.getElementById("logo-igl-adm"))return;var img=document.createElement("img");img.id="logo-igl-adm";img.src="img/logo.png";img.style.cssText="height:44px;width:auto;border-radius:50%;background:#fff;padding:2px;box-shadow:0 2px 6px rgba(0,0,0,.25)";h.style.display="flex";h.style.alignItems="center";h.style.gap="10px";h.insertBefore(img,h.firstChild);}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",poner);else poner();}catch(e){}})();</script>
+
 
 <!-- DIST-V26 -->
 
@@ -1306,13 +1318,13 @@ h3 { font-size: 1.25em !important; }
 
 <!-- INTERESADOS-FOLLETO-ADMIN SOLO-CENTRO-V35 -->
 <style>
-#int-flotante{position:fixed;right:14px;bottom:78px;z-index:99998;background:#1a3a6b;color:#fff;border:none;border-radius:999px;padding:12px 18px;font-size:16px;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer}
+#int-flotante{position:fixed;right:14px;bottom:78px;z-index:99998;background:#6B5B95;color:#fff;border:none;border-radius:999px;padding:12px 18px;font-size:16px;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer}
 #int-panel{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:none;align-items:center;justify-content:center;padding:14px}
 #int-panel.abierto{display:flex}
 .int-caja{background:#fff;border-radius:12px;max-width:660px;width:100%;max-height:88vh;overflow:auto;padding:16px}
 .int-tabs{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}
 .int-tabs button{border:1.5px solid #c9d4e3;background:#f6f9fd;border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer}
-.int-tabs button.activo{background:#1a3a6b;color:#fff;border-color:#1a3a6b}
+.int-tabs button.activo{background:#6B5B95;color:#fff;border-color:#6B5B95}
 .int-item{border:1px solid #e3e8ef;border-radius:10px;padding:10px;margin-bottom:8px;font-size:15px}
 .int-item .int-nombre{font-weight:bold}
 .int-badge{font-size:12px;border-radius:999px;padding:2px 8px;margin-left:6px}
@@ -1322,9 +1334,9 @@ h3 { font-size: 1.25em !important; }
 .int-asignado{background:#dbeafe;color:#1e40af}
 .int-botones button{font-size:14px;padding:6px 10px;margin:6px 6px 0 0;border:none;border-radius:8px;cursor:pointer;background:#eef2f7}
 .int-botones button.int-wa{background:#25d366;color:#fff}
-#int-milink{background:#f2f6fc;border:1.5px dashed #1a3a6b;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px;display:none}
+#int-milink{background:#f2f6fc;border:1.5px dashed #6B5B95;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:10px;display:none}
 #int-milink code{word-break:break-all;font-size:13px}
-#int-milink button{border:none;background:#1a3a6b;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+#int-milink button{border:none;background:#6B5B95;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
 #int-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#222;color:#fff;padding:12px 18px;border-radius:10px;font-size:15px;z-index:100000;display:none;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 </style>
 <button id="int-flotante">📋 Interesados <span id="int-cont">0</span></button>
