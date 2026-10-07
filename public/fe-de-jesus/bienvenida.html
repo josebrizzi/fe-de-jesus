@@ -32,7 +32,7 @@
 <script>
 // ================== CONFIGURACIÓN ==================
 var CONFIG_APP = {
-  instructor: "",   // ← dejar VACÍO: la bienvenida es general y luego la iglesia asigna quién toma el contacto
+  instructor: "Jose Brizzi",   // ← dejar VACÍO: la bienvenida es general y luego la iglesia asigna quién toma el contacto
   iglesia: "IASD JCP Centro",
   estudio: "Estudios Bíblicos Fe de Jesús",
   telefono: "5491128945261",
@@ -98,8 +98,8 @@ var CONFIG_APP = {
 
 <script>
 (function(){
-  var generico = !(CONFIG_APP.instructor && CONFIG_APP.instructor.trim());
-  var quien = generico ? CONFIG_APP.iglesia : CONFIG_APP.instructor;
+  var generico = false; // MODO-JOSE: siempre el instructor
+  var quien = CONFIG_APP.instructor || CONFIG_APP.iglesia;
   document.getElementById("v-quien").textContent = quien;
   document.getElementById("v-quien-sub").textContent = generico ? CONFIG_APP.estudio : CONFIG_APP.iglesia;
   document.getElementById("v-quien2").textContent = generico ? "un instructor de la iglesia" : quien;
