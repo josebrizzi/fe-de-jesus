@@ -8,25 +8,25 @@
   * { box-sizing:border-box; }
   body { margin:0; font-family:system-ui,sans-serif; background:#eef1f5; color:#222; font-size:16px; line-height:1.5; }
   .hero { background:linear-gradient(135deg,#1a3a6b,#2c5aa0); color:#fff; padding:36px 18px 28px; text-align:center; }
-  .cruz { font-size:44px; }
-  .hero h1 { margin:8px 0 4px; font-size:27px; }
-  .hero .sub { opacity:.9; font-size:15px; }
+  .cruz { font-size:42px; }
+  .hero h1 { margin:8px 0 4px; font-size:26px; }
+  .hero .sub { opacity:.92; font-size:15px; }
   .autor { margin-top:10px; font-size:17px; font-weight:700; }
-  .rol { font-size:12.5px; letter-spacing:2px; opacity:.85; margin-top:2px; }
+  .rol { font-size:12px; letter-spacing:2px; opacity:.85; }
   .wrap { max-width:430px; margin:0 auto; padding:0 14px 30px; }
-  .btn-sala { display:block; margin:-24px auto 0; background:#fff; color:#1a3a6b; border:2.5px solid #1a3a6b; border-radius:14px;
-              padding:16px 20px; font-size:18px; font-weight:800; text-decoration:none; box-shadow:0 4px 14px rgba(0,0,0,.15); }
-  .btn-sala small { display:block; font-size:12.5px; font-weight:400; color:#556; margin-top:3px; }
-  .ayuda { text-align:center; color:#556; font-size:13.5px; margin:14px 0 4px; }
-  details { background:#fff; border:1px solid #dfe4ec; border-radius:12px; padding:14px 16px; margin-top:10px; }
-  summary { font-weight:700; color:#1a3a6b; cursor:pointer; font-size:15.5px; }
-  label { display:block; font-weight:600; font-size:13.5px; margin:10px 0 3px; }
-  input { width:100%; padding:11px; font-size:15px; border:1px solid #c9d4e3; border-radius:9px; }
-  button { width:100%; margin-top:14px; padding:13px; font-size:16px; font-weight:700; color:#fff; background:#1a3a6b; border:none; border-radius:10px; cursor:pointer; }
-  .ok { display:none; text-align:center; padding:10px 0; }
-  .ok .e { font-size:40px; }
-  .error { color:#b02a2a; font-size:13px; margin-top:6px; min-height:16px; }
-  footer { text-align:center; font-size:12.5px; color:#667; margin-top:16px; }
+  .card { background:#fff; border:1px solid #dfe4ec; border-radius:14px; padding:18px 18px 20px; margin-top:16px; }
+  .card h2 { margin:0 0 6px; font-size:17px; color:#1a3a6b; }
+  .card p.intro { margin:0; font-size:14.5px; color:#445; }
+  label { display:block; font-weight:600; font-size:13.5px; margin:12px 0 3px; }
+  input { width:100%; padding:12px; font-size:15px; border:1px solid #c9d4e3; border-radius:9px; }
+  button { width:100%; margin-top:16px; padding:14px; font-size:16.5px; font-weight:700; color:#fff; background:#1a3a6b; border:none; border-radius:10px; cursor:pointer; }
+  button:disabled { opacity:.6; }
+  .error { color:#b02a2a; font-size:13px; margin-top:8px; min-height:18px; }
+  .gracias { display:none; text-align:center; padding:8px 0 2px; }
+  .gracias .e { font-size:46px; }
+  .gracias h2 { color:#1a3a6b; }
+  .gracias p { font-size:14.5px; color:#445; }
+  footer { text-align:center; font-size:12.5px; color:#667; margin-top:14px; }
   footer a { color:#1a3a6b; }
 </style>
 </head>
@@ -39,52 +39,60 @@
     <div class="rol">INSTRUCTOR BÍBLICO</div>
   </div>
   <div class="wrap">
-    <a class="btn-sala" href="index.html?sala=GENERAL">▶ ENTRAR A LA SALA DE ESTUDIOS<small>empezá ahora — te reconoce por tu nombre</small></a>
-    <p class="ayuda">¿Preferís que te contacte yo primero?</p>
-    <details>
-      <summary>📝 Dejame tu contacto</summary>
-      <div id="fz">
-        <label>Tu nombre</label>
-        <input id="c-nombre" type="text" autocomplete="name">
-        <label>Tu WhatsApp</label>
-        <input id="c-wa" type="text" autocomplete="tel" placeholder="Ej: 0911 234 567">
-        <button id="btn-env">Quiero que me escribas ✉️</button>
-        <div class="error" id="c-err"></div>
-      </div>
-      <div class="ok" id="fok">
-        <div class="e">🎉</div>
-        <b>¡Listo, <span id="v-nom"></span>!</b>
-        <p style="font-size:14px">Te voy a escribir con tu enlace personal. Mientras tanto podés entrar a la sala desde el botón de arriba.</p>
-      </div>
-    </details>
+
+    <div class="card" id="card-form">
+      <h2>📝 Dejá tu contacto</h2>
+      <p class="intro">Completá tus datos y te voy a escribir personalmente con tu enlace para empezar el estudio.</p>
+      <label>Tu nombre</label>
+      <input id="c-nombre" type="text" autocomplete="name" placeholder="Nombre y apellido">
+      <label>Tu WhatsApp</label>
+      <input id="c-wa" type="text" autocomplete="tel" placeholder="Ej: 0911 234 567">
+      <button id="btn-env">Quiero estudiar la Biblia ✉️</button>
+      <div class="error" id="c-err"></div>
+    </div>
+
+    <div class="card gracias" id="card-ok">
+      <div class="e">🙏</div>
+      <h2>¡Gracias por querer estudiar la Biblia!</h2>
+      <p>Recibí tus datos, <b><span id="v-nom"></span></b>.</p>
+      <p><b>Estamos en contacto</b>: en breve te escribo por WhatsApp con tu enlace personal para que empieces el estudio.</p>
+      <p style="font-size:13.5px;color:#667">Podés cerrar esta página con tranquilidad.</p>
+    </div>
+
     <footer>¿Consultas? <a href="https://wa.me/5491128945261">Escribime por WhatsApp</a></footer>
   </div>
-
 <script>
 document.addEventListener("DOMContentLoaded", function(){
+  var YA = "fe-registrado-v50";
+  try {
+    if (localStorage.getItem(YA) === "1") {
+      document.getElementById("card-form").style.display = "none";
+      document.getElementById("card-ok").style.display = "block";
+      return;
+    }
+  } catch(e){}
   var b = document.getElementById("btn-env");
-  if (!b) { console.log("WARN: no encuentro btn-env"); return; }
   b.addEventListener("click", function(){
-    var nom = (document.getElementById("c-nombre")||{}).value || "";
-    var wa  = (document.getElementById("c-wa")||{}).value || "";
+    var nom = (document.getElementById("c-nombre").value||"").trim();
+    var wa  = (document.getElementById("c-wa").value||"").trim();
     var err = document.getElementById("c-err");
-    nom = nom.trim(); wa = wa.trim();
-    if (err) err.textContent = "";
-    if (nom.length < 2) { if (err) err.textContent = "Escribí tu nombre."; return; }
-    if (wa.length < 6)  { if (err) err.textContent = "Escribí tu WhatsApp."; return; }
+    err.textContent = "";
+    if (nom.length < 2) { err.textContent = "Escribí tu nombre."; return; }
+    if (wa.length < 6)  { err.textContent = "Escribí tu WhatsApp."; return; }
     b.disabled = true;
     fetch("/api/fe-de-jesus/interesados", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nombre: nom, contacto: wa, mensaje: "Quiere estudiar la Biblia" })
     }).then(function(r){ return r.json(); }).then(function(d){
       if (d && d.ok) {
+        try { localStorage.setItem(YA, "1"); } catch(e){}
         var vn = document.getElementById("v-nom"); if (vn) vn.textContent = nom.split(" ")[0];
-        var fz = document.getElementById("fz"); if (fz) fz.style.display = "none";
-        var ok = document.getElementById("fok"); if (ok) ok.style.display = "block";
-      } else { throw new Error("servidor rechazo"); }
+        document.getElementById("card-form").style.display = "none";
+        document.getElementById("card-ok").style.display = "block";
+        window.scrollTo(0,0);
+      } else throw new Error("x");
     }).catch(function(){
-      if (err) err.textContent = "Hubo un problema — probá de nuevo o escribinos al WhatsApp.";
+      err.textContent = "Hubo un problema — probá de nuevo o escribime al WhatsApp.";
       b.disabled = false;
     });
   });
