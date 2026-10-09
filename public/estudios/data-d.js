@@ -82,4 +82,79 @@ temas:[
 {n:6,p:"¿Para qué se emplea el diezmo?",r:"1 Corintios 9:13-14",resp:"Para sostener a los ministros del evangelio",des:`"Los que sirven al altar, del altar participan. Así también ordenó el Señor a los que anuncian el evangelio, que vivan del evangelio."`,egw:[]},
 {n:7,p:"¿Qué maravillosa bendición promete Dios?",r:"Malaquías 3:10",resp:"Bendición hasta que sobreabunde",des:`"Traed todos los diezmos al alfolí... y probadme ahora en esto... si no os abriré las ventanas de los cielos, y derramaré sobre vosotros bendición hasta que sobreabunde." Dios invita a probarle: no a tentarle, sino a confiar en su fidelidad.`,egw:[]},
 {n:8,p:"¿Cuál fue la ofrenda que Dios entregó para nuestra salvación?",r:"Juan 3:16; Apocalipsis 13:8",resp:"Su Hijo",des:`"De tal manera amó Dios al mundo, que ha dado a su Hijo unigénito" — "el Cordero que fue inmolado desde el principio del mundo". La cruz es el ejemplo máximo de generosidad: si Dios dio lo más precioso, ¿cómo no vamos a dar nosotros una porción de lo que nos confió?`,egw:[]},
-{n:9,p:"¿Cuál es el resultado de la ofrenda de Cristo en mi vida?",r:"Hebreos 9:28; 10:12, 14",resp:"Perfeccionamiento y salvación eterna",des:`"Cristo fue ofrecido una sola vez para llevar los pecados
+{n:9,p:"¿Cuál es el resultado de la ofrenda de Cristo en mi vida?",r:"Hebreos 9:28; 10:12, 14",resp:"Perfeccionamiento y salvación eterna",des:`"Cristo fue ofrecido una sola vez para llevar los pecados de muchos" / "Con una sola ofrenda hizo perfectos para siempre a los santificados."`,egw:[]}
+]}
+],
+extras:[
+{tt:"Sociedad con Dios",lista:[{x:"Dios es dueño de todo",r:"Deuteronomio 10:14; Hageo 2:8"},{x:"Somos mayordomos",r:"Mateo 25:14"},{x:"Dios espera fidelidad",r:"1 Corintios 4:1-2"},{x:"Generosidad",r:"2 Corintios 9:5-7"},{x:"Colaboramos no porque Dios necesite, sino para recordar que dependemos de él"}]},
+{tt:"Diezmo y ofrenda",columnas:[
+{ct:"El diezmo — devolución",items:[{x:"Sostenimiento del culto",r:"Números 18:21"},{x:"Sostenimiento de ministros",r:"1 Corintios 9:13-14"},{x:"Predicación del evangelio"}]},
+{ct:"La ofrenda — dadivosidad",items:[{x:"Gastos de la iglesia",r:"Salmos 96:8"},{x:"Extensión del evangelio",r:"Marcos 12:41-44"}]}
+],nota:"Cadena de salvación: usted conoció la verdad porque otros fueron fieles en dar sus diezmos. Usted ahora es fiel, y colabora para que otros tengan el mismo privilegio. Fidelidad = dependencia de Dios; dependencia de Dios = bendiciones."},
+{tt:"Sugerencias para ser socio con Dios",lista:[{x:"Ser un fiel administrador de los bienes de Dios",r:"1 Pedro 4:10"},{x:"Ser socio de Dios — 'Hay quienes reparten, y les es añadido más'",r:"Proverbios 11:24-25"},{x:"Dar con alegría — 'Dios ama al dador alegre'",r:"2 Corintios 9:6-7"}]}
+],
+dec:"Quiero ser socio de Dios. Prometo dar con alegría lo que le pertenece a Dios.",
+amf:{des:"Plan de siete días que incluye: Reavivados por su Palabra, la lección de la Escuela Sabática y tu pedido de oración. Anota cada mañana lo que Dios te dice.",dias:[]},
+fmf:{ops:["Si usted tiene remuneración por su actividad, consulte en su clase de Escuela Sabática cómo se prepara el sobre de diezmos y ofrendas.","Tenga o no tenga remuneración, todos pueden ofrendar: alimentos, ropas, tiempo, servicios, etc. Pregunte en la clase cómo puede colaborar con los proyectos de la iglesia y de la comunidad."]},
+cmf:{act:["Pactar con Dios un tiempo semanal para servirlo con los dones.","Si está en posibilidades, además de diezmar, dedicar una ofrenda que expanda la misión.","Seguir compartiendo el estudio bíblico con el acompañamiento del instructor."],preg:"'¡Cuán hermosos son los pies de los que anuncian la paz, de los que anuncian buenas nuevas!' (Romanos 10:15). El tiempo también es una ofrenda preciosa."},
+res:`Dios es dueño de todo y nosotros sus mayordomos. El diezmo es la devolución del 10% que le pertenece; la ofrenda, la dadivosidad voluntaria. Ambos sostienen la misión. Dios promete bendición a quienes son fieles.`
+},
+{
+d:19,e:"🕯️",g:"linear-gradient(135deg,#654ea3,#eaafc8)",
+t:"¿Qué es el don de profecía?",
+i:`La iglesia verdadera tiene "el testimonio de Jesús", que es el espíritu de profecía. Este estudio presenta el don profético, las características del verdadero profeta y su manifestación en la Iglesia Adventista del Séptimo Día.`,
+temas:[
+{tt:"El don de profecía",ps:[
+{n:1,p:"¿A quién revela Dios sus designios?",r:"Amós 3:7",resp:"A los profetas",des:`"No hará nada Jehová el Señor, sin que revele su secreto a sus siervos los profetas." Dios no actúa sin antes comunicar sus planes a través de sus mensajeros escogidos.`,egw:[]},
+{n:2,p:"¿Cómo se comunica Dios con el profeta?",r:"Números 12:6",resp:"En visión, en sueños o palabra directa",des:`"Si hubiere profeta entre vosotros, yo, Jehová, me haré conocer a él en visión, y en sueños hablaré con él." Dios se comunica con el profeta de manera sobrenatural, revelando su voluntad y sus planes.`,egw:[]},
+{n:3,p:"¿Puede una mujer ser profeta?",r:"Joel 2:28",resp:"Sí",des:`"Derramaré mi Espíritu sobre toda carne, y profetizarán vuestros hijos y vuestras hijas." El derramamiento del Espíritu incluye a hijos e hijas: la profecía no es un don exclusivo de los hombres.`,egw:[]}
+]},
+{tt:"El don profético en la iglesia verdadera",ps:[
+{n:4,p:"¿Tuvo profetas la iglesia cristiana apostólica del primer siglo?",r:"1 Corintios 12:28",resp:"Sí",des:`"A unos puso Dios en la iglesia, primeramente apóstoles, luego profetas, lo tercero maestros..." Los profetas son uno de los dones que Dios puso en la iglesia, y este don no fue eliminado.`,egw:[]},
+{n:5,p:"¿Qué estaba predicho acerca del don profético en la iglesia verdadera?",r:"Apocalipsis 12:17; 19:10",resp:"Que tendrá el testimonio de Jesús, que es el espíritu de profecía",des:`El remanente fiel "guarda los mandamientos de Dios y tiene el testimonio de Jesús". Y "el testimonio de Jesús es el espíritu de profecía": el don se manifestará en la iglesia del tiempo del fin.`,egw:[]}
+]}
+],
+extras:[
+{tt:"Características del verdadero profeta",lista:[{x:"Habla de acuerdo con la Ley y el testimonio — '¡A la ley y al testimonio!'",r:"Isaías 8:20"},{x:"Sus predicciones se cumplen",r:"Jeremías 28:9"},{x:"No induce al pueblo a la apostasía",r:"Deuteronomio 13:1-3"},{x:"Declara lo que Dios le inspira y no habla de sí mismo",r:"Jeremías 14:14"},{x:"Reprueba el pecado",r:"Jeremías 23:21-22"}]},
+{tt:"Elena de White y el don profético",parrafo:`Elena de White (1827-1915) es presentada como la manifestación del don profético en la Iglesia Adventista del Séptimo Día. Se bautizó a los 12 años (1840); en 1842 conoció el mensaje del Advenimiento; y en 1844 tuvo su primera visión. Miles de personas fueron testigos de los momentos en que estaba en visión. Junto con su esposo viajó extensamente predicando y ayudando en la organización de la iglesia.`,lista:[{x:"Escribió miles de páginas y alrededor de 45 libros importantes"},{x:"Entre los principales: El Conflicto de los Siglos, El Deseado de Todas las Gentes, La Educación, El Ministerio de Curación y El Camino a Cristo"}],nota:"Lectura sugerida: leer El Camino a Cristo durante las próximas semanas."},
+{tt:"Sugerencias para beneficiarme con el don de profecía",lista:[{x:"Apreciar las profecías — 'No menospreciéis las profecías'",r:"1 Tesalonicenses 5:20"},{x:"Estar atento a las profecías — 'Tenemos también la palabra profética más segura'",r:"2 Pedro 1:19"},{x:"Creer en los profetas — 'Creed a sus profetas, y seréis prosperados'",r:"2 Crónicas 20:20"}]}
+],
+dec:"Acepto el maravilloso don de profecía otorgado por Dios a su iglesia.",
+amf:{des:"Plan de siete días que incluye: Reavivados por su Palabra, la lección de la Escuela Sabática, la lectura de El Camino a Cristo (de Elena de White) y tus motivos de oración.",dias:[]},
+fmf:`Consulta en la clase cómo los ayudó lo que aprendieron de los escritos de Elena de White, tanto en la vida espiritual como en los principios de salud, educación y servicio. Seguramente te conseguirán uno de sus libros.`,
+cmf:{act:["Entregar el libro misionero o un folleto a las personas que se sienta que necesitan de Dios.","Continuar compartiendo el estudio bíblico con los conocidos."],egw:[{x:"Hay muchos lugares en los cuales no puede oírse la voz del predicador, lugares que pueden ser alcanzados únicamente por nuestras publicaciones... No sabemos cuáles pueden ser los resultados al entregar un solo folleto que contiene la verdad presente.",f:"Manuscrito 127, 1909"}]},
+res:`Dios revela sus designios a los profetas mediante visión, sueño o palabra directa. El verdadero profeta habla conforme a la Ley, sus predicciones se cumplen, no induce a la apostasía y reprueba el pecado. Elena de White es presentada como la manifestación de este don en la Iglesia Adventista.`
+},
+{
+d:20,e:"🚪",g:"linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)",
+t:"Y ahora ¿qué hago?",
+i:`Llegó el momento de la decisión. Después de 19 estudios —la Biblia, Dios, la oración, la salvación, el perdón, la venida de Jesús, la muerte, el juicio, la Ley, el sábado, la iglesia, el bautismo, la vida cristiana, la salud, la mayordomía y el don de profecía—, la pregunta final es: ¿qué hago ahora? La respuesta: seguir a Jesús y bautizarse.`,
+temas:[
+{tt:"El paso indispensable para la salvación",ps:[
+{n:1,p:"¿Qué paso es indispensable para la salvación?",r:"Marcos 16:16",resp:"Creer y bautizarse",des:`"El que creyere y fuere bautizado, será salvo." La fe y el bautismo son dos pasos inseparables: creer sin bautizarse es una fe incompleta; bautizarse sin creer es un rito vacío. Ambos van juntos.`,egw:[]},
+{n:2,p:"¿Qué llamado dirigió Jesús a Levi?",r:"Lucas 5:27",resp:"'Sígueme'",des:`Jesús vio a un publicano llamado Leví sentado al banco de los tributos y le dijo: "Sígueme". Es el mismo llamado que hace a cada persona: la invitación a una relación personal y a un compromiso total.`,egw:[]},
+{n:3,p:"¿Cómo respondió Levi?",r:"Lucas 5:28",resp:"'Y dejándolo todo, se levantó y le siguió'",des:`La decisión de seguir a Cristo implica renunciar a lo que sea necesario para obedecerle. Levi dejó todo —su profesión, su seguridad— y siguió a Jesús.`,egw:[]},
+{n:4,p:"¿Qué otro tierno llamado hace Jesús?",r:"Apocalipsis 3:20",resp:"'He aquí, yo estoy a la puerta y llamo'",des:`"Si alguno oye mi voz y abre la puerta, entraré a él, y cenaré con él, y él conmigo." Jesús no fuerza la entrada: espera que le abramos. El llamado es personal, tierno y urgente.`,egw:[]},
+{n:5,p:"¿Qué decisión debemos tomar ahora?",r:"Hechos 22:16",resp:"Levantarse y bautizarse",des:`"Ahora, pues, ¿por qué te detienes? Levántate y bautízate, y lava tus pecados, invocando su nombre." La pregunta resuena en el corazón de quien ha conocido la verdad: ¿por qué te detienes?`,egw:[]},
+{n:6,p:"¿Cuán importante es que todos testifiquemos?",r:"Mateo 24:14; 1 Pedro 3:15",resp:"Esencial",des:`"Será predicado este evangelio del reino en todo el mundo..." Cada creyente es llamado a compartir su fe y a estar preparado para dar razón de su esperanza.`,egw:[]}
+]}
+],
+extras:[
+{tt:"Cómo ser testigos",lista:[{x:"I. Ser testigos es una orden bíblica — 'me seréis testigos... hasta lo último de la tierra'",r:"Hechos 1:8"},{x:"II. Ser testigos es la respuesta al amor de Dios — 'siendo aún pecadores, Cristo murió por nosotros'",r:"Romanos 5:8"},{x:"III. Ser testigos contribuye a la vida espiritual — 'el amor de Cristo nos constriñe'",r:"2 Corintios 5:14-17"}]},
+{tt:"Las cuatro partes de tu testimonio",lista:[{x:"a. Su testimonio: cómo era mi vida antes de conocer a Jesús"},{x:"b. Las lecciones de su vida: cómo me di cuenta de que necesitaba a Jesús"},{x:"c. Sus pasiones de origen divino: cómo comprometí mi vida con Jesús"},{x:"d. Las buenas nuevas de salvación: la diferencia que Jesús produce en mi vida"}]},
+{tt:"Sugerencias para ser un verdadero discípulo",lista:[{x:"No postergar la decisión de aceptar al Señor",r:"Hechos 24:25"},{x:"Junto con mi familia decidirme por Dios — 'yo y mi casa serviremos a Jehová'",r:"Josué 24:15"},{x:"Hacer la decisión ahora mismo — 'Si oyereis hoy su voz, no endurezcáis vuestros corazones'",r:"Hebreos 3:15"},{x:"Pedir el bautismo — 'Aquí hay agua; ¿qué impide que yo sea bautizado?'",r:"Hechos 8:36"},{x:"Confiar plenamente en Jesús — 'Todo lo puedo en Cristo que me fortalece'",r:"Filipenses 4:13"}]},
+{tt:"La declaración de fe del candidato al bautismo",parrafo:"Por la gracia de Dios, quiero ser un discípulo porque:",lista:[{x:"Acepto a Jesús como mi único Salvador",r:"Hechos 4:12"},{x:"Abandono el pecado, habiendo obtenido el perdón por el arrepentimiento, la confesión y la conversión",r:"1 Juan 1:9"},{x:"Acepto que la Iglesia Adventista es el pueblo remanente fiel, que espera la venida de Cristo guardando sus mandamientos y teniendo la fe de Jesús",r:"Apocalipsis 12:17; 14:12"}]},
+{tt:"Vivir en relación, comunión y misión",columnas:[
+{ct:"Vivir en Relación",items:[{x:"Descansar el santo sábado y asistir al culto",r:"Éxodo 20:8-11"},{x:"Participar de la Escuela Sabática y de los grupos pequeños",r:"Hechos 2:41-47"}]},
+{ct:"Vivir en Comunión",items:[{x:"Aceptar la Biblia como única regla de fe y estudiarla diariamente",r:"Juan 5:39"},{x:"Orar tres veces al día",r:"Daniel 6:10"},{x:"Observar fielmente sus santos mandamientos",r:"Santiago 2:10"},{x:"Aceptar el Espíritu de Profecía",r:"2 Crónicas 20:20"},{x:"Vivir sanamente, abstenerse de todo vicio",r:"1 Corintios 6:19-20"},{x:"Vestir con modestia cristiana",r:"1 Timoteo 2:9"},{x:"Colaborar con el plan de diezmos y ofrendas",r:"Malaquías 3:6-10"}]},
+{ct:"Vivir en Misión",items:[{x:"Usar mis talentos como misionero voluntario, ganando almas para Cristo",r:"Lucas 8:38-39"},{x:"Aceptar de buen grado la orientación de la iglesia y sus pastores",r:"Hebreos 13:17"}]}
+],nota:"Por la gracia de Dios, declaro: conocer, aceptar y practicar la doctrina de Jesús; y solicito ser bautizado por inmersión y ser aceptado como miembro de la Iglesia Adventista del Séptimo Día. Mi bautismo se realizará: Fecha ______ a las ______ hs. Lugar: ______."},
+{tt:"Fortaleciendo la vida espiritual",lista:[{x:"Tener un plan de lectura bíblica"},{x:"Tener la Guía de Estudio de la Escuela Sabática para usted y su familia"},{x:"Estudiar un material del don de profecía"},{x:"Si es posible, tener el culto familiar"},{x:"Asistir regularmente a la Escuela Sabática y a las actividades del grupo pequeño"}],nota:"La vida cristiana se construye con la comunión con Dios y se fortalece con la comunidad de los creyentes. Formaré parte de: Clase de Escuela Sabática (templo): ______ / Grupo pequeño (casa): ______"}
+],
+dec:"Creo que el Señor me llama para unirme a su iglesia. Respondo gozoso a su llamado y entrego mi vida mediante el santo bautismo.",
+amf:{des:"Plan sugerido: Reavivados por su Palabra, la lección de la Escuela Sabática y tus motivos de oración, cada mañana. La vida cristiana se construye en la comunión diaria con Dios.",dias:[]},
+cmf:{act:["Invitar al bautismo a familiares, amigos y especialmente a aquellos con quienes se está compartiendo la Biblia. La iglesia proveerá de invitaciones."],preg:"JESÚS VIENE PRONTO: por eso, propóngase ser un instrumento de salvación, testificando, enseñando y llevando personas a Cristo."},
+res:`La serie completa de 20 estudios ha conducido al lector desde el conocimiento de la Biblia hasta la entrega total a Dios mediante el bautismo. Jesús llama: "Sígueme". La respuesta es dejar todo y seguirle. JESÚS VIENE PRONTO: por eso, propóngase ser un instrumento de salvación, testificando, enseñando y llevando personas a Cristo.`
+}
+);
+console.log("Fe de Jesús: lecciones cargadas =", LECCIONES.length);
