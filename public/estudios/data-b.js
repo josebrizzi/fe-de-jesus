@@ -14,7 +14,7 @@ temas:[
 {n:4,p:"¿Qué sentimiento profundo es indispensable?",r:"Hechos 2:37-38",resp:"Arrepentimiento",des:`"Se compungieron de corazón... Pedro les dijo: Arrepentíos, y bautícese cada uno de vosotros en el nombre de Jesucristo para perdón de los pecados." El arrepentimiento bíblico no es solo sentirse mal por las consecuencias, ni vergüenza social: es una profunda tristeza según Dios que produce un cambio de mente y de dirección.`,egw:[{x:"El arrepentimiento incluye dolor por el pecado y apartamiento de él. No renunciaremos al pecado a menos que veamos su maldad.",f:"El Camino a Cristo, p. 29"}]}
 ]},
 {tt:"La confesión y el perdón divino",ps:[
-{n:5,p:"¿Qué se debe hacer con los pecados?",r:"Salmos 32:3-5",resp:"Confesarlos a Dios",des:`David describe el peso del pecado no confesado: "Mientras callé, se envejecieron mis huesos en mi gemir todo el día". Pero al confesar, recibió el perdón. "El que encubre sus pecados no prosperará; mas el que los confiesa y se aparta alcanzará misericordia" (Proverbios 28:13). La confesión debe ir acompañada de apartamiento del pecado.`,egw:[]},
+{n:5,p:"¿Qué se debe hacer con los pecados?",r:"Salmos 32:3-5",resp:"Confesarlos a God",des:`David describe el peso del pecado no confesado: "Mientras callé, se envejecieron mis huesos en mi gemir todo el día". Pero al confesar, recibió el perdón. "El que encubre sus pecados no prosperará; mas el que los confiesa y se aparta alcanzará misericordia" (Proverbios 28:13). La confesión debe ir acompañada de apartamiento del pecado.`,egw:[]},
 {n:6,p:"¿Qué maravilloso ofrecimiento hace Dios?",r:"Isaías 1:18",resp:"'Si vuestros pecados fueren como la grana, como la nieve serán emblanquecidos'",des:`"Venid luego, dice Jehová, y estemos a cuenta..." Dios no se cansa de perdonar. Su ofrecimiento es amplio, generoso, incondicional en cuanto a la magnitud del pecado. No importa cuán manchado esté el pecador: la sangre de Cristo puede limpiarlo completamente.`,egw:[]},
 {n:7,p:"¿Cuán completo es el perdón divino?",r:"Isaías 43:25",resp:"Dios no recuerda más nuestros pecados",des:`"Yo, yo soy el que borro tus rebeliones por amor de mí mismo, y no me acordaré de tus pecados." Dios no solo perdona; olvida. No guarda registro para usarlo en nuestra contra. Y: "Sepultará nuestras iniquidades, y echará en lo profundo del mar todos nuestros pecados" (Miqueas 7:19).`,egw:[]}
 ]}
@@ -65,7 +65,7 @@ res:`Jesús prometió volver; su venida será personal, visible y gloriosa. Todo
 },
 {
 d:8,e:"🌠",g:"linear-gradient(135deg,#141e30,#243b55)",
-t:"¿Cómo saber cuándo es \"pronto\"?",
+t:"¿Cómo saber cuándo es pronto?",
 i:`Nadie conoce la fecha del regreso de Jesús, pero los creyentes no están en tinieblas: pueden reconocer las señales de los tiempos y vivir en preparación constante. La esperanza de la segunda venida no es motivo de especulación, sino de consagración, perseverancia y servicio.`,
 temas:[
 {tt:"La pregunta sobre el tiempo",ps:[
@@ -137,4 +137,18 @@ temas:[
 {n:5,p:"¿Quiénes son los testigos?",r:"Mateo 18:10",resp:"Los ángeles",des:`"Sus ángeles en los cielos ven siempre el rostro de mi Padre que está en los cielos." Los ángeles han observado la vida de cada ser humano. El juicio no es un acto secreto, sino un proceso ante el universo celestial.`,egw:[]},
 {n:6,p:"¿Quién es el Abogado?",r:"1 Juan 2:1",resp:"Jesús",des:`"Si alguno hubiere pecado, abogado tenemos para con el Padre, a Jesucristo el justo." En el juicio no estamos solos: Cristo intercede por nosotros y presenta su sacrificio como pago por nuestros pecados. La buena noticia: el Juez es también nuestro Abogado.`,egw:[{x:"Cristo es nuestro Abogado y nuestro Juez. No hay condenación para los que están en él. Su sangre nos limpia de todo pecado.",f:"El Deseado de Todas las Gentes, p. 568"}]},
 {n:7,p:"¿Por cuál código seremos juzgados?",r:"Santiago 2:12",resp:"Por la ley de la libertad",des:`"Así hablad, y así haced, como los que han de ser juzgados por la ley de la libertad." Los Diez Mandamientos son la norma del juicio: no un yugo de esclavitud, sino una ley que revela el carácter de Dios y el camino de la vida.`,egw:[]},
-{n:8,p:"¿Cuál será la sentencia?",r:"Mateo 25:31-46",resp:"Vida eterna para los justos; apartamiento para los que rechazaron",des:`El Hijo del Hombre separará a las naciones como el pastor separa las ovejas de los cabritos. A las ovejas: "Venid, benditos de mi Padre, heredad el reino preparado para vosotros desde la fund
+{n:8,p:"¿Cuál será la sentencia?",r:"Mateo 25:31-46",resp:"Vida eterna para los justos; apartamiento para los que rechazaron",des:`El Hijo del Hombre separará a las naciones como el pastor separa las ovejas de los cabritos. A las ovejas: "Venid, benditos de mi Padre, heredad el reino preparado para vosotros desde la fundación del mundo". La sentencia manifiesta una fe viva que se traduce en amor al prójimo: no es salvación por obras.`,egw:[]}
+]}
+],
+extras:[
+{tt:"Las etapas del juicio divino",lista:[{x:"1. Juicio Investigador — antes de la segunda venida. 'El Santuario sería purificado' al final de los 2.300 años (Daniel 8:14), es decir, en 1844, cuando comenzó el juicio en el Santuario celestial (Hebreos 8:2, 5)",r:"Apocalipsis 14:6-7"},{x:"2. Juicio Comprobatorio — durante el milenio. Los justos participan en la evaluación de las decisiones divinas",r:"Apocalipsis 20:4"},{x:"3. Juicio Ejecutivo — después del milenio. Se ejecuta la sentencia final ante el gran trono blanco",r:"Apocalipsis 20:11-12"}],nota:"Este tema puede profundizarse con el estudio adicional 'La profecía más extraordinaria'."},
+{tt:"Sugerencias para enfrentar el Juicio con el amparo de Cristo",lista:[{x:"Creer y obedecer a Jesús — 'El que oye mi palabra, y cree al que me envió, tiene vida eterna; y no vendrá a condenación'",r:"Juan 5:24"},{x:"Amar a Dios y guardar los mandamientos — 'Teme a Dios, y guarda sus mandamientos'",r:"Eclesiastés 12:13"}]}
+],
+dec:"Acepto a Jesús como mi Abogado.",
+amf:{des:"Plan de siete días con textos del Evangelio de Juan. Para cada texto: meditar y orar, escribiendo lo que se piensa que Dios dijo cada mañana.",dias:[{x:"Juan 7",i:"La fiesta de los tabernáculos"},{x:"Juan 8",i:"La mujer adúltera y la luz del mundo"},{x:"Juan 9",i:"La curación del ciego de nacimiento"},{x:"Juan 10",i:"El buen pastor"},{x:"Juan 11",i:"La resurrección de Lázaro"},{x:"Juan 12",i:"La unción en Betania"},{x:"Juan 13",i:"El lavamiento de los pies"}]},
+fmf:`Comenta con amistades lo que sientes sobre el Juicio al saber que Jesús es nuestro Abogado. ¿Cómo reaccionaron? Para el creyente, el juicio no es una amenaza, sino una seguridad. Comparte la experiencia en el grupo pequeño de apoyo espiritual.`,
+cmf:{act:["Llevar este evangelio a alguien que lo necesite.","Invitar a otros a compartir este estudio de la Palabra de Dios."],preg:"'Evangelio' significa 'buena noticia': Cristo murió para que podamos enfrentar el Juicio justificados por su sacrificio. ¿A quién le contarás esta buena noticia?"},
+res:`Todos comparecerán ante el tribunal de Cristo. El juicio es universal, exhaustivo y basado en la ley de Dios. Pero para el creyente es una seguridad: Jesús es nuestro Abogado. Tres etapas —investigador, comprobatorio y ejecutivo— y una sola buena noticia: el Juez es también nuestro Salvador.`
+}
+);
+console.log("Fe de Jesús: lecciones cargadas =", LECCIONES.length);
