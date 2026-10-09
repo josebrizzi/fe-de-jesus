@@ -26,41 +26,43 @@ const LECCIONES = [];
 (function(){
   var s = document.createElement("style");
   s.textContent = `
-header .t{font-size:18px}
-.logo{font-size:22px}
-.logo small{font-size:14px}
-.pill{font-size:15px}
-.st small{font-size:12px}
-.hero .dia{font-size:14px}
-.hero h1{font-size:29px}
-.hero p{font-size:16px}
-.btn{font-size:17px}
-.sec h2{font-size:14px}
-.d{font-size:13px}
-.card h3{font-size:17px}
-.stx{font-size:14px}
-.card h2{font-size:21px}
-.intro{font-size:18px;line-height:1.7}
-.pq{font-size:18px}
-.chip{font-size:15px;padding:6px 14px}
-.resp{font-size:15px}
-.des{font-size:18px;line-height:1.7}
-.egw{font-size:16px;line-height:1.65}
-.egw b{font-size:13px}
-ul.lis li{font-size:18px;line-height:1.6}
-ul.lis li span{font-size:14px !important}
-.colwrap h4{font-size:16px}
-.dec h2{font-size:19px}
-.dec p{font-size:18px}
-.dbtns button{font-size:18px}
-.navg button{font-size:16px}
-.cplt{font-size:18px}
-#sheet h3{font-size:24px}
-#sheet .vv{font-size:14px}
-#sheet .bd{font-size:23px;line-height:1.8}
-#sheet sup{font-size:16px}
-.toast{font-size:16px}
-footer{font-size:14px}
+header .t{font-size:20px}
+.logo{font-size:24px}
+.logo small{font-size:16px}
+.pill{font-size:17px}
+.st small{font-size:14px}
+.hero .dia{font-size:16px}
+.hero h1{font-size:31px}
+.hero p{font-size:18px}
+.btn{font-size:19px}
+.sec h2{font-size:16px}
+.d{font-size:16px}
+.card h3{font-size:20px;line-height:1.35}
+.stx{font-size:16px}
+.he{font-size:22px}
+.card h2{font-size:23px}
+.intro{font-size:20px;line-height:1.7}
+.pq{font-size:20px}
+.pnum{width:27px;height:27px;font-size:14px}
+.chip{font-size:17px;padding:7px 15px}
+.resp{font-size:17px}
+.des{font-size:20px;line-height:1.72}
+.egw{font-size:18px;line-height:1.65}
+.egw b{font-size:15px}
+ul.lis li{font-size:20px;line-height:1.6}
+ul.lis li span{font-size:16px !important}
+.colwrap h4{font-size:18px}
+.dec h2{font-size:21px}
+.dec p{font-size:20px}
+.dbtns button{font-size:20px}
+.navg button{font-size:18px}
+.cplt{font-size:20px}
+#sheet h3{font-size:26px}
+#sheet .vv{font-size:16px}
+#sheet .bd{font-size:25px;line-height:1.8}
+#sheet sup{font-size:18px}
+.toast{font-size:18px}
+footer{font-size:16px}
 `;
   document.head.appendChild(s);
 })();
