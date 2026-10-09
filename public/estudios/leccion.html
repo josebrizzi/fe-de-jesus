@@ -51,7 +51,6 @@ ul.lis li:last-child{border:none}
 .colwrap{display:flex;gap:12px;flex-wrap:wrap}
 .colwrap>div{flex:1;min-width:140px}
 .colwrap h4{font-size:13px;margin-bottom:6px;color:#555}
-/* bottom sheet */
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:50}
 #overlay.on{opacity:1;pointer-events:auto}
 #sheet{position:fixed;left:0;right:0;bottom:0;max-height:75vh;background:#fff;border-radius:20px 20px 0 0;transform:translateY(100%);transition:.3s;z-index:51;display:flex;flex-direction:column}
@@ -88,11 +87,9 @@ ul.lis li:last-child{border:none}
 
 <script src="data.js"></script>
 <script src="data-a.js"></script>
-<!-- Descomentar al subir los siguientes archivos:
 <script src="data-b.js"></script>
 <script src="data-c.js"></script>
 <script src="data-d.js"></script>
--->
 
 <script>
 /* ============ API BÍBLICA (autodetección) ============ */
@@ -162,7 +159,6 @@ function linkRefs(texto){
     `<a class="ref" data-r="${ref}">${ref}</a>`);
 }
 
-/* Divide "Mateo 24:14; 28:19" en chips, heredando el libro */
 function chips(refs){
   const partes = refs.split(";").map(s => s.trim()).filter(Boolean);
   let libroPrev = "";
@@ -198,7 +194,6 @@ async function openRef(ref){
   abrirSheet();
   try{
     await discover();
-    /* Rango de versos: puede cruzar capítulos ("1:1-2:3") */
     let caps = [p.c];
     let rango = null;
     if(p.versos){
@@ -348,7 +343,7 @@ function render(){
   if(L.amf) h += card(`<h2>🌅 Alimentando mi fe</h2>` +
     (L.amf.des ? `<div class="des">${linkRefs(L.amf.des)}</div>` : "") +
     (L.amf.pg ? `<div class="des" style="margin-top:8px"><b>Preguntas guía:</b><ul class="lis">${L.amf.pg.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul></div>` : "") +
-    listaHTML(L.amf.dias.map(d => ({x: d.x + " — " + d.i}))));
+    (L.amf.dias && L.amf.dias.length ? listaHTML(L.amf.dias.map(d => ({x: d.x + " — " + d.i}))) : ""));
 
   if(L.fmf){
     const esOps = typeof L.fmf === "object";
@@ -356,7 +351,7 @@ function render(){
       (esOps
         ? `<ol class="lis" style="padding-left:20px">` + L.fmf.ops.map(o => `<li style="list-style:decimal">${escapeHtml(o)}</li>`).join("") + `</ol>`
         : `<div class="des">${linkRefs(L.fmf)}</div>`) +
-      egwBlock(esOps ? L.fmf.egw : null));
+      egwBlock(esOps ? L.fmf.egw : L.fmf_egw));
   }
 
   if(L.cmf) h += card(`<h2>📣 Compartiendo mi fe</h2>` +
