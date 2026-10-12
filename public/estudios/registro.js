@@ -1,7 +1,7 @@
 // ============ REGISTRO DE ALUMNOS ============
 (function(){
   // URL del receptor de Google Sheets (planilla del instructor)
-  var REGISTRO_URL = "https://script.google.com/macros/s/AKfycby3TbjpQcecQ5uV1Uq1dioCRC07AbcgbdG63xRppwv2PkIquvpCWmG8LV3AnXEIIND8/exec";
+  var REGISTRO_URL = var REGISTRO_URL = "https://script.google.com/macros/s/AKfycbykRiG6IoNWWkGrVv9aHDKv5kZtsbkl11Z-Y2uOXHbqctptrjNeTrlupTgre7mkiGlh/exec";";
 
   window.fejPerfil = function(){
     return JSON.parse(localStorage.getItem("fej_alumno") || "null");
