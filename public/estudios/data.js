@@ -118,7 +118,8 @@ footer{font-size:16px}
       <button class="x" onclick="cerrarAcerca()">×</button>
       <div class="qa-av"><span>👤</span></div>
       <h2>José Francisco Brizzi</h2>
-      <div class="rol">Abogado — Universidad de Buenos Aires (UBA)</div>
+      <div class="rol">Anciano · Instructor Bíblico</div>
+      <div class="rol">Abogado — Universidad de Buenos Aires (UBA)</div>     
       <p>«Hace años que camino con el Señor. Esta herramienta nació del deseo de que más personas conozcan a Jesús a través del estudio de Su Palabra.»</p>
       <div class="qa-cred">📖 <b>Sobre el contenido:</b> todo el contenido de los estudios pertenece a la <b>IGLESIA ADVENTISTA DEL SÉPTIMO DÍA</b>, y está basado en el curso de estudio bíblico «La Fe de Jesús». Las citas provienen de los libros de Elena G. de White.</div>
       <p>¿Terminaste los 20 estudios y querés dar el siguiente paso? Encontrá una iglesia cerca tuyo y coordiná tu bautismo. 🙏</p>
