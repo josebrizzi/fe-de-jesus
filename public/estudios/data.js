@@ -72,7 +72,7 @@ footer{font-size:16px}
   /* ⚠️⚠️⚠️ REEMPLAZÁ ESTE NÚMERO POR EL TUYO ⚠️⚠️⚠️
      Formato internacional, SIN +, sin espacios, sin guiones.
      Ejemplo Argentina: 549 + código de área + número → 5491155555555 */
-  var TELEFONO = "5491100000000";
+  var TELEFONO = "5491128945261";
 
   var WHATSAPP = "https://wa.me/" + TELEFONO + "?text=" +
     encodeURIComponent("Hola José 📖 Vengo de la app Fe de Jesús y quiero consultarte algo.");
