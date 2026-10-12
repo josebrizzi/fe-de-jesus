@@ -69,9 +69,7 @@ footer{font-size:16px}
 
 /* ============ ACERCA DE + ENCONTRÁ UNA IGLESIA ============ */
 (function(){
-  /* ⚠️⚠️⚠️ REEMPLAZÁ ESTE NÚMERO POR EL TUYO ⚠️⚠️⚠️
-     Formato internacional, SIN +, sin espacios, sin guiones.
-     Ejemplo Argentina: 549 + código de área + número → 5491155555555 */
+  /* Tu número de WhatsApp (formato internacional, sin +, sin espacios) */
   var TELEFONO = "5491128945261";
 
   var WHATSAPP = "https://wa.me/" + TELEFONO + "?text=" +
@@ -119,7 +117,7 @@ footer{font-size:16px}
       <div class="qa-av"><span>👤</span></div>
       <h2>José Francisco Brizzi</h2>
       <div class="rol">Anciano · Instructor Bíblico</div>
-      <div class="rol">Abogado — Universidad de Buenos Aires (UBA)</div>     
+      <div class="rol">Abogado — Universidad de Buenos Aires (UBA)</div>
       <p>«Hace años que camino con el Señor. Esta herramienta nació del deseo de que más personas conozcan a Jesús a través del estudio de Su Palabra.»</p>
       <div class="qa-cred">📖 <b>Sobre el contenido:</b> todo el contenido de los estudios pertenece a la <b>IGLESIA ADVENTISTA DEL SÉPTIMO DÍA</b>, y está basado en el curso de estudio bíblico «La Fe de Jesús». Las citas provienen de los libros de Elena G. de White.</div>
       <p>¿Terminaste los 20 estudios y querés dar el siguiente paso? Encontrá una iglesia cerca tuyo y coordiná tu bautismo. 🙏</p>
@@ -199,4 +197,49 @@ footer{font-size:16px}
   } else {
     botones();
   }
+})();
+
+/* ============ ORACIÓN PERSONALIZADA EN CADA ESTUDIO ============ */
+(function(){
+  /* Cargar las oraciones */
+  var sc = document.createElement("script");
+  sc.src = "oraciones.js";
+  document.head.appendChild(sc);
+
+  var css = document.createElement("style");
+  css.textContent = `
+.oracion{background:linear-gradient(135deg,#ede7f6,#f3e5f5);border:1px solid #d9d0ec;border-left:4px solid #7e57c2}
+.oracion h2{color:#5e35b1}
+.oracion .des{font-style:italic;color:#4527a0}
+`;
+  document.head.appendChild(css);
+
+  var listo = false;
+
+  function intentar(){
+    if(listo) return true;
+    var app = document.getElementById("app");
+    if(!app || !app.children.length) return false;
+    if(!window.ORACIONES) return false;
+
+    var params = new URLSearchParams(location.search);
+    var d = +params.get("dia") || 1;
+    var texto = window.ORACIONES[d];
+    if(!texto) return true;
+
+    var card = document.createElement("section");
+    card.className = "card oracion";
+    card.innerHTML = '<h2>🙏 Oración para comenzar el estudio</h2><div class="des">' + texto + '</div>';
+
+    var hero = app.querySelector(".hero");
+    if(hero && hero.nextSibling) app.insertBefore(card, hero.nextSibling);
+    else app.insertBefore(card, app.firstChild);
+
+    listo = true;
+    return true;
+  }
+
+  var timer = setInterval(function(){
+    if(intentar()) clearInterval(timer);
+  }, 250);
 })();
