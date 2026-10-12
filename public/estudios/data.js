@@ -67,179 +67,155 @@ footer{font-size:16px}
   document.head.appendChild(s);
 })();
 
-/* ============ ACERCA DE + ENCONTRÁ UNA IGLESIA ============ */
+/* ============ REGISTRO DE ALUMNOS ============ */
 (function(){
-  /* Tu número de WhatsApp (formato internacional, sin +, sin espacios) */
-  var TELEFONO = "5491128945261";
+  /* URL del receptor de Google Sheets (planilla del instructor) */
+  var REGISTRO_URL = "https://script.google.com/macros/s/AKfycbwFnRRvs-5kJ8O1WXyqo-IOePnoRsk1mMnsk7Mk-UEjsVQFhSQXmVkNyqW-u2wHGlJK/exec";
 
-  var WHATSAPP = "https://wa.me/" + TELEFONO + "?text=" +
-    encodeURIComponent("Hola José 📖 Vengo de la app Fe de Jesús y quiero consultarte algo.");
+  window.fejPerfil = function(){
+    return JSON.parse(localStorage.getItem("fej_alumno") || "null");
+  };
 
+  window.fejRegistrar = function(evento, detalle){
+    try{
+      var p = window.fejPerfil() || {};
+      var fila = {
+        fecha: new Date().toLocaleString("es-AR"),
+        nombre: p.nombre || "(sin registrar)",
+        telefono: p.telefono || "",
+        evento: evento,
+        detalle: detalle || ""
+      };
+      var log = JSON.parse(localStorage.getItem("fej_log") || "[]");
+      log.push(fila);
+      localStorage.setItem("fej_log", JSON.stringify(log));
+      if(REGISTRO_URL && !p.privado){
+        fetch(REGISTRO_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(fila)
+        }).catch(function(){});
+      }
+    }catch(err){}
+  };
+
+  window.fejTextoProgreso = function(){
+    var p = window.fejPerfil() || {};
+    var doneMap = JSON.parse(localStorage.getItem("fej_done") || "{}");
+    var deces = JSON.parse(localStorage.getItem("fej_dec") || "{}");
+    var log = JSON.parse(localStorage.getItem("fej_log") || "[]");
+    var ultimas = log.slice(-12).reverse().map(function(f){
+      return "• " + f.fecha + " — " + f.evento + " (" + f.detalle + ")";
+    });
+    var completadas = Object.keys(doneMap).map(Number).sort(function(a,b){return a-b;});
+    var decisiones = Object.keys(deces).map(Number).sort(function(a,b){return a-b;})
+      .map(function(d){ return "Día " + d + ": " + (deces[d]==="si"?"SÍ":"NO"); });
+    return "📊 *Mi progreso en Fe de Jesús*" +
+      "\n\n👤 " + (p.nombre || "Sin registrar") +
+      "\n✅ Lecciones completadas: " + completadas.length + "/20" +
+      (completadas.length ? "\n   Días: " + completadas.join(", ") : "") +
+      (decisiones.length ? "\n✍️ Decisiones: " + decisiones.join(" | ") : "") +
+      (ultimas.length ? "\n\n🕐 Última actividad:\n" + ultimas.join("\n") : "") +
+      "\n\n— Enviado desde la app Fe de Jesús";
+  };
+
+  /* Registro automático de apertura de lección (una vez por lección) */
+  window.addEventListener("load", function(){
+    var params = new URLSearchParams(location.search);
+    var dia = +params.get("dia");
+    if(dia){
+      var clave = "fej_abierta_" + dia;
+      if(!localStorage.getItem(clave)){
+        localStorage.setItem(clave, "1");
+        window.fejRegistrar("Abrió la lección", "Lección " + dia);
+      }
+    }
+  });
+
+  /* Registro de completar/desmarcar y decisiones (por clicks) */
+  document.addEventListener("click", function(e){
+    var t = e.target.closest("#btnCplt, #btnDone, .dbtns button");
+    if(!t) return;
+    var params = new URLSearchParams(location.search);
+    var dia = +params.get("dia") || 1;
+    setTimeout(function(){
+      var doneMap = JSON.parse(localStorage.getItem("fej_done") || "{}");
+      if(t.id === "btnCplt" || t.id === "btnDone"){
+        window.fejRegistrar(doneMap[dia] ? "Completó la lección" : "Desmarcó la lección", "Lección " + dia);
+      } else {
+        var txt = (t.textContent || "").trim().toUpperCase();
+        window.fejRegistrar("Decisión: " + (txt === "SÍ" || txt === "SI" ? "SÍ" : "NO"), "Lección " + dia);
+      }
+    }, 200);
+  }, true);
+})();
+
+/* ============ PANTALLA DE REGISTRO (primera vez) ============ */
+(function(){
   var css = document.createElement("style");
   css.textContent = `
-.acc-wrap{padding:4px 16px 8px}
-.acc-wrap h2{font-size:16px;color:#8e8e8e;margin:26px 4px 10px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
-.acc-grid{display:flex;gap:10px}
-.acc-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;background:#fff;border:1px solid #efefef;border-radius:16px;padding:18px 10px;text-decoration:none;color:#262626;cursor:pointer;font-weight:800;font-size:15px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-.acc-btn:active{transform:scale(.97)}
-.acc-btn span{font-size:32px}
-#qaOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:.25s;z-index:70}
-#qaOverlay.on{opacity:1;pointer-events:auto}
-#qaModal{position:fixed;left:50%;top:50%;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:.25s;z-index:71;width:min(92vw,420px);max-height:84vh;overflow-y:auto;background:#fff;border-radius:20px;padding:26px 22px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
-#qaModal.on{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
-#qaModal .x{position:absolute;top:8px;right:12px;background:none;border:none;font-size:28px;color:#8e8e8e;cursor:pointer}
-.qa-av{width:76px;height:76px;border-radius:50%;margin:0 auto;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;padding:3px}
-.qa-av span{background:#fff;width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px}
-#qaModal h2{text-align:center;font-size:22px;margin:12px 0 2px;line-height:1.25}
-#qaModal .rol{text-align:center;color:#8e8e8e;font-size:14px;font-weight:600}
-#qaModal p{font-size:16px;line-height:1.65;color:#333;margin-top:14px}
-.qa-cred{background:#f7f4ee;border-left:4px solid #b79a5f;border-radius:10px;padding:12px 14px;margin-top:14px;font-size:15px;line-height:1.6;color:#555}
-.qa-cred b{color:#8a744a}
-.qa-btns{display:flex;flex-direction:column;gap:10px;margin-top:18px}
-.qa-btn{display:block;text-align:center;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none}
-.qa-btn.wa{background:#25d366;color:#fff}
-.qa-btn.ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
-.qa-firma{text-align:center;margin-top:16px;font-size:13px;color:#c7c7c7}
+#rgOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:80;display:none;align-items:center;justify-content:center;padding:18px}
+#rgOverlay.on{display:flex}
+#rgModal{background:#fff;border-radius:20px;padding:26px 22px;width:min(92vw,400px);max-height:88vh;overflow-y:auto;position:relative;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+#rgModal h2{font-size:22px;text-align:center;margin-bottom:4px}
+#rgModal .sub{text-align:center;color:#8e8e8e;font-size:14px;margin-bottom:16px}
+#rgModal label{display:block;font-weight:700;font-size:15px;margin:12px 0 5px}
+#rgModal input{width:100%;box-sizing:border-box;padding:13px;border:1px solid #dbdbdb;border-radius:10px;font-size:16px}
+#rgModal input:focus{outline:none;border-color:#0095f6}
+.rg-aviso{background:#e8f3fd;border-radius:10px;padding:12px;font-size:13.5px;color:#3178c6;line-height:1.5;margin-top:14px}
+.rg-btn{width:100%;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;margin-top:10px}
+.rg-btn.si{background:#0095f6;color:#fff}
+.rg-btn.priv{background:#fff;color:#8e8e8e;border:2px solid #dbdbdb}
+.rg-pie{text-align:center;font-size:12px;color:#c7c7c7;margin-top:12px}
 `;
   document.head.appendChild(css);
 
-  var overlay = null, modal = null;
+  function mostrar(){
+    var p = window.fejPerfil();
+    if(p && (p.nombre || p.privado)) return;
 
-  function crearModal(){
-    if(document.getElementById("qaModal")) return;
-    overlay = document.createElement("div");
-    overlay.id = "qaOverlay";
-    overlay.onclick = window.cerrarAcerca;
-    modal = document.createElement("div");
-    modal.id = "qaModal";
-    modal.innerHTML = `
-      <button class="x" onclick="cerrarAcerca()">×</button>
-      <div class="qa-av"><span>👤</span></div>
-      <h2>José Francisco Brizzi</h2>
-      <div class="rol">Anciano · Instructor Bíblico</div>
-      <div class="rol">Abogado — Universidad de Buenos Aires (UBA)</div>
-      <p>«Hace años que camino con el Señor. Esta herramienta nació del deseo de que más personas conozcan a Jesús a través del estudio de Su Palabra.»</p>
-      <div class="qa-cred">📖 <b>Sobre el contenido:</b> todo el contenido de los estudios pertenece a la <b>IGLESIA ADVENTISTA DEL SÉPTIMO DÍA</b>, y está basado en el curso de estudio bíblico «La Fe de Jesús». Las citas provienen de los libros de Elena G. de White.</div>
-      <p>¿Terminaste los 20 estudios y querés dar el siguiente paso? Encontrá una iglesia cerca tuyo y coordiná tu bautismo. 🙏</p>
-      <div class="qa-btns">
-        <a class="qa-btn wa" href="${WHATSAPP}" target="_blank" rel="noopener">💬 Escribirme por WhatsApp</a>
-        <button class="qa-btn ig" onclick="encontrarIglesia()">📍 Encontrá una iglesia cerca tuyo</button>
-      </div>
-      <div class="qa-firma">"JESÚS VIENE PRONTO"</div>
-    `;
-    document.body.appendChild(overlay);
-    document.body.appendChild(modal);
-  }
-
-  window.abrirAcerca = function(){
-    crearModal();
-    requestAnimationFrame(function(){
-      overlay.classList.add("on");
-      modal.classList.add("on");
-    });
-  };
-
-  window.cerrarAcerca = function(){
-    if(overlay){
-      overlay.classList.remove("on");
-      modal.classList.remove("on");
-    }
-  };
-
-  window.encontrarIglesia = function(){
-    var abrirConUbicacion = function(lat, lng){
-      window.open(
-        "https://www.google.com/maps/search/Iglesia%20Adventista%20del%20S%C3%A9ptimo%20D%C3%ADa/@" +
-        lat + "," + lng + ",14z",
-        "_blank"
-      );
-    };
-    var abrirSinUbicacion = function(){
-      window.open(
-        "https://www.google.com/maps/search/Iglesia%20Adventista%20del%20S%C3%A9ptimo%20D%C3%ADa%20cerca%20de%20m%C3%AD",
-        "_blank"
-      );
-    };
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(
-        function(p){ abrirConUbicacion(p.coords.latitude, p.coords.longitude); },
-        abrirSinUbicacion,
-        { timeout: 8000, maximumAge: 60000 }
-      );
-    } else {
-      abrirSinUbicacion();
-    }
-  };
-
-  function botones(){
-    var esPortada = !!document.getElementById("lista");
-    var esLeccion = !!document.getElementById("app");
-    if(!esPortada && !esLeccion) return;
-
-    var wrap = document.createElement("div");
-    wrap.className = "acc-wrap";
-    wrap.innerHTML = `
-      <h2>${esPortada ? "Acerca de" : "¿Querés saber más?"}</h2>
-      <div class="acc-grid">
-        <div class="acc-btn" onclick="abrirAcerca()"><span>👤</span>Quiénes somos</div>
-        <div class="acc-btn" onclick="encontrarIglesia()"><span>📍</span>Encontrá una iglesia</div>
+    var ov = document.createElement("div");
+    ov.id = "rgOverlay";
+    ov.innerHTML = `
+      <div id="rgModal">
+        <h2>📖 ¡Bienvenido!</h2>
+        <div class="sub">Antes de comenzar, contanos quién sos para acompañarte en el camino</div>
+        <label>Tu nombre completo</label>
+        <input id="rgNombre" placeholder="Ej: María González" autocomplete="name">
+        <label>Tu teléfono (opcional)</label>
+        <input id="rgTel" placeholder="Para que tu instructor pueda contactarte" inputmode="tel">
+        <div class="rg-aviso">🤝 Tu nombre y tu avance en los estudios se comparten con el instructor, José, para poder acompañarte en tu crecimiento y en tu decisión de bautismo.</div>
+        <button class="rg-btn si" id="rgOk">✅ Registrarme y comenzar</button>
+        <button class="rg-btn priv" id="rgPriv">🔒 Prefiero estudiar en privado</button>
+        <div class="rg-pie">Podés cambiar esto después desde "Quiénes somos"</div>
       </div>`;
+    document.body.appendChild(ov);
+    requestAnimationFrame(function(){ ov.classList.add("on"); });
 
-    if(esPortada){
-      document.querySelector(".sec").appendChild(wrap);
-    } else {
-      document.getElementById("app").appendChild(wrap);
-    }
+    ov.querySelector("#rgOk").onclick = function(){
+      var n = ov.querySelector("#rgNombre").value.trim();
+      if(!n){ ov.querySelector("#rgNombre").focus(); return; }
+      localStorage.setItem("fej_alumno", JSON.stringify({
+        nombre: n,
+        telefono: ov.querySelector("#rgTel").value.trim(),
+        privado: false,
+        desde: new Date().toLocaleString("es-AR")
+      }));
+      window.fejRegistrar("Se registró como alumno", "Primera vez");
+      ov.classList.remove("on");
+    };
+    ov.querySelector("#rgPriv").onclick = function(){
+      localStorage.setItem("fej_alumno", JSON.stringify({ privado: true }));
+      ov.classList.remove("on");
+    };
   }
 
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", botones);
-  } else {
-    botones();
-  }
+    document.addEventListener("DOMContentLoaded", mostrar);
+  } else { mostrar(); }
 })();
 
-/* ============ ORACIÓN PERSONALIZADA EN CADA ESTUDIO ============ */
+/* ============ ACERCA DE + ENCONTRÁ UNA IGLESIA + MI PROGRESO ============ */
 (function(){
-  /* Cargar las oraciones */
-  var sc = document.createElement("script");
-  sc.src = "oraciones.js";
-  document.head.appendChild(sc);
-
-  var css = document.createElement("style");
-  css.textContent = `
-.oracion{background:linear-gradient(135deg,#ede7f6,#f3e5f5);border:1px solid #d9d0ec;border-left:4px solid #7e57c2}
-.oracion h2{color:#5e35b1}
-.oracion .des{font-style:italic;color:#4527a0}
-`;
-  document.head.appendChild(css);
-
-  var listo = false;
-
-  function intentar(){
-    if(listo) return true;
-    var app = document.getElementById("app");
-    if(!app || !app.children.length) return false;
-    if(!window.ORACIONES) return false;
-
-    var params = new URLSearchParams(location.search);
-    var d = +params.get("dia") || 1;
-    var texto = window.ORACIONES[d];
-    if(!texto) return true;
-
-    var card = document.createElement("section");
-    card.className = "card oracion";
-    card.innerHTML = '<h2>🙏 Oración para comenzar el estudio</h2><div class="des">' + texto + '</div>';
-
-    var hero = app.querySelector(".hero");
-    if(hero && hero.nextSibling) app.insertBefore(card, hero.nextSibling);
-    else app.insertBefore(card, app.firstChild);
-
-    listo = true;
-    return true;
-  }
-
-  var timer = setInterval(function(){
-    if(intentar()) clearInterval(timer);
-  }, 250);
-})();
+  /* Tu número de WhatsApp (formato internacional, sin +
