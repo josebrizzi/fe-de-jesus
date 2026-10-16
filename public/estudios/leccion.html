@@ -27,7 +27,10 @@ header .t{flex:1;font-weight:700;font-size:20px}
 .chip:active{background:#cde8fc}
 .respTa{width:100%;box-sizing:border-box;min-height:70px;padding:12px;border:1.5px solid #dbdbdb;border-radius:10px;font-size:17px;font-family:inherit;line-height:1.5;resize:vertical;background:#fafafa;color:#262626}
 .respTa:focus{outline:none;border-color:#0095f6;background:#fff}
-.respLbl{font-size:15px;font-weight:700;color:#555;margin-top:10px;display:block}
+.respLbl{font-size:16px;font-weight:700;color:#262626;margin-top:12px;display:block}
+.respLbl small{display:block;font-weight:400;font-size:14px;color:#8e8e8e;margin-top:2px}
+.motiva{font-size:14px;color:#00a86b;font-weight:600;margin-top:5px;display:none}
+.motiva.on{display:block}
 .verEns{background:#e8f3fd;color:#0095f6;border:none;border-radius:10px;padding:11px 16px;font-weight:700;font-size:16px;cursor:pointer;margin-top:8px}
 .verEns:disabled{opacity:.45;cursor:default}
 .ensenanza{display:none;margin-top:14px;border-top:1px dashed #dbdbdb;padding-top:14px}
@@ -61,9 +64,12 @@ ul.lis li span{font-size:16px !important}
 .navg button.prim{background:#0095f6;border-color:#0095f6;color:#fff}
 .navg button:disabled{opacity:.35;cursor:default}
 .fin20{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border-radius:14px;padding:22px;text-align:center;margin:12px 0;font-size:18px;font-weight:700}
-.oracion{background:linear-gradient(135deg,#ede7f6,#f3e5f5);border:1px solid #d9d0ec;border-left:4px solid #7e57c2}
-.oracion h2{color:#5e35b1}
-.oracion .des{font-style:italic;color:#4527a0}
+.oracion{background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1px solid #f0e0a0;border-left:4px solid #f5a623}
+.oracion h2{color:#b8860b;font-size:21px}
+.oracion .eli{font-size:16px;line-height:1.6;color:#5c4a00;margin:8px 0;padding:10px;background:#fff9e6;border-radius:8px}
+.oracion .pedir{font-size:17px;line-height:1.6;color:#5c4a00;margin:8px 0}
+.oracion .amen{font-size:16px;color:#7a5c00;font-weight:600;margin-top:8px}
+.oracion .vers{font-size:15px;font-style:italic;color:#8a744a;margin-top:10px;border-top:1px solid #f0e0a0;padding-top:10px}
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:50}
 #overlay.on{opacity:1;pointer-events:auto}
 #sheet{position:fixed;left:0;right:0;bottom:0;max-height:75vh;background:#fff;border-radius:20px 20px 0 0;transform:translateY(100%);transition:.3s;z-index:51;display:flex;flex-direction:column}
@@ -332,7 +338,8 @@ function render(){
         return '<div class="preg">' +
            '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
            '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
-           '<label class="respLbl">✍️ Tu respuesta (escribí lo que entendés, después podés ver la enseñanza):</label>' +
+           '<label class="respLbl">✍️ Tu respuesta:<small>Escribí con tus palabras lo que entendés. Después vas a poder ver la enseñanza.</small></label>' +
+           '<div class="motiva" id="mo_' + p.n + '"></div>' +
            '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>' +
            '<button class="verEns" id="ve_' + p.n + '" ' + (yaEscribio ? "" : "disabled") + ' onclick="toggleEns(' + p.n + ', this)">' + (yaEscribio ? "👁 Ver la enseñanza" : "✍️ Escribí tu respuesta para ver la enseñanza") + '</button>' +
            '<div class="ensenanza" id="ens_' + p.n + '">' +
@@ -393,6 +400,20 @@ function guardarResp(n, texto){
       btn.textContent = "✍️ Escribí tu respuesta para ver la enseñanza";
     }
   }
+  const motiva = document.getElementById("mo_" + n);
+  if(motiva){
+    const palabras = texto.trim().split(/\s+/).filter(Boolean).length;
+    let msg = "";
+    if(palabras >= 60) msg = "🌟 ¡WOW! " + palabras + " palabras — se nota que el Espíritu te está hablando. Tu reflexión va a bendecir a otros.";
+    else if(palabras >= 35) msg = "🔥 ¡Excelente! " + palabras + " palabras. Tu respuesta es profunda — seguí así.";
+    else if(palabras >= 15) msg = "💪 ¡Muy bien! " + palabras + " palabras. Agregá un ejemplo de tu vida y va a quedar aún mejor.";
+    else if(palabras >= 5) msg = "👏 Buen comienzo. ¿Qué significa esto para vos personalmente?";
+    else if(palabras >= 1) msg = "🌱 ¡Empezaste! Contá un poco más de qué se trata.";
+    if(msg){
+      motiva.textContent = msg;
+      motiva.classList.add("on");
+    }
+  }
 }
 
 function decidir(v){
@@ -435,29 +456,27 @@ discover();
 </script>
 
 <script>
+/* ENSEÑANZA DE ORACIÓN — breve, en cada lección */
 (function(){
-  var sc = document.createElement("script");
-  sc.src = "oraciones.js";
-  document.head.appendChild(sc);
-  var listo = false;
-  function intentar(){
-    if(listo) return true;
+  function colocar(){
     var app = document.getElementById("app");
-    if(!app || !app.children.length) return false;
-    if(!window.ORACIONES) return false;
-    var d = +(new URLSearchParams(location.search).get("dia")) || 1;
-    var texto = window.ORACIONES[d];
-    if(!texto) return true;
+    if(!app || !app.querySelector(".hero")) return false;
+
     var card = document.createElement("section");
     card.className = "card oracion";
-    card.innerHTML = '<h2>🙏 Oración para comenzar el estudio</h2><div class="des" style="font-style:italic;color:#4527a0">' + texto + '</div>';
+    card.innerHTML =
+      '<h2>🙏 Antes de estudiar, orá así:</h2>' +
+      '<div class="eli"><b>A quién:</b> a Dios, tu Padre celestial &nbsp;·&nbsp; <b>En el nombre de:</b> Jesús &nbsp;·&nbsp; <b>Quién te ayuda:</b> el Espíritu Santo</div>' +
+      '<div class="pedir"><b>Pedile:</b> que te ayude a entender las verdades de este estudio, con un corazón humilde y dispuesto a obedecer.</div>' +
+      '<div class="amen">Terminá diciendo: <b>"En el nombre de Jesús, Amén."</b></div>' +
+      '<div class="vers">"Pedid, y se os dará." — Mateo 7:7</div>';
+
     var hero = app.querySelector(".hero");
     if(hero && hero.nextSibling) app.insertBefore(card, hero.nextSibling);
     else app.insertBefore(card, app.firstChild);
-    listo = true;
     return true;
   }
-  var timer = setInterval(function(){ if(intentar()) clearInterval(timer); }, 250);
+  var timer = setInterval(function(){ if(colocar()) clearInterval(timer); }, 250);
 })();
 </script>
 </body>
