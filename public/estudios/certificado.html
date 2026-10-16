@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certificado — Fe de Jesús</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,"Times New Roman",serif;background:#fafafa;color:#262626;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.acciones{max-width:500px;width:100%;text-align:center}
+.acc-top{margin-bottom:14px}
+.acc-top a,.acc-top button{display:inline-block;background:#0095f6;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;margin:4px}
+.acc-top button.imp{background:#262626}
+.cert{background:#fffdf7;border:3px double #b79a5f;border-radius:8px;padding:34px 26px;box-shadow:0 8px 30px rgba(0,0,0,.12);position:relative}
+.cert::before{content:"";position:absolute;inset:8px;border:1px solid #d9cba8;border-radius:4px;pointer-events:none}
+.ema{font-size:46px;margin-bottom:6px}
+.t1{font-size:15px;letter-spacing:3px;color:#8a744a;text-transform:uppercase}
+.t2{font-size:28px;font-weight:bold;margin:10px 0 4px;color:#173f35}
+.t3{font-size:14px;color:#666}
+.nom{font-size:32px;font-weight:bold;color:#222;margin:20px 0 4px;border-bottom:2px solid #b79a5f;display:inline-block;padding:0 18px 6px}
+.p1{font-size:15px;color:#555;line-height:1.6;margin-top:10px}
+.vers{font-size:15px;font-style:italic;color:#8a744a;margin:18px 0;line-height:1.6}
+.firmas{display:flex;gap:20px;justify-content:center;margin-top:30px}
+.firma{flex:1;max-width:200px;border-top:1px solid #999;padding-top:6px;font-size:12px;color:#555}
+.firma b{display:block;font-size:13px;color:#262626}
+.fec{margin-top:22px;font-size:14px;color:#666}
+.lock{text-align:center;padding:50px 24px}
+.lock .e{font-size:60px}
+.lock h1{font-size:24px;margin:14px 0 8px}
+.lock p{font-size:16px;color:#666;line-height:1.6}
+.barra{height:8px;background:#e5e5e5;border-radius:5px;margin:20px auto;max-width:320px;overflow:hidden}
+.barra i{display:block;height:100%;background:#00a86b;border-radius:5px}
+@media print{
+  .acc-top{display:none}
+  body{padding:0;background:#fff}
+  .cert{box-shadow:none;border-radius:0}
+}
+</style>
+</head>
+<body>
+<div class="acciones" id="caja"></div>
+
+<script src="data.js"></script>
+<script src="data-a.js"></script>
+<script src="data-b.js"></script>
+<script src="data-c.js"></script>
+<script src="data-d.js"></script>
+
+<script>
+var doneMap = JSON.parse(localStorage.getItem("fej_done") || "{}");
+var perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
+var deces = JSON.parse(localStorage.getItem("fej_dec") || "{}");
+var nDone = Object.keys(doneMap).length;
+var TELEFONO = "5491128945261";
+var caja = document.getElementById("caja");
+
+if(nDone < 20){
+  caja.innerHTML = '<div class="lock"><div class="e">🎓</div><h1>Tu certificado te espera</h1>' +
+    '<p>Completaste <b>' + nDone + ' de 20</b> estudios.<br>Terminá el curso para desbloquear tu certificado.</p>' +
+    '<div class="barra"><i style="width:' + (nDone/20*100) + '%"></i></div>' +
+    '<p style="font-size:14px;color:#999">Faltan: ' + (function(){ var f=[]; for(var i=1;i<=20;i++){ if(!doneMap[i]) f.push(i); } return f.join(", "); })() + '</p>' +
+    '<a class="acc-top" style="display:inline-block;margin-top:20px;background:#0095f6;color:#fff;border-radius:10px;padding:12px 22px;font-weight:700;text-decoration:none" href="index.html">← Volver a mis estudios</a></div>';
+} else {
+  var nombre = (perfil && perfil.nombre) ? perfil.nombre : "";
+  var hoy = new Date().toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+  var decisiones = Object.keys(deces).filter(function(d){ return deces[d] === "si"; }).length;
+  caja.innerHTML = '<div class="acc-top">' +
+    '<button class="imp" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>' +
+    '<a href="index.html">← Volver</a>' +
+    '</div>' +
+    '<div class="cert">' +
+    '<div class="ema">📖</div>' +
+    '<div class="t1">Certificado</div>' +
+    '<div class="t2">Fe de Jesús</div>' +
+    '<div class="t3">Curso de Estudios Bíblicos · 20 Lecciones</div>' +
+    (nombre
+      ? '<div class="nom">' + nombre + '</div>'
+      : '<div style="margin:18px 0 6px"><input id="nomIn" placeholder="Escribí tu nombre completo" style="font-family:Georgia,serif;font-size:22px;text-align:center;border:none;border-bottom:2px solid #b79a5f;padding:8px 14px;width:90%;outline:none;background:transparent"><br><button onclick="fijarNombre()" style="margin-top:10px;background:#00a86b;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer">✓ Confirmar mi nombre</button></div>') +
+    '<div class="p1">ha completado fielmente el curso de estudio bíblico<br><b>«La Fe de Jesús»</b>, abarcando las 20 lecciones del curso,<br>y ha manifestado su decisión personal de fe.</div>' +
+    '<div class="vers">«Lámpara es a mis pies tu palabra, y lumbre a mi camino.»<br>— Salmos 119:105</div>' +
+    '<div class="firmas">' +
+    '<div class="firma"><b>José Francisco Brizzi</b>Instructor Bíblico</div>' +
+    '<div class="firma"><b>Iglesia Adventista del Séptimo Día</b>Curso La Fe de Jesús</div>' +
+    '</div>' +
+    '<div class="fec">Completado el ' + hoy + ' · ' + decisiones + ' decisiones de fe tomadas</div>' +
+    '</div>';
+}
+
+function fijarNombre(){
+  var v = document.getElementById("nomIn").value.trim();
+  if(!v) return;
+  var p = perfil || {};
+  p.nombre = v; p.privado = false;
+  localStorage.setItem("fej_alumno", JSON.stringify(p));
+  if(typeof window.fejRegistrar === "function") window.fejRegistrar("Recibió su certificado", "Curso completado 20/20");
+  location.reload();
+}
+</script>
+</body>
+</html>
