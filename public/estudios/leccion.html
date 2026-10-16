@@ -33,7 +33,6 @@ header .t{flex:1;font-weight:700;font-size:20px}
 .ensenanza{display:none;margin-top:14px;border-top:1px dashed #dbdbdb;padding-top:14px}
 .ensenanza.on{display:block;animation:abre .6s ease}
 @keyframes abre{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-.resp{display:inline-block;background:#e8f8ef;color:#00a86b;border-radius:8px;padding:6px 10px;font-size:17px;font-weight:700;margin:6px 0}
 .des{font-size:20px;line-height:1.72;color:#333}
 a.ref{color:#0095f6;text-decoration:none;font-weight:600;cursor:pointer;border-bottom:1px dotted #99c9f0}
 ul.lis{list-style:none;margin-top:6px}
@@ -64,10 +63,7 @@ ul.lis li span{font-size:16px !important}
 .fin20{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border-radius:14px;padding:22px;text-align:center;margin:12px 0;font-size:18px;font-weight:700}
 .oracion{background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1px solid #f0e0a0;border-left:4px solid #f5a623}
 .oracion h2{color:#b8860b;font-size:21px}
-.oracion .eli{font-size:16px;line-height:1.6;color:#5c4a00;margin:8px 0;padding:10px;background:#fff9e6;border-radius:8px}
-.oracion .pedir{font-size:17px;line-height:1.6;color:#5c4a00;margin:8px 0}
-.oracion .amen{font-size:16px;color:#7a5c00;font-weight:600;margin-top:8px}
-.oracion .vers{font-size:15px;font-style:italic;color:#8a744a;margin-top:10px;border-top:1px solid #f0e0a0;padding-top:10px}
+.oracion .pedir{font-size:19px;line-height:1.7;color:#5c4a00;font-style:italic;margin:8px 0}
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:50}
 #overlay.on{opacity:1;pointer-events:auto}
 #sheet{position:fixed;left:0;right:0;bottom:0;max-height:75vh;background:#fff;border-radius:20px 20px 0 0;transform:translateY(100%);transition:.3s;z-index:51;display:flex;flex-direction:column}
@@ -330,14 +326,16 @@ function render(){
            '<div class="motiva" id="mo_' + p.n + '"></div>' +
            '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>' +
            '<div class="ensenanza ' + (yaEscribio ? "on" : "") + '" id="ens_' + p.n + '">' +
-             '<span class="resp">✔ ' + escapeHtml(p.resp) + '</span>' +
              '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[L.d + ":" + p.n]) || p.des) + '</div>' +
            '</div>' +
          '</div>';
       }).join("")
     )).join("");
 
-  h += extrasHTML(L.extras);
+  if(L.extras){
+    const visibles = L.d === 20 ? L.extras : L.extras.filter(e => /^Sugerencias/i.test(e.tt));
+    h += extrasHTML(visibles);
+  }
 
   if(L.dec) h += '<section class="dec">' +
     '<h2>✍️ Decisión personal</h2>' +
@@ -441,20 +439,43 @@ discover();
 </script>
 
 <script>
-/* ENSEÑANZA DE ORACIÓN — breve, en cada lección */
+/* ORACIÓN SENCILLA — una por día, según el tema */
 (function(){
   function colocar(){
     var app = document.getElementById("app");
     if(!app || !app.querySelector(".hero")) return false;
 
+    var temas = {
+      1:"entender que la Biblia es Tu Palabra inspirada",
+      2:"conocer a Dios como Padre lleno de amor",
+      3:"aprender a orar y confiar en Ti",
+      4:"entender de dónde vino el sufrimiento y cómo vencerlo",
+      5:"comprender la salvación que Jesús logró para mí",
+      6:"recibir Tu perdón y perdonar de corazón",
+      7:"esperar con fe el regreso de Jesús",
+      8:"reconocer las señales de Tu venida",
+      9:"descansar en la promesa de la resurrección",
+      10:"confiar en Jesús, mi Abogado en el Juicio",
+      11:"guardar Tu Ley escrita en mi corazón",
+      12:"valorar el sábado como Tu regalo",
+      13:"hacer del sábado mi día más feliz",
+      14:"encontrar la iglesia que Tú preparaste",
+      15:"decidirme al bautismo siguiendo a Jesús",
+      16:"crecer cada día como discípulo tuyo",
+      17:"cuidar mi cuerpo como templo de Tu Espíritu",
+      18:"ser fiel mayordomo de lo que me das",
+      19:"valorar la guía que das a Tu iglesia",
+      20:"abrirte la puerta de mi corazón para siempre"
+    };
+
+    var d = +(new URLSearchParams(location.search).get("dia")) || 1;
+    var tema = temas[d] || "entender las verdades de este estudio";
+
     var card = document.createElement("section");
     card.className = "card oracion";
     card.innerHTML =
-      '<h2>🙏 Antes de estudiar, orá así:</h2>' +
-      '<div class="eli"><b>A quién:</b> a Dios, tu Padre celestial &nbsp;·&nbsp; <b>En el nombre de:</b> Jesús &nbsp;·&nbsp; <b>Quién te ayuda:</b> el Espíritu Santo</div>' +
-      '<div class="pedir"><b>Pedile:</b> que te ayude to entender las verdades de este estudio, con un corazón humilde y dispuesto a obedecer.</div>' +
-      '<div class="amen">Terminá diciendo: <b>"En el nombre de Jesús, Amén."</b></div>' +
-      '<div class="vers">"Pedid, y se os dará." — Mateo 7:7</div>';
+      '<h2>🙏 Orá antes de comenzar:</h2>' +
+      '<div class="pedir">"Padre celestial, en el nombre de Jesús, te pido que tu Espíritu Santo me ayude a ' + tema + '. Amén."</div>';
 
     var hero = app.querySelector(".hero");
     if(hero && hero.nextSibling) app.insertBefore(card, hero.nextSibling);
