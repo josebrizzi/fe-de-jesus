@@ -47,8 +47,6 @@ header .t{font-size:20px}
 .chip{font-size:17px;padding:7px 15px}
 .resp{font-size:17px}
 .des{font-size:20px;line-height:1.72}
-.egw{font-size:18px;line-height:1.65}
-.egw b{font-size:15px}
 ul.lis li{font-size:20px;line-height:1.6}
 ul.lis li span{font-size:16px !important}
 .colwrap h4{font-size:18px}
@@ -65,50 +63,6 @@ ul.lis li span{font-size:16px !important}
 footer{font-size:16px}
 `;
   document.head.appendChild(s);
-})();
-
-// ============ ORACIÓN PERSONALIZADA EN CADA ESTUDIO ============
-(function(){
-  var sc = document.createElement("script");
-  sc.src = "oraciones.js";
-  document.head.appendChild(sc);
-
-  var css = document.createElement("style");
-  css.textContent = `
-.oracion{background:linear-gradient(135deg,#ede7f6,#f3e5f5);border:1px solid #d9d0ec;border-left:4px solid #7e57c2}
-.oracion h2{color:#5e35b1}
-.oracion .des{font-style:italic;color:#4527a0}
-`;
-  document.head.appendChild(css);
-
-  var listo = false;
-
-  function intentar(){
-    if(listo) return true;
-    var app = document.getElementById("app");
-    if(!app || !app.children.length) return false;
-    if(!window.ORACIONES) return false;
-
-    var params = new URLSearchParams(location.search);
-    var d = +params.get("dia") || 1;
-    var texto = window.ORACIONES[d];
-    if(!texto) return true;
-
-    var card = document.createElement("section");
-    card.className = "card oracion";
-    card.innerHTML = '<h2>🙏 Oración para comenzar el estudio</h2><div class="des">' + texto + '</div>';
-
-    var hero = app.querySelector(".hero");
-    if(hero && hero.nextSibling) app.insertBefore(card, hero.nextSibling);
-    else app.insertBefore(card, app.firstChild);
-
-    listo = true;
-    return true;
-  }
-
-  var timer = setInterval(function(){
-    if(intentar()) clearInterval(timer);
-  }, 250);
 })();
 
 // ============ CARGADOR DE MÓDULOS ============
