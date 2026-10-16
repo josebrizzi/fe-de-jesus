@@ -51,7 +51,6 @@ var doneMap = JSON.parse(localStorage.getItem("fej_done") || "{}");
 var perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
 var deces = JSON.parse(localStorage.getItem("fej_dec") || "{}");
 var nDone = Object.keys(doneMap).length;
-var TELEFONO = "5491128945261";
 var caja = document.getElementById("caja");
 
 if(nDone < 20){
@@ -59,7 +58,7 @@ if(nDone < 20){
     '<p>Completaste <b>' + nDone + ' de 20</b> estudios.<br>Terminá el curso para desbloquear tu certificado.</p>' +
     '<div class="barra"><i style="width:' + (nDone/20*100) + '%"></i></div>' +
     '<p style="font-size:14px;color:#999">Faltan: ' + (function(){ var f=[]; for(var i=1;i<=20;i++){ if(!doneMap[i]) f.push(i); } return f.join(", "); })() + '</p>' +
-    '<a class="acc-top" style="display:inline-block;margin-top:20px;background:#0095f6;color:#fff;border-radius:10px;padding:12px 22px;font-weight:700;text-decoration:none" href="index.html">← Volver a mis estudios</a></div>';
+    '<a style="display:inline-block;margin-top:20px;background:#0095f6;color:#fff;border-radius:10px;padding:12px 22px;font-weight:700;text-decoration:none" href="index.html">← Volver a mis estudios</a></div>';
 } else {
   var nombre = (perfil && perfil.nombre) ? perfil.nombre : "";
   var hoy = new Date().toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
@@ -79,8 +78,8 @@ if(nDone < 20){
     '<div class="p1">ha completado fielmente el curso de estudio bíblico<br><b>«La Fe de Jesús»</b>, abarcando las 20 lecciones del curso,<br>y ha manifestado su decisión personal de fe.</div>' +
     '<div class="vers">«Lámpara es a mis pies tu palabra, y lumbre a mi camino.»<br>— Salmos 119:105</div>' +
     '<div class="firmas">' +
-    '<div class="firma"><b>José Francisco Brizzi</b>Instructor Bíblico</div>' +
-    '<div class="firma"><b>Iglesia Adventista del Séptimo Día</b>Curso La Fe de Jesús</div>' +
+    '<div class="firma"><b>Instructor Bíblico</b>Curso La Fe de Jesús</div>' +
+    '<div class="firma"><b>Iglesia Adventista del Séptimo Día</b>Estudios Bíblicos</div>' +
     '</div>' +
     '<div class="fec">Completado el ' + hoy + ' · ' + decisiones + ' decisiones de fe tomadas</div>' +
     '</div>';
