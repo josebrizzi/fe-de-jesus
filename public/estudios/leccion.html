@@ -109,7 +109,7 @@ ul.lis li span{font-size:16px !important}
 <script src="data-b.js"></script>
 <script src="data-c.js"></script>
 <script src="data-d.js"></script>
-
+<script src="resumen.js"></script>
 <script>
 let API_BASE = null, BIBLE_VERSION = "RVR1960", apiOK = false;
 var TELEFONO_INSTRUCTOR = "5491128945261";
@@ -342,9 +342,9 @@ function render(){
            '<div class="motiva" id="mo_' + p.n + '"></div>' +
            '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>' +
            '<button class="verEns" id="ve_' + p.n + '" ' + (yaEscribio ? "" : "disabled") + ' onclick="toggleEns(' + p.n + ', this)">' + (yaEscribio ? "👁 Ver la enseñanza" : "✍️ Escribí tu respuesta para ver la enseñanza") + '</button>' +
-           '<div class="ensenanza" id="ens_' + p.n + '">' +
-             '<span class="resp">✔ Respuesta sugerida: ' + escapeHtml(p.resp) + '</span>' +
-             '<div class="des">' + linkRefs(p.des) + '</div>' +
+                   '<div class="ensenanza" id="ens_' + p.n + '">' +
+             '<span class="resp">✔ ' + escapeHtml(p.resp) + '</span>' +
+             '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[L.d + ":" + p.n]) || p.des) + '</div>' +
            '</div>' +
          '</div>';
       }).join("")
