@@ -28,13 +28,11 @@ header .t{flex:1;font-weight:700;font-size:20px}
 .respTa{width:100%;box-sizing:border-box;min-height:70px;padding:12px;border:1.5px solid #dbdbdb;border-radius:10px;font-size:17px;font-family:inherit;line-height:1.5;resize:vertical;background:#fafafa;color:#262626}
 .respTa:focus{outline:none;border-color:#0095f6;background:#fff}
 .respLbl{font-size:16px;font-weight:700;color:#262626;margin-top:12px;display:block}
-.respLbl small{display:block;font-weight:400;font-size:14px;color:#8e8e8e;margin-top:2px}
 .motiva{font-size:14px;color:#00a86b;font-weight:600;margin-top:5px;display:none}
 .motiva.on{display:block}
-.verEns{background:#e8f3fd;color:#0095f6;border:none;border-radius:10px;padding:11px 16px;font-weight:700;font-size:16px;cursor:pointer;margin-top:8px}
-.verEns:disabled{opacity:.45;cursor:default}
 .ensenanza{display:none;margin-top:14px;border-top:1px dashed #dbdbdb;padding-top:14px}
-.ensenanza.on{display:block}
+.ensenanza.on{display:block;animation:abre .6s ease}
+@keyframes abre{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 .resp{display:inline-block;background:#e8f8ef;color:#00a86b;border-radius:8px;padding:6px 10px;font-size:17px;font-weight:700;margin:6px 0}
 .des{font-size:20px;line-height:1.72;color:#333}
 a.ref{color:#0095f6;text-decoration:none;font-weight:600;cursor:pointer;border-bottom:1px dotted #99c9f0}
@@ -110,6 +108,7 @@ ul.lis li span{font-size:16px !important}
 <script src="data-c.js"></script>
 <script src="data-d.js"></script>
 <script src="resumen.js"></script>
+
 <script>
 let API_BASE = null, BIBLE_VERSION = "RVR1960", apiOK = false;
 var TELEFONO_INSTRUCTOR = "5491128945261";
@@ -309,17 +308,6 @@ function extrasHTML(efs){
   )).join("");
 }
 
-function toggleEns(n, btn){
-  const ens = document.getElementById("ens_" + n);
-  if(ens.classList.contains("on")){
-    ens.classList.remove("on");
-    btn.textContent = "👁 Ver la enseñanza";
-  } else {
-    ens.classList.add("on");
-    btn.textContent = "🙈 Ocultar la enseñanza";
-  }
-}
-
 function render(){
   const deces = getDecs();
   const misResp = getResp();
@@ -338,11 +326,10 @@ function render(){
         return '<div class="preg">' +
            '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
            '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
-           '<label class="respLbl">✍️ Tu respuesta:<small>Escribí con tus palabras lo que entendés. Después vas a poder ver la enseñanza.</small></label>' +
+           '<label class="respLbl">✍️ Tu respuesta:</label>' +
            '<div class="motiva" id="mo_' + p.n + '"></div>' +
            '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>' +
-           '<button class="verEns" id="ve_' + p.n + '" ' + (yaEscribio ? "" : "disabled") + ' onclick="toggleEns(' + p.n + ', this)">' + (yaEscribio ? "👁 Ver la enseñanza" : "✍️ Escribí tu respuesta para ver la enseñanza") + '</button>' +
-                   '<div class="ensenanza" id="ens_' + p.n + '">' +
+           '<div class="ensenanza ' + (yaEscribio ? "on" : "") + '" id="ens_' + p.n + '">' +
              '<span class="resp">✔ ' + escapeHtml(p.resp) + '</span>' +
              '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[L.d + ":" + p.n]) || p.des) + '</div>' +
            '</div>' +
@@ -390,14 +377,13 @@ function guardarResp(n, texto){
   const r = getResp();
   r[n] = texto;
   saveResp(r);
-  const btn = document.getElementById("ve_" + n);
-  if(btn){
-    if(texto.trim()){
-      btn.disabled = false;
-      btn.textContent = "👁 Ver la enseñanza";
-    } else {
-      btn.disabled = true;
-      btn.textContent = "✍️ Escribí tu respuesta para ver la enseñanza";
+  const ens = document.getElementById("ens_" + n);
+  if(ens){
+    if(texto.trim() && !ens.classList.contains("on")){
+      ens.classList.add("on");
+      ens.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } else if(!texto.trim()){
+      ens.classList.remove("on");
     }
   }
   const motiva = document.getElementById("mo_" + n);
@@ -431,7 +417,6 @@ function decidir(v){
 function enviarRespuestas(ev){
   if(ev) ev.preventDefault();
   const deces = getDecs();
-  const decFull = JSON.parse(localStorage.getItem("fej_decfull_" + L.d) || "null");
   const perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
   const nombre = (document.getElementById("decNombre").value || "").trim() || (perfil && perfil.nombre) || "Sin nombre";
   const fecha = document.getElementById("decFecha").value || "";
@@ -467,7 +452,7 @@ discover();
     card.innerHTML =
       '<h2>🙏 Antes de estudiar, orá así:</h2>' +
       '<div class="eli"><b>A quién:</b> a Dios, tu Padre celestial &nbsp;·&nbsp; <b>En el nombre de:</b> Jesús &nbsp;·&nbsp; <b>Quién te ayuda:</b> el Espíritu Santo</div>' +
-      '<div class="pedir"><b>Pedile:</b> que te ayude a entender las verdades de este estudio, con un corazón humilde y dispuesto a obedecer.</div>' +
+      '<div class="pedir"><b>Pedile:</b> que te ayude to entender las verdades de este estudio, con un corazón humilde y dispuesto a obedecer.</div>' +
       '<div class="amen">Terminá diciendo: <b>"En el nombre de Jesús, Amén."</b></div>' +
       '<div class="vers">"Pedid, y se os dará." — Mateo 7:7</div>';
 
