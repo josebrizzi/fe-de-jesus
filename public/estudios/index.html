@@ -97,7 +97,7 @@ footer{text-align:center;color:var(--texto2);font-size:12px;padding:24px}
     <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: sus respuestas te llegan a vos</small></a>
   </div>
 
-  <footer>Fe de Jesús · "JESÚS VIENE PRONTO"</footer>
+  <footer>Fe de Jesús · v5 · "JESÚS VIENE PRONTO"</footer>
 </div>
 
 <script src="data.js"></script>
@@ -119,6 +119,7 @@ function escHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
   let msg = "🎓 Estás estudiando con <b>" + escHtml(cfg.nombre) + "</b>";
   if(cfg.alumno) msg += ", " + escHtml(cfg.alumno);
   msg += " — tus respuestas y consultas le llegan a su WhatsApp. ¡Bendecido camino!";
+  msg += '<br><span style="font-size:13px">📘 Modo acompañado: podés adelantar hasta 2 estudios sin revisión — después esperás la devolución de tu instructor.</span>';
   d.innerHTML = msg;
   const hero = document.querySelector(".hero");
   if(hero && hero.parentNode) hero.parentNode.insertBefore(d, hero);
@@ -143,6 +144,7 @@ function render(){
   const total = LECCIONES.length;
   const doneMap = done();
   const nDone = Object.keys(doneMap).length;
+  const limite = (typeof window.fejLimite === "function") ? window.fejLimite() : 20;
 
   document.getElementById("pill").textContent = nDone + "/20";
   document.getElementById("barra").style.width = (nDone / 20 * 100) + "%";
@@ -160,14 +162,15 @@ function render(){
 
   document.getElementById("lista").innerHTML = LECCIONES.map(l => {
     const hecho = doneMap[l.d];
+    const esperando = !hecho && l.d > limite;
     return `<a class="card" href="leccion.html?dia=${l.d}">
       <div class="thumb" style="background:${l.g}">${l.e}</div>
       <div class="tx">
         <div class="d">DÍA ${l.d}</div>
         <h3>${l.t}</h3>
-        <div class="stx ${hecho ? "ok" : ""}">${hecho ? "✓ Completado" : "Sin completar"}</div>
+        <div class="stx ${hecho ? "ok" : ""}">${hecho ? "✓ Completado" : esperando ? "⏳ Esperá la revisión de tu instructor" : "Sin completar"}</div>
       </div>
-      <div class="he">${hecho ? "❤️" : "🤍"}</div>
+      <div class="he">${hecho ? "❤️" : esperando ? "⏳" : "🤍"}</div>
     </a>`;
   }).join("");
 }

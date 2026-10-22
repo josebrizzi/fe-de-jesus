@@ -1,89 +1,110 @@
-═══════════════════════════════════════════════════════════
- FE DE JESÚS — VERSIÓN 3
- Quiz secuencial + modo oscuro + azul Facebook + ENLACES DE INSTRUCTOR
-═══════════════════════════════════════════════════════════
+========================================================
+FE DE JESÚS — PAQUETE FINAL v5 (subida única y completa)
+========================================================
 
-DÓNDE EDITAR (todo dentro de tu repo GitHub → carpeta public/estudios/):
+¿POR QUÉ NO VISTE LOS CAMBIOS?
+------------------------------
+Revisamos el sitio en vivo (fe-de-jesus.onrender.com/estudios/) y los
+archivos nuevos NUNCA llegaron a GitHub. En el servidor hay una mezcla
+de versiones:
 
- 1) CREAR   instructor.html  → página nueva: genera el enlace personal
-                             de cada instructor (archivo nuevo)
- 2) REEMPLAZAR COMPLETO  index.html   (banner de bienvenida + botón
-                             "Generar mi enlace personal de instructor")
- 3) REEMPLAZAR COMPLETO  leccion.html (todo lo de abajo + WhatsApp
-                             dinámico + botón "Invitar a alguien más")
- 4) REEMPLAZAR COMPLETO  data.js      (detecta el enlace del instructor)
- 5) REEMPLAZAR COMPLETO  registro.js  (precarga el nombre del alumno y
-                             manda a tu planilla quién es su instructor)
- 6) REEMPLAZAR COMPLETO  sw.js        (caché fej-v5 + instructor.html)
+  - leccion.html, index.html, instructor.html  → de la v3 (sin "No lo sé")
+  - quiz-a.js y quiz-b.js                      → los ORIGINALES (opciones fáciles)
+  - data.js                                    → anterior a la v2 (sin conexión
+                                                 de instructor, barra rosa vieja)
+  - registro.js                                → original
+  - sw.js                                      → viejo (caché fej-v3)
 
-⚠️ IMPORTANTE: cada archivo se sube en su propio "Add file". Copiá TODO el
-   contenido de cada archivo, de la primera a la última línea.
-   quiz-a.js y quiz-b.js NO cambian en esta versión (si ya los subiste,
-   quedan como están). Los otros archivos (data-a..d.js, resumen.js,
-   acerca.js, manifest.json, icon.svg, certificado.html) NO se tocan.
+Por eso las quiz no se actualizaban y no aparecía la opción de consultar
+al instructor. La solución es subir TODO el contenido de esta carpeta,
+reemplazando todo, en UNA sola pasada.
 
-Después de subir, Render hace el deploy solo (o botón Manual Deploy).
-En el celular: cerrar y volver a abrir la app una vez para que entre la
-versión nueva (el sw.js nuevo fuerza la actualización de la caché).
+QUÉ HAY EN ESTA CARPETA (9 archivos)
+-------------------------------------
+  data.js          → conexión de instructor, modo revisión, límite de avance,
+                     auto-actualización y versión v5 visible
+  index.html       → inicio con banner de conexión + "v5" en el pie
+  leccion.html     → quiz secuencial + "No lo sé" + modo revisión con
+                     devolución + límite de 2 estudios + "v5" en el pie
+  instructor.html  → panel del instructor: enlaces, modo con devolución,
+                     devolver estudio corregido (día por día o todos juntos)
+  registro.js      → registro con nombre + envío a Google Sheets
+  quiz-a.js        → preguntas días 1-10 con distractores difíciles
+  quiz-b.js        → preguntas días 11-20 con distractores difíciles
+  sw.js            → service worker nuevo (caché fej-v7)
+  INSTRUCCIONES.txt → este archivo (puede subirse o no, no afecta)
 
-═══════════════════════════════════════════════════════════
- QUÉ HAY DE NUEVO EN ESTA VERSIÓN
-═══════════════════════════════════════════════════════════
+PASO A PASO DE SUBIDA (GitHub, 5 minutos)
+------------------------------------------
+1. Entrá a github.com con tu usuario y abrí tu repositorio:
+   github.com/josebrizzi/fe-de-jesus
+2. Entrá a la carpeta  public  → después a la carpeta  estudios
+   (IMPORTANTE: tenés que estar DENTRO de public/estudios antes de subir,
+   si subís en otra carpeta los archivos no se ven en la app)
+3. Tocá "Add file" → "Upload files"
+4. ARRASTRÁ LOS 9 ARCHIVOS de esta carpeta, todos juntos de una vez
+   - No cambies los nombres de los archivos
+   - GitHub avisa "This edit overwrites existing files": está bien,
+     eso es exactamente lo que queremos (reemplazar los viejos)
+5. Abajo tocá "Commit changes" (podés escribir "v5" como descripción)
+6. Esperá 2-3 minutos: Render detecta los cambios y publica solo
+   (se puede ver en dashboard.render.com → tu servicio → Events)
 
-1) PREGUNTAS SECUENCIALES
-   Las preguntas aparecen una a una: hasta no responder la actual
-   (multiple choice = acertar; escrita = escribir algo), la siguiente
-   queda como "🔒 Pregunta N — respondé la anterior para desbloquearla".
-   Al responder, la próxima aparece con una animación suave.
+Si subís desde el CELULAR: abrí github.com en el navegador (no la app),
+menú del navegador → "Versión para escritorio", y seguí los mismos pasos.
 
-2) BOTÓN COMPLETAR CON CANDADO
-   "Marcar estudio como completado" (y el ❤️ del header) están
-   deshabilitados mientras queden preguntas sin responder. Muestran
-   "🔒 Respondé todas las preguntas (X de Y)". Cuando respondés la
-   última, el botón se habilita solo y aparece la DECISIÓN PERSONAL
-   con el envío al instructor.
+CÓMO VERIFICAR QUE LLEGÓ AL CELULAR
+------------------------------------
+1. Abrí la app: fe-de-jesus.onrender.com/estudios/
+2. Bajá hasta el pie de la pantalla de inicio: tiene que decir
+      "Fe de Jesús · v5 · JESÚS VIENE PRONTO"
+3. Adentro de cualquier lección, al pie también dice "Fe de Jesús · v5"
+4. Si todavía no dice v5: cerrá la app por completo (desde el multitarea)
+   y volvé a abrir con internet. La app ahora se auto-actualiza sola en
+   cada arranque; no hace falta borrar nada.
 
-3) MODO OSCURO
-   Botón 🌙/☀️ en el header de la app y en el índice. Se guarda solo
-   (localStorage) y responde al estilo Facebook oscuro.
+QUÉ VA A NOTAR EL ALUMNO (resumen de todo lo nuevo)
+----------------------------------------------------
+- QUIZ MÁS EXIGENTE: opciones que parecen correctas y obligan a pensar.
+  Las respuestas correctas no cambian, solo los distractores.
 
-4) PALETA FACEBOOK
-   Azul #1877F2 predominante, fondos #F0F2F5 claro / #18191A oscuro,
-   tarjetas #242526 en oscuro. Las fuentes y tamaños no cambiaron.
+- MODO ACOMPAÑADO (enlace generado con "Modo con devolución" tildado):
+  · el alumno responde SIN ver si acierta (no hay verde ni rojo)
+  · aparece el botón "🤔 No lo sé — quiero que mi instructor me lo explique"
+  · al terminar envía todo por WhatsApp al instructor
+  · el instructor corrige y le devuelve el enlace de corrección
+  · recién ahí el alumno ve aciertos, errores, enseñanzas y puntaje
+    (ida y vuelta, como querías)
+  · el alumno NO puede adelantar más de 2 estudios sin revisión:
+    ve "⏳ Esperá a tu instructor" con un botón para pedirla por WhatsApp
+  · cada devolución del instructor desbloquea los siguientes estudios
 
-5) ENLACES DE INSTRUCTOR (lo nuevo importante)
-   • En el índice hay una sección "Invitá a otros a estudiar" y en cada
-     lección un enlace "🎓 Invitalo a estudiar" → página instructor.html.
-   • El instructor completa: su nombre, su WhatsApp y el nombre del
-     alumno → la página genera un ENLACE PERSONAL:
-        https://fe-de-jesus.onrender.com/estudios/?i=TEL&n=NOMBRE&a=ALUMNO
-   • Con el WhatsApp del alumno cargado, un botón manda el enlace por
-     WhatsApp con un mensaje listo. También se genera un CÓDIGO QR
-     para cuando el instructor está en la PC y el alumno cerca.
-   • Cuando el alumno abre ese enlace, la app queda CONECTADA: ve un
-     cartel "🎓 Estás estudiando con [instructor]" y TODAS sus
-     respuestas y decisiones llegan al WhatsApp DEL INSTRUCTOR,
-     no al número principal (el tuyo sigue siendo el destino por
-     defecto de quien entra sin enlace).
-   • CADENA: el alumno también puede generar SU propio enlace (botón
-     "Invitalo a estudiar") y la persona que se lo acepta queda
-     conectada al teléfono DEL ALUMNO que compartió. El estudio se
-     multiplica sin pasar por vos.
-   • Tu planilla de Google Sheets ahora también recibe dos columnas
-     nuevas en cada registro: "instructor" e "instructorTel" (quién
-     acompaña a ese alumno). Si el Apps Script no las espera, las
-     ignora sin problema.
+- MODO AUTOESTUDIO (sin enlace de instructor): igual que siempre, responde
+  y ve la corrección al instante. La opción "No lo sé" no aparece acá
+  porque en este modo la corrección es inmediata — solo tiene sentido en
+  el modo acompañado, donde el instructor es quien corrige.
 
-═══════════════════════════════════════════════════════════
- PRUEBA RÁPIDA (2 minutos)
-═══════════════════════════════════════════════════════════
+PRUEBA RÁPIDA (5 minutos, dos teléfonos)
+-----------------------------------------
+1. Abrí instructor.html en tu teléfono → tildá "Modo con devolución" →
+   generá el enlace y mandáselo a alguien (o abrilo vos en otro navegador)
+2. En ese teléfono: estudiá el Día 1 → no hay verde/rojo, aparece
+   "No lo sé", y el envío por WhatsApp dice "Enviado para corrección"
+3. En tu teléfono: instructor.html → "Devolver un estudio corregido" →
+   Día 1 → mandale el enlace de corrección
+4. En el teléfono del alumno: al abrir ese enlace se revelan aciertos,
+   errores, enseñanzas y puntaje, y quedan habilitados los próximos días
 
-1) Abrí  https://fe-de-jesus.onrender.com/estudios/instructor.html
-2) Poné tu nombre y tu WhatsApp (5491128945261) + un nombre de prueba
-3) Tocá "Probar el enlace" → la app abre conectada con vos
-4) Respondé las preguntas de un día y tocá "Enviar mis respuestas..."
-   → te abre WhatsApp a TU número (así lo verá cualquier instructor)
-5) En el índice vas a ver el cartel "🎓 Estás estudiando con vos"
+SI ALGO SIGUIERA VIEJO (poco probable)
+---------------------------------------
+Chrome del celular: ⋮ → Configuración → Privacidad y seguridad →
+Borrar datos de navegación → tildá SOLO "Imágenes y archivos almacenados
+en caché" → Borrar → abrí la app de nuevo.
+(No hace falta borrar historial ni contraseñas.)
 
-Para dejar el celular como estaba: instructor.html → "Quitar la
-conexión de este dispositivo".
+DATOS TÉCNICOS
+--------------
+  window.fejVersion = "5"   (en data.js, se muestra en el pie)
+  Caché del service worker  =  "fej-v7"
+  Auto-actualización: en cada arranque la app pide al servidor la versión
+  nueva y se recarga una sola vez si hubo cambios (sessionStorage fej_sw_re).

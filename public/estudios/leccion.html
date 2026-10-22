@@ -65,6 +65,13 @@ header .t{flex:1;font-weight:700;font-size:20px}
 .opt.ok{background:var(--verdesoft);border-color:var(--verde)}
 .opt.ok .letra{background:var(--verde);color:#fff}
 .opt.mal{animation:treme .45s;border-color:var(--rojo);background:var(--rojosoft)}
+.opt.sel{border-color:var(--azul);background:var(--azulsoft)}
+.opt.sel .letra{background:var(--azul);color:#fff}
+.opt.err{border-color:var(--rojo);background:var(--rojosoft)}
+.opt.err .letra{background:var(--rojo);color:#fff}
+.opt.nolsb .letra{background:var(--panel2);font-size:15px}
+.nolsb.sel{border-color:var(--azul);background:var(--azulsoft)}
+.corrn{font-size:14px;font-weight:700;color:var(--verde);margin-top:8px}
 .opt:disabled{cursor:default}
 @keyframes treme{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .hint{font-size:14px;color:var(--rojo);font-weight:600;margin-top:2px;display:none}
@@ -145,6 +152,7 @@ ul.lis li span{font-size:16px !important}
   <div class="bd" id="shBody"></div>
 </div>
 <div class="toast" id="toast"></div>
+<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · v5</footer>
 
 <script src="data.js"></script>
 <script src="data-a.js"></script>
@@ -171,6 +179,28 @@ function telDestino(){
 function nombreInstructor(){
   const c = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
   return (c && c.nombre) ? c.nombre : "";
+}
+/* ===== MODO REVISIÓN (ida y vuelta con el instructor) =====
+   El instructor comparte el enlace con &m=rev: el alumno responde TODO sin
+   ver las respuestas (con opción "No lo sé") y las envía por WhatsApp.
+   Cuando el instructor le devuelve leccion.html?dia=N&c=1, ese día queda
+   marcado como corregido y recién entonces se revelan los aciertos y las
+   enseñanzas de cada pregunta. */
+function modoRev(){
+  return (typeof window.fejModoRev === "function") ? window.fejModoRev() : false;
+}
+function corregido(){
+  return (typeof window.fejCorregido === "function") ? window.fejCorregido(L.d) : false;
+}
+/* ===== LÍMITE DE AVANCE EN MODO ACOMPAÑADO =====
+   Con enlace de instructor, el alumno adelanta como máximo 2 estudios sin
+   revisión: para seguir, el instructor le devuelve el estudio corregido
+   (leccion.html?dia=N&c=1). Sin conexión no hay límite (autoestudio libre). */
+function diaLimite(){
+  return (typeof window.fejLimite === "function") ? window.fejLimite() : 20;
+}
+function maxCorregidoDia(){
+  return (typeof window.fejMaxCorregido === "function") ? window.fejMaxCorregido() : 0;
 }
 
 async function discover(){
@@ -334,9 +364,35 @@ const dia = +params.get("dia") || 1;
 const L = LECCIONES.find(x => x.d === dia) || LECCIONES[0];
 
 /* GUARDIÁN PROGRESIVO */
+function diaVolverDe(d){ return Math.min(Math.max(1, d - 1), diaLimite()); }
 const doneMapGuard = getDone();
-if(L.d > 1 && !doneMapGuard[L.d - 1]){
-  document.getElementById("app").innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:64px">🔒</div><h2 style="font-size:22px;margin:16px 0 8px">Estudio bloqueado</h2><p style="font-size:17px;color:var(--texto2);line-height:1.6">Para hacer el Día ' + L.d + ', primero completá el <b>Día ' + (L.d-1) + '</b>.</p><button onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'" style="margin-top:20px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + (L.d-1) + '</button><br><a href="index.html" style="display:inline-block;margin-top:14px;color:var(--azultx);font-weight:600;font-size:15px">Volver al índice</a></div>';
+const cfgGuard = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+const sinPermiso = L.d > diaLimite();
+const faltaPrevio = L.d > 1 && !doneMapGuard[L.d - 1];
+if(sinPermiso || faltaPrevio){
+  let inner = "";
+  if(sinPermiso){
+    /* Modo acompañado: toca esperar la devolución del instructor */
+    let pend = 0;
+    for(let d = 1; d <= 20; d++){
+      if(doneMapGuard[d] && !(typeof window.fejCorregido === "function" && window.fejCorregido(d))){ pend = d; break; }
+    }
+    if(!pend) pend = Math.min(20, maxCorregidoDia() + 1);
+    const nomIns = (cfgGuard && cfgGuard.nombre) ? cfgGuard.nombre : "tu instructor";
+    const nomAlu = (cfgGuard && cfgGuard.alumno) ? cfgGuard.alumno : "";
+    const txtWa = "Hola " + nomIns + "! 👋" + (nomAlu ? " Soy " + nomAlu + "." : "") + " Estoy haciendo Fe de Jesús y ya completé los estudios disponibles. ¿Me podés enviar el enlace del estudio corregido (Día " + pend + ") para seguir avanzando? 🙏";
+    const diaVolver = diaVolverDe(L.d);
+    inner = '<div style="text-align:center;padding:60px 20px">' +
+      '<div style="font-size:64px">⏳</div>' +
+      '<h2 style="font-size:22px;margin:16px 0 8px">Esperá a tu instructor</h2>' +
+      '<p style="font-size:17px;color:var(--texto2);line-height:1.6">En el modo acompañado podés adelantar hasta <b>2 estudios</b> sin revisión. Para desbloquear el <b>Día ' + L.d + '</b>, ' + escapeHtml(nomIns) + ' tiene que devolverte corregido el <b>Día ' + pend + '</b>.</p>' +
+      '<a href="https://wa.me/' + telDestino() + '?text=' + encodeURIComponent(txtWa) + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:20px;background:var(--verde);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none">💬 Pedirle la devolución por WhatsApp</a><br>' +
+      '<button onclick="location.href=\'leccion.html?dia=' + diaVolver + '\' style="margin-top:14px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + diaVolver + '</button>' +
+      '<p style="margin:14px 0 0"><a href="index.html" style="color:var(--azultx);font-weight:600;font-size:15px">Volver al índice</a></p></div>';
+  } else {
+    inner = '<div style="text-align:center;padding:60px 20px"><div style="font-size:64px">🔒</div><h2 style="font-size:22px;margin:16px 0 8px">Estudio bloqueado</h2><p style="font-size:17px;color:var(--texto2);line-height:1.6">Para hacer el Día ' + L.d + ', primero completá el <b>Día ' + (L.d-1) + '</b>.</p><button onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'" style="margin-top:20px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + (L.d-1) + '</button><br><a href="index.html" style="display:inline-block;margin-top:14px;color:var(--azultx);font-weight:600;font-size:15px">Volver al índice</a></div>';
+  }
+  document.getElementById("app").innerHTML = inner;
   document.getElementById("btnDone").style.display = "none";
   document.getElementById("btnTema").style.display = "none";
   throw new Error("bloqueado");
@@ -416,7 +472,10 @@ function ordenPreguntas(){
 }
 function respondida(p, misResp){
   const clave = L.d + ":" + p.n;
-  if(window.QUIZ && window.QUIZ[clave]) return !!(quizEstado[p.n] && quizEstado[p.n].ok);
+  if(window.QUIZ && window.QUIZ[clave]){
+    const st = quizEstado[p.n];
+    return !!(st && (st.ok || st.rev || st.nols));
+  }
   return !!(misResp[p.n] && misResp[p.n].trim());
 }
 function estadoRespuestas(){
@@ -439,6 +498,8 @@ function htmlPregunta(p, desbloq, misResp){
   }
 
   const st = quizEstado[p.n];
+  const revPend = modoRev() && !corregido();  /* revisión: corrección aún no devuelta */
+  const revCorr = modoRev() && corregido();   /* revisión ya corregida */
   const respondidaOk = !!(st && st.ok);
   const yaEscribio = !!(misResp[p.n] && misResp[p.n].trim());
 
@@ -446,15 +507,24 @@ function htmlPregunta(p, desbloq, misResp){
   if(ops){
     const lista = mezclar(ops);
     const LETRAS = ["A","B","C","D"];
+    const botones = lista.map((o,i) => {
+      let cls = "opt";
+      if(respondidaOk && st.sel === o) cls += " ok";
+      if(revCorr && !respondidaOk && st && !st.nols && st.sel === o) cls += " err";
+      if(revPend && st && st.sel === o) cls += " sel";
+      const dis = (respondidaOk || revCorr) ? " disabled" : "";
+      return '<button type="button" class="' + cls + '"' + dis + ' data-t="' + escapeHtml(o) + '"><span class="letra">' + LETRAS[i] + '</span><span>' + escapeHtml(o) + '</span></button>';
+    }).join("");
+    const nols = revPend
+      ? '<button type="button" class="opt nolsb' + (st && st.nols ? " sel" : "") + '" data-nols="1"><span class="letra">🤔</span><span>No lo sé — quiero que mi instructor me lo explique</span></button>'
+      : "";
+    const etiqueta = revPend ? "👆 Marcá la respuesta que creés correcta:" : (revCorr ? "👆 La respuesta correcta está en verde:" : "👆 Elegí la respuesta correcta:");
     cuerpo =
-      '<label class="respLbl">👆 Elegí la respuesta correcta:</label>' +
-      '<div class="quiz" data-q="' + p.n + '">' +
-        lista.map((o,i) => {
-          const marcada = respondidaOk && st.sel === o;
-          return '<button type="button" class="opt' + (marcada ? " ok" : "") + '"' + (respondidaOk ? " disabled" : "") + ' data-t="' + escapeHtml(o) + '"><span class="letra">' + LETRAS[i] + '</span><span>' + escapeHtml(o) + '</span></button>';
-        }).join("") +
-        '<div class="hint" id="hi_' + p.n + '">📖 Volvé a leer el versículo y probá de nuevo</div>' +
-      '</div>';
+      '<label class="respLbl">' + etiqueta + '</label>' +
+      '<div class="quiz" data-q="' + p.n + '">' + botones + nols +
+        (revPend ? "" : '<div class="hint" id="hi_' + p.n + '">📖 Volvé a leer el versículo y probá de nuevo</div>') +
+      '</div>' +
+      (revCorr ? '<div class="corrn">✅ Corregido por tu instructor</div>' : "");
   } else {
     cuerpo =
       '<label class="respLbl">✍️ Tu respuesta:</label>' +
@@ -462,11 +532,13 @@ function htmlPregunta(p, desbloq, misResp){
       '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>';
   }
 
+  const ensOn = !revPend && (respondidaOk || yaEscribio || revCorr);
+
   return '<div class="preg" id="preg_' + p.n + '">' +
      '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
      '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
      cuerpo +
-     '<div class="ensenanza ' + ((respondidaOk || yaEscribio) ? "on" : "") + '" id="ens_' + p.n + '">' +
+     '<div class="ensenanza ' + (ensOn ? "on" : "") + '" id="ens_' + p.n + '">' +
        '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des) + '</div>' +
      '</div>' +
    '</div>';
@@ -495,7 +567,8 @@ function htmlDecision(completa){
       '<button id="btnSi" class="' + (deces[L.d] === "si" ? "on-si" : "") + '" onclick="decidir(\'si\')">SÍ</button>' +
       '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
     '</div>' +
-    '<a class="enviarBtn" id="btnEnviar" onclick="enviarRespuestas(event)">📤 Enviar mis respuestas y mi decisión al instructor</a>' +
+    '<a class="enviarBtn" id="btnEnviar" onclick="enviarRespuestas(event)">' + (modoRev() && !corregido() ? '📤 Enviar mis respuestas al instructor para corrección' : '📤 Enviar mis respuestas y mi decisión al instructor') + '</a>' +
+    (modoRev() && !corregido() ? '<div class="corrn" style="color:var(--azultx)">📨 Cuando tu instructor corrija el estudio, te manda un enlace: al abrirlo se revelan tus aciertos y la enseñanza de cada pregunta.</div>' : "") +
   '</section>';
 }
 
@@ -506,7 +579,14 @@ function render(){
   let h = '<div class="hero" style="background:' + L.g + '"><div class="dia">DÍA ' + L.d + ' DE 20</div><div class="em">' + L.e + '</div><h1>' + escapeHtml(L.t) + '</h1></div>';
 
   const insNombre = nombreInstructor();
-  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b> — tus respuestas y consultas le llegan a su WhatsApp.</div>';
+  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b>' + (modoRev() ? ' — te devuelve el estudio corregido' : ' — tus respuestas y consultas le llegan a su WhatsApp') + '.<br><span style="font-size:13px">📘 Modo acompañado: podés adelantar hasta 2 estudios sin revisión — después esperás la devolución de tu instructor.</span></div>';
+  if(modoRev()){
+    if(corregido()){
+      h += '<div class="conectado" style="border-left-color:var(--verde)">✅ Tu instructor ya revisó este estudio: la respuesta correcta quedó marcada en verde y la enseñanza de cada pregunta está abierta.</div>';
+    } else {
+      h += '<div class="conectado" style="border-left-color:var(--orah)">📨 Modo revisión: respondé sin ver las respuestas — si no sabés una, marcá “No lo sé”. Al final, las enviás a tu instructor y él te devuelve el estudio corregido.</div>';
+    }
+  }
 
   if(L.i) h += card('<h2>📖 Introducción</h2><div class="intro">' + linkRefs(L.i) + '</div>');
 
@@ -523,7 +603,7 @@ function render(){
   }
 
   const cq = contarQuiz();
-  if(cq.total) h += '<div class="score" id="scoreBox"></div>';
+  if(cq.total && (!modoRev() || corregido())) h += '<div class="score" id="scoreBox"></div>';
 
   if(L.extras){
     const visibles = L.d === 20 ? L.extras : L.extras.filter(e => /^Sugerencias/i.test(e.tt));
@@ -540,12 +620,15 @@ function render(){
 
   const ant = LECCIONES.find(x => x.d === L.d - 1);
   const sig = LECCIONES.find(x => x.d === L.d + 1);
+  const bloqueoIns = sig && sig.d > diaLimite();
   const sigBloqueado = sig && !getDone()[L.d];
   h += '<div class="navg">' +
     '<button ' + (ant ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'">← Anterior</button>' +
-    (sigBloqueado
+    (bloqueoIns
+      ? '<button class="prim" disabled>⏳ Esperá la revisión de tu instructor</button>'
+      : (sigBloqueado
       ? '<button class="prim" disabled>🔒 Completá este estudio para continuar</button>'
-      : '<button class="prim" ' + (sig ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d+1) + '\'">Siguiente →</button>') +
+      : '<button class="prim" ' + (sig ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d+1) + '\'">Siguiente →</button>')) +
   '</div>';
 
   h += '<a class="invitar" href="instructor.html">🎓 ¿Querés acompañar a alguien más? Invitalo a estudiar</a>';
@@ -636,9 +719,34 @@ document.getElementById("app").addEventListener("click", function(e){
   const qDiv = b.closest(".quiz");
   if(!qDiv) return;
   const n = +qDiv.getAttribute("data-q");
-  const texto = b.getAttribute("data-t");
   const ops = window.QUIZ[L.d + ":" + n];
   if(!ops) return;
+
+  /* ===== MODO REVISIÓN (sin respuesta revelada hasta la corrección) ===== */
+  if(modoRev() && !corregido()){
+    const esNols = b.getAttribute("data-nols") === "1";
+    quizEstado[n] = quizEstado[n] || { tries: 0 };
+    if(esNols){
+      quizEstado[n].sel = "🤔 No lo sé — quiero que el instructor me lo explique";
+      quizEstado[n].nols = true;
+      quizEstado[n].first = false;
+    } else {
+      quizEstado[n].sel = b.getAttribute("data-t");
+      quizEstado[n].nols = false;
+      quizEstado[n].first = true;
+    }
+    quizEstado[n].rev = true;
+    delete quizEstado[n].ok;
+    guardarQuiz();
+    qDiv.querySelectorAll(".opt").forEach(o => o.classList.toggle("sel", o === b));
+    actualizarBotonCompleto();
+    revelarSiguiente(n, true);
+    const e2 = estadoRespuestas();
+    if(e2.hechas === e2.total) revelarDecision(true);
+    return;
+  }
+
+  const texto = b.getAttribute("data-t");
   const correcta = ops[0];
 
   if(texto === correcta){
@@ -682,7 +790,9 @@ function guardarResp(n, texto){
   saveResp(r);
   const ens = document.getElementById("ens_" + n);
   if(ens){
-    if(texto.trim() && !ens.classList.contains("on")){
+    /* en modo revisión la enseñanza queda oculta hasta que llega la corrección */
+    const abrir = texto.trim() && (!modoRev() || corregido());
+    if(abrir && !ens.classList.contains("on")){
       ens.classList.add("on");
     } else if(!texto.trim()){
       ens.classList.remove("on");
@@ -732,13 +842,19 @@ function enviarRespuestas(ev){
   let hay = false;
   (L.temas || []).forEach(t => t.ps.forEach(p => {
     const st = quizEstado[p.n];
-    if(st && st.ok){ hay = true; txt += "\n*" + p.n + ". " + p.p + "*\n→ ✅ " + st.sel + "\n"; return; }
+    if(st && (st.ok || st.rev) && st.sel){
+      hay = true;
+      txt += "\n*" + p.n + ". " + p.p + "*\n→ " + (st.ok ? "✅ " : "") + st.sel + "\n";
+      return;
+    }
     const r = (misResp[p.n] || "").trim();
     if(r){ hay = true; txt += "\n*" + p.n + ". " + p.p + "*\n→ " + r + "\n"; }
   }));
   if(!hay) txt += "(sin respuestas registradas)\n";
-  if(cq.total) txt += "\n🎯 *Acertadas a la primera:* " + cq.aciertos + " de " + cq.total;
+  if(cq.total && !(modoRev() && !corregido())) txt += "\n🎯 *Acertadas a la primera:* " + cq.aciertos + " de " + cq.total;
   txt += "\n\n✍️ *Mi decisión personal:* " + (deces[L.d] === "si" ? "SÍ" : deces[L.d] === "no" ? "NO" : "sin marcar");
+  if(modoRev() && !corregido()) txt += "\n📨 *Enviado para corrección*";
+  if(typeof window.fejCfg === "function" && window.fejCfg()) txt += "\n🔁 Cuando lo revises, mandame el enlace de devolución para desbloquear los próximos estudios";
   const insN = nombreInstructor();
   if(insN) txt += "\n🎓 *Instructor conectado:* " + insN;
   if(typeof window.fejRegistrar === "function"){
@@ -746,6 +862,26 @@ function enviarRespuestas(ev){
     if(typeof window.fejRespaldo === "function") window.fejRespaldo();
   }
   window.open("https://wa.me/" + telDestino() + "?text=" + encodeURIComponent(txt), "_blank");
+}
+
+/* ===== CORRECCIÓN DEVUELTA: al abrir leccion.html?dia=N&c=1, ese día queda
+   marcado como corregido. Acá se revelan los aciertos y se habilitan las
+   enseñanzas (ida y vuelta con el instructor). ===== */
+if(modoRev() && corregido()){
+  let cambio = false;
+  ordenPreguntas().forEach(p => {
+    const clave = L.d + ":" + p.n;
+    const st = quizEstado[p.n];
+    if(st && !st.corr){
+      if(window.QUIZ && window.QUIZ[clave] && !st.nols && st.sel !== undefined){
+        st.ok = (st.sel === window.QUIZ[clave][0]);
+        st.first = !!st.ok;
+      }
+      st.corr = true;
+      cambio = true;
+    }
+  });
+  if(cambio) guardarQuiz();
 }
 
 render();

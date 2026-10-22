@@ -11,10 +11,13 @@
     }
   }
 
+  function cfg(){ return (typeof window.fejCfg === "function") ? window.fejCfg() : null; }
+
   window.fejRegistrar = function(evento, detalle){
     try{
       var p = perfil() || {};
-      var fila = { fecha: new Date().toLocaleString("es-AR"), nombre: p.nombre || "(sin registrar)", telefono: p.telefono || "", evento: evento, detalle: detalle || "" };
+      var c = cfg() || {};
+      var fila = { fecha: new Date().toLocaleString("es-AR"), nombre: p.nombre || "(sin registrar)", telefono: p.telefono || "", evento: evento, detalle: detalle || "", instructor: c.nombre || "", instructorTel: c.tel || "" };
       var log = JSON.parse(localStorage.getItem("fej_log") || "[]");
       log.push(fila);
       localStorage.setItem("fej_log", JSON.stringify(log));
@@ -49,7 +52,8 @@
       var completados = Object.keys(doneMap).map(Number).sort(function(a,b){ return a-b; }).join(", ");
       var decs = Object.keys(deces).map(Number).sort(function(a,b){ return a-b; }).map(function(d){ return "D" + d + ":" + (deces[d] === "si" ? "SÍ" : "NO"); }).join(" ");
       var quizTxt = window.fejTextoQuiz ? window.fejTextoQuiz() : "";
-      var fila = { fecha: new Date().toLocaleString("es-AR"), nombre: p.nombre || "(sin registrar)", telefono: p.telefono || "", evento: "Respaldo de progreso", detalle: "Completados(" + Object.keys(doneMap).length + "/20): " + (completados || "—") + " | Decisiones: " + (decs || "—") + " | Respuestas escritas: " + respuestas + (quizTxt ? " | Quiz (aciertos 1a): " + quizTxt : "") };
+      var c = cfg() || {};
+      var fila = { fecha: new Date().toLocaleString("es-AR"), nombre: p.nombre || "(sin registrar)", telefono: p.telefono || "", evento: "Respaldo de progreso", detalle: "Completados(" + Object.keys(doneMap).length + "/20): " + (completados || "—") + " | Decisiones: " + (decs || "—") + " | Respuestas escritas: " + respuestas + (quizTxt ? " | Quiz (aciertos 1a): " + quizTxt : ""), instructor: c.nombre || "", instructorTel: c.tel || "" };
       var log = JSON.parse(localStorage.getItem("fej_log") || "[]");
       log.push({ fecha: fila.fecha, evento: fila.evento, detalle: fila.detalle });
       localStorage.setItem("fej_log", JSON.stringify(log));
@@ -108,8 +112,13 @@
     if(p && (p.nombre || p.privado)) return;
     var ov = document.createElement("div");
     ov.id = "rgOverlay";
-    ov.innerHTML = '<div id="rgModal"><h2>📖 ¡Bienvenido!</h2><div class="sub">Antes de comenzar, contanos quién sos para acompañarte en el camino</div><label>Tu nombre completo</label><input id="rgNombre" placeholder="Ej: María González" autocomplete="name"><label>Tu teléfono (opcional)</label><input id="rgTel" placeholder="Para que tu instructor pueda contactarte" inputmode="tel"><div class="rg-aviso">🤝 Tu nombre y tu avance en los estudios se comparten con el instructor, para poder acompañarte en tu crecimiento y en tu decisión de bautismo.</div><button class="rg-btn si" id="rgOk">✅ Registrarme y comenzar</button><button class="rg-btn priv" id="rgPriv">🔒 Prefiero estudiar en privado</button><div class="rg-pie">Podés cambiar esto después poniéndote en contacto con tu instructor</div></div>';
+    ov.innerHTML = '<div id="rgModal"><h2>📖 ¡Bienvenido!</h2><div class="sub">Antes de comenzar, contanos quién sos para acompañarte en el camino</div><label>Tu nombre completo</label><input id="rgNombre" placeholder="Ej: María González" autocomplete="name"><label>Tu teléfono (opcional)</label><input id="rgTel" placeholder="Para que tu instructor pueda contactarte" inputmode="tel"><div class="rg-aviso">🤝 Tu nombre y tu avance en los estudios se comparten con tu instructor, para poder acompañarte en tu crecimiento y en tu decisión de bautismo.</div><button class="rg-btn si" id="rgOk">✅ Registrarme y comenzar</button><button class="rg-btn priv" id="rgPriv">🔒 Prefiero estudiar en privado</button><div class="rg-pie">Podés cambiar esto después poniéndote en contacto con tu instructor</div></div>';
     document.body.appendChild(ov);
+    /* Si llegó por el enlace de un instructor, precargo su nombre */
+    try{
+      var c = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+      if(c && c.alumno) ov.querySelector("#rgNombre").value = c.alumno;
+    }catch(err){}
     requestAnimationFrame(function(){ ov.classList.add("on"); });
     ov.querySelector("#rgOk").onclick = function(){
       var n = ov.querySelector("#rgNombre").value.trim();
