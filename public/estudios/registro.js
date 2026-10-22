@@ -1,4 +1,4 @@
-// REGISTRO Y RESPALDO DE ALUMNOS - Fe de Jesús (versión limpia, con puntaje del quiz)
+// REGISTRO Y RESPALDO DE ALUMNOS - Fe de Jesús (v6: estudio libre, envío al instructor)
 (function(){
   var REGISTRO_URL = "https://script.google.com/macros/s/AKfycbykRiG6IoNWWkGrVv9aHDKv5kZtsbkl11Z-Y2uOXHbqctptrjNeTrlupTgre7mkiGlh/exec";
 
@@ -25,16 +25,14 @@
     }catch(err){}
   };
 
-  /* Resume el puntaje de todos los días con quiz: D1:5/8 D2:6/6 ... */
+  /* Resume el quiz de todos los días: D1:5/8 D2:6/6 ... (correctas al completar) */
   window.fejTextoQuiz = function(){
     var partes = [];
     for(var k = 1; k <= 20; k++){
       var q = JSON.parse(localStorage.getItem("fej_quiz_" + k) || "{}");
-      var ok = 0, hay = false;
-      Object.keys(q).forEach(function(n){
-        if(q[n] && q[n].ok){ hay = true; if(q[n].first) ok++; }
-      });
-      if(hay) partes.push("D" + k + ":" + ok);
+      var ok = 0, tot = 0;
+      Object.keys(q).forEach(function(n){ if(q[n] && q[n].ok !== undefined){ tot++; if(q[n].ok) ok++; } });
+      if(tot) partes.push("D" + k + ":" + ok + "/" + tot);
     }
     return partes.join(" ");
   };
@@ -53,7 +51,7 @@
       var decs = Object.keys(deces).map(Number).sort(function(a,b){ return a-b; }).map(function(d){ return "D" + d + ":" + (deces[d] === "si" ? "SÍ" : "NO"); }).join(" ");
       var quizTxt = window.fejTextoQuiz ? window.fejTextoQuiz() : "";
       var c = cfg() || {};
-      var fila = { fecha: new Date().toLocaleString("es-AR"), nombre: p.nombre || "(sin registrar)", telefono: p.telefono || "", evento: "Respaldo de progreso", detalle: "Completados(" + Object.keys(doneMap).length + "/20): " + (completados || "—") + " | Decisiones: " + (decs || "—") + " | Respuestas escritas: " + respuestas + (quizTxt ? " | Quiz (aciertos 1a): " + quizTxt : ""), instructor: c.nombre || "", instructorTel: c.tel || "" };
+      var fila = { fecha: new Date().toLocaleString("es-AR"), nombre: p.nombre || "(sin registrar)", telefono: p.telefono || "", evento: "Respaldo de progreso", detalle: "Completados(" + Object.keys(doneMap).length + "/20): " + (completados || "—") + " | Decisiones: " + (decs || "—") + " | Respuestas escritas: " + respuestas + (quizTxt ? " | Quiz: " + quizTxt : ""), instructor: c.nombre || "", instructorTel: c.tel || "" };
       var log = JSON.parse(localStorage.getItem("fej_log") || "[]");
       log.push({ fecha: fila.fecha, evento: fila.evento, detalle: fila.detalle });
       localStorage.setItem("fej_log", JSON.stringify(log));
@@ -70,7 +68,7 @@
     var decisiones = Object.keys(deces).map(Number).sort(function(a,b){ return a-b; }).map(function(d){ return "Día " + d + ": " + (deces[d] === "si" ? "SÍ" : "NO"); });
     var quizTxt = window.fejTextoQuiz ? window.fejTextoQuiz() : "";
     var ultimas = log.slice(-12).reverse().map(function(f){ return "• " + f.fecha + " — " + f.evento + " (" + f.detalle + ")"; });
-    return "📊 *Mi progreso en Fe de Jesús*\n\n👤 " + (p.nombre || "Sin registrar") + "\n✅ Lecciones completadas: " + completadas.length + "/20" + (completadas.length ? "\n   Días: " + completadas.join(", ") : "") + (decisiones.length ? "\n✍️ Decisiones: " + decisiones.join(" | ") : "") + (quizTxt ? "\n🎯 Aciertos a la primera: " + quizTxt : "") + (ultimas.length ? "\n\n🕐 Última actividad:\n" + ultimas.join("\n") : "") + "\n\n— Enviado desde la app Fe de Jesús";
+    return "📊 *Mi progreso en Fe de Jesús*\n\n👤 " + (p.nombre || "Sin registrar") + "\n✅ Lecciones completadas: " + completadas.length + "/20" + (completadas.length ? "\n   Días: " + completadas.join(", ") : "") + (decisiones.length ? "\n✍️ Decisiones: " + decisiones.join(" | ") : "") + (quizTxt ? "\n📝 Quiz: " + quizTxt : "") + (ultimas.length ? "\n\n🕐 Última actividad:\n" + ultimas.join("\n") : "") + "\n\n— Enviado desde la app Fe de Jesús";
   };
 
   window.addEventListener("load", function(){
