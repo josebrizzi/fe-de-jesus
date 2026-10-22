@@ -152,7 +152,7 @@ ul.lis li span{font-size:16px !important}
   <div class="bd" id="shBody"></div>
 </div>
 <div class="toast" id="toast"></div>
-<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · v5</footer>
+<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · v6</footer>
 
 <script src="data.js"></script>
 <script src="data-a.js"></script>
@@ -180,28 +180,13 @@ function nombreInstructor(){
   const c = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
   return (c && c.nombre) ? c.nombre : "";
 }
-/* ===== MODO REVISIÓN (ida y vuelta con el instructor) =====
-   El instructor comparte el enlace con &m=rev: el alumno responde TODO sin
-   ver las respuestas (con opción "No lo sé") y las envía por WhatsApp.
-   Cuando el instructor le devuelve leccion.html?dia=N&c=1, ese día queda
-   marcado como corregido y recién entonces se revelan los aciertos y las
-   enseñanzas de cada pregunta. */
-function modoRev(){
-  return (typeof window.fejModoRev === "function") ? window.fejModoRev() : false;
-}
-function corregido(){
-  return (typeof window.fejCorregido === "function") ? window.fejCorregido(L.d) : false;
-}
-/* ===== LÍMITE DE AVANCE EN MODO ACOMPAÑADO =====
-   Con enlace de instructor, el alumno adelanta como máximo 2 estudios sin
-   revisión: para seguir, el instructor le devuelve el estudio corregido
-   (leccion.html?dia=N&c=1). Sin conexión no hay límite (autoestudio libre). */
-function diaLimite(){
-  return (typeof window.fejLimite === "function") ? window.fejLimite() : 20;
-}
-function maxCorregidoDia(){
-  return (typeof window.fejMaxCorregido === "function") ? window.fejMaxCorregido() : 0;
-}
+/* ===== ESTUDIO LIBRE (v6 — un solo modo para todos) =====
+   Las preguntas se responden SIN mostrar si son correctas, en cualquier orden
+   y sin candados (ni entre preguntas ni entre días). Si el alumno no sabe una,
+   marca "No lo sé — quiero que mi instructor me lo explique". Al completar el
+   estudio, las respuestas se envían SOLAS por WhatsApp al instructor conectado
+   (o al número principal si no hay enlace) y recién entonces se abren la
+   enseñanza y las respuestas correctas de ese día. */
 
 async function discover(){
   if(API_BASE !== null) return;
@@ -363,40 +348,7 @@ const params = new URLSearchParams(location.search);
 const dia = +params.get("dia") || 1;
 const L = LECCIONES.find(x => x.d === dia) || LECCIONES[0];
 
-/* GUARDIÁN PROGRESIVO */
-function diaVolverDe(d){ return Math.min(Math.max(1, d - 1), diaLimite()); }
-const doneMapGuard = getDone();
-const cfgGuard = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
-const sinPermiso = L.d > diaLimite();
-const faltaPrevio = L.d > 1 && !doneMapGuard[L.d - 1];
-if(sinPermiso || faltaPrevio){
-  let inner = "";
-  if(sinPermiso){
-    /* Modo acompañado: toca esperar la devolución del instructor */
-    let pend = 0;
-    for(let d = 1; d <= 20; d++){
-      if(doneMapGuard[d] && !(typeof window.fejCorregido === "function" && window.fejCorregido(d))){ pend = d; break; }
-    }
-    if(!pend) pend = Math.min(20, maxCorregidoDia() + 1);
-    const nomIns = (cfgGuard && cfgGuard.nombre) ? cfgGuard.nombre : "tu instructor";
-    const nomAlu = (cfgGuard && cfgGuard.alumno) ? cfgGuard.alumno : "";
-    const txtWa = "Hola " + nomIns + "! 👋" + (nomAlu ? " Soy " + nomAlu + "." : "") + " Estoy haciendo Fe de Jesús y ya completé los estudios disponibles. ¿Me podés enviar el enlace del estudio corregido (Día " + pend + ") para seguir avanzando? 🙏";
-    const diaVolver = diaVolverDe(L.d);
-    inner = '<div style="text-align:center;padding:60px 20px">' +
-      '<div style="font-size:64px">⏳</div>' +
-      '<h2 style="font-size:22px;margin:16px 0 8px">Esperá a tu instructor</h2>' +
-      '<p style="font-size:17px;color:var(--texto2);line-height:1.6">En el modo acompañado podés adelantar hasta <b>2 estudios</b> sin revisión. Para desbloquear el <b>Día ' + L.d + '</b>, ' + escapeHtml(nomIns) + ' tiene que devolverte corregido el <b>Día ' + pend + '</b>.</p>' +
-      '<a href="https://wa.me/' + telDestino() + '?text=' + encodeURIComponent(txtWa) + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:20px;background:var(--verde);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none">💬 Pedirle la devolución por WhatsApp</a><br>' +
-      '<button onclick="location.href=\'leccion.html?dia=' + diaVolver + '\' style="margin-top:14px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + diaVolver + '</button>' +
-      '<p style="margin:14px 0 0"><a href="index.html" style="color:var(--azultx);font-weight:600;font-size:15px">Volver al índice</a></p></div>';
-  } else {
-    inner = '<div style="text-align:center;padding:60px 20px"><div style="font-size:64px">🔒</div><h2 style="font-size:22px;margin:16px 0 8px">Estudio bloqueado</h2><p style="font-size:17px;color:var(--texto2);line-height:1.6">Para hacer el Día ' + L.d + ', primero completá el <b>Día ' + (L.d-1) + '</b>.</p><button onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'" style="margin-top:20px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + (L.d-1) + '</button><br><a href="index.html" style="display:inline-block;margin-top:14px;color:var(--azultx);font-weight:600;font-size:15px">Volver al índice</a></div>';
-  }
-  document.getElementById("app").innerHTML = inner;
-  document.getElementById("btnDone").style.display = "none";
-  document.getElementById("btnTema").style.display = "none";
-  throw new Error("bloqueado");
-}
+/* Estudio libre: sin candados entre días ni entre preguntas. */
 localStorage.setItem("fej_ultimo", L.d);
 document.getElementById("hdTitle").textContent = "Día " + L.d + " de 20";
 document.title = "Día " + L.d + " — " + L.t;
@@ -421,7 +373,7 @@ function renderDone(){
   const hecho = !!getDone()[L.d];
   document.getElementById("btnDone").textContent = hecho ? "❤️" : "🤍";
   const b = document.getElementById("btnCplt");
-  if(b){ b.classList.toggle("on", hecho); b.textContent = hecho ? "✓ Estudio completado" : "Marcar estudio como completado"; }
+  if(b){ b.classList.toggle("on", hecho); b.textContent = hecho ? "✓ Completado — tocá para reenviarlo" : "✅ Completar y enviar a mi instructor"; }
 }
 function toggleDone(){
   const o = getDone();
@@ -429,7 +381,8 @@ function toggleDone(){
   if(yaEstaba){ delete o[L.d]; toast("Estudio desmarcado"); }
   else {
     o[L.d] = 1;
-    toast("❤️ ¡Estudio " + L.d + " completado! Ya podés seguir al próximo día");
+    calcularCorreccion();
+    toast("❤️ ¡Estudio " + L.d + " completado!");
     if(typeof window.fejRespaldo === "function") window.fejRespaldo();
     if(L.d === 20) setTimeout(function(){ location.href = "certificado.html"; }, 1400);
   }
@@ -474,7 +427,7 @@ function respondida(p, misResp){
   const clave = L.d + ":" + p.n;
   if(window.QUIZ && window.QUIZ[clave]){
     const st = quizEstado[p.n];
-    return !!(st && (st.ok || st.rev || st.nols));
+    return !!(st && st.sel);
   }
   return !!(misResp[p.n] && misResp[p.n].trim());
 }
@@ -489,42 +442,35 @@ function estadoRespuestas(){
 }
 
 /* ===== CONSTRUCTORES DE BLOQUES ===== */
-function htmlPregunta(p, desbloq, misResp){
+function htmlPregunta(p, misResp){
   const clave = L.d + ":" + p.n;
   const ops = (window.QUIZ && window.QUIZ[clave]) || null;
-
-  if(!desbloq){
-    return '<div class="lockrow" id="lock_' + p.n + '">🔒 <span>Pregunta ' + p.n + ' — respondé la anterior para desbloquearla</span></div>';
-  }
-
   const st = quizEstado[p.n];
-  const revPend = modoRev() && !corregido();  /* revisión: corrección aún no devuelta */
-  const revCorr = modoRev() && corregido();   /* revisión ya corregida */
-  const respondidaOk = !!(st && st.ok);
+  const hecho = !!getDone()[L.d];   /* día completado: vista de revisión */
   const yaEscribio = !!(misResp[p.n] && misResp[p.n].trim());
 
   let cuerpo = "";
   if(ops){
     const lista = mezclar(ops);
     const LETRAS = ["A","B","C","D"];
+    const correcta = ops[0];
     const botones = lista.map((o,i) => {
       let cls = "opt";
-      if(respondidaOk && st.sel === o) cls += " ok";
-      if(revCorr && !respondidaOk && st && !st.nols && st.sel === o) cls += " err";
-      if(revPend && st && st.sel === o) cls += " sel";
-      const dis = (respondidaOk || revCorr) ? " disabled" : "";
+      if(hecho){
+        if(o === correcta) cls += " ok";
+        else if(st && !st.nols && st.sel === o) cls += " err";
+      } else if(st && st.sel === o) cls += " sel";
+      const dis = hecho ? " disabled" : "";
       return '<button type="button" class="' + cls + '"' + dis + ' data-t="' + escapeHtml(o) + '"><span class="letra">' + LETRAS[i] + '</span><span>' + escapeHtml(o) + '</span></button>';
     }).join("");
-    const nols = revPend
-      ? '<button type="button" class="opt nolsb' + (st && st.nols ? " sel" : "") + '" data-nols="1"><span class="letra">🤔</span><span>No lo sé — quiero que mi instructor me lo explique</span></button>'
-      : "";
-    const etiqueta = revPend ? "👆 Marcá la respuesta que creés correcta:" : (revCorr ? "👆 La respuesta correcta está en verde:" : "👆 Elegí la respuesta correcta:");
+    const nols = hecho
+      ? ""
+      : '<button type="button" class="opt nolsb' + (st && st.nols ? " sel" : "") + '" data-nols="1"><span class="letra">🤔</span><span>No lo sé — quiero que mi instructor me lo explique</span></button>';
+    const etiqueta = hecho ? "👆 La respuesta correcta está en verde:" : "👆 Marcá la respuesta que creés correcta:";
     cuerpo =
       '<label class="respLbl">' + etiqueta + '</label>' +
-      '<div class="quiz" data-q="' + p.n + '">' + botones + nols +
-        (revPend ? "" : '<div class="hint" id="hi_' + p.n + '">📖 Volvé a leer el versículo y probá de nuevo</div>') +
-      '</div>' +
-      (revCorr ? '<div class="corrn">✅ Corregido por tu instructor</div>' : "");
+      '<div class="quiz" data-q="' + p.n + '">' + botones + nols + '</div>' +
+      (hecho ? '<div class="corrn">✅ Revisión abierta — tu instructor te acompaña con la enseñanza</div>' : "");
   } else {
     cuerpo =
       '<label class="respLbl">✍️ Tu respuesta:</label>' +
@@ -532,7 +478,8 @@ function htmlPregunta(p, desbloq, misResp){
       '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>';
   }
 
-  const ensOn = !revPend && (respondidaOk || yaEscribio || revCorr);
+  /* Enseñanza: en multiple choice se abre al completar el estudio; en las escritas, al escribir */
+  const ensOn = ops ? hecho : yaEscribio;
 
   return '<div class="preg" id="preg_' + p.n + '">' +
      '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
@@ -567,8 +514,8 @@ function htmlDecision(completa){
       '<button id="btnSi" class="' + (deces[L.d] === "si" ? "on-si" : "") + '" onclick="decidir(\'si\')">SÍ</button>' +
       '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
     '</div>' +
-    '<a class="enviarBtn" id="btnEnviar" onclick="enviarRespuestas(event)">' + (modoRev() && !corregido() ? '📤 Enviar mis respuestas al instructor para corrección' : '📤 Enviar mis respuestas y mi decisión al instructor') + '</a>' +
-    (modoRev() && !corregido() ? '<div class="corrn" style="color:var(--azultx)">📨 Cuando tu instructor corrija el estudio, te manda un enlace: al abrirlo se revelan tus aciertos y la enseñanza de cada pregunta.</div>' : "") +
+    '<a class="enviarBtn" id="btnEnviar" onclick="completarYEnviar(event)">' + (getDone()[L.d] ? '📤 Reenviar a mi instructor' : '📤 Completar y enviar a mi instructor') + '</a>' +
+    '<div class="corrn" style="color:var(--azultx)">📨 Al tocar acá el estudio se marca como completado y tus respuestas se envían solas por WhatsApp' + (nombreInstructor() ? " a " + escapeHtml(nombreInstructor()) : "") + '. Recién entonces se abren la enseñanza y las respuestas correctas.</div>' +
   '</section>';
 }
 
@@ -579,31 +526,16 @@ function render(){
   let h = '<div class="hero" style="background:' + L.g + '"><div class="dia">DÍA ' + L.d + ' DE 20</div><div class="em">' + L.e + '</div><h1>' + escapeHtml(L.t) + '</h1></div>';
 
   const insNombre = nombreInstructor();
-  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b>' + (modoRev() ? ' — te devuelve el estudio corregido' : ' — tus respuestas y consultas le llegan a su WhatsApp') + '.<br><span style="font-size:13px">📘 Modo acompañado: podés adelantar hasta 2 estudios sin revisión — después esperás la devolución de tu instructor.</span></div>';
-  if(modoRev()){
-    if(corregido()){
-      h += '<div class="conectado" style="border-left-color:var(--verde)">✅ Tu instructor ya revisó este estudio: la respuesta correcta quedó marcada en verde y la enseñanza de cada pregunta está abierta.</div>';
-    } else {
-      h += '<div class="conectado" style="border-left-color:var(--orah)">📨 Modo revisión: respondé sin ver las respuestas — si no sabés una, marcá “No lo sé”. Al final, las enviás a tu instructor y él te devuelve el estudio corregido.</div>';
-    }
-  }
+  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b> — al completar el estudio, tus respuestas se envían solas a su WhatsApp.<br><span style="font-size:13px">📘 Respondé sin ver las respuestas, en el orden que quieras. Si no sabés una, marcá “🤔 No lo sé”.</span></div>';
 
   if(L.i) h += card('<h2>📖 Introducción</h2><div class="intro">' + linkRefs(L.i) + '</div>');
 
   if(L.temas){
-    const lista = ordenPreguntas();
     h += L.temas.map(t =>
       card('<h2>✨ ' + escapeHtml(t.tt) + '</h2>' +
-        t.ps.map(p => {
-          const i = lista.indexOf(p);
-          const desbloq = todoAbierto || i === 0 || respondida(lista[i-1], misResp);
-          return htmlPregunta(p, desbloq, misResp);
-        }).join("")
+        t.ps.map(p => htmlPregunta(p, misResp)).join("")
       )).join("");
   }
-
-  const cq = contarQuiz();
-  if(cq.total && (!modoRev() || corregido())) h += '<div class="score" id="scoreBox"></div>';
 
   if(L.extras){
     const visibles = L.d === 20 ? L.extras : L.extras.filter(e => /^Sugerencias/i.test(e.tt));
@@ -616,19 +548,13 @@ function render(){
   if(L.d === 20) h += '<div class="fin20">JESÚS VIENE PRONTO 🎉<br><span style="font-weight:400;font-size:16px">¡Completaste los 20 estudios de Fe de Jesús!</span></div>' +
     '<a class="certBtn" href="certificado.html">🎓 Ver mi certificado</a>';
 
-  h += '<button class="cplt" id="btnCplt" onclick="toggleDone()"></button>';
+  h += '<button class="cplt" id="btnCplt" onclick="completarYEnviar()"></button>';
 
   const ant = LECCIONES.find(x => x.d === L.d - 1);
   const sig = LECCIONES.find(x => x.d === L.d + 1);
-  const bloqueoIns = sig && sig.d > diaLimite();
-  const sigBloqueado = sig && !getDone()[L.d];
   h += '<div class="navg">' +
-    '<button ' + (ant ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'">← Anterior</button>' +
-    (bloqueoIns
-      ? '<button class="prim" disabled>⏳ Esperá la revisión de tu instructor</button>'
-      : (sigBloqueado
-      ? '<button class="prim" disabled>🔒 Completá este estudio para continuar</button>'
-      : '<button class="prim" ' + (sig ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d+1) + '\'">Siguiente →</button>')) +
+    '<button ' + (ant ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\">← Anterior</button>' +
+    '<button class="prim" ' + (sig ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d+1) + '\">Siguiente →</button>' +
   '</div>';
 
   h += '<a class="invitar" href="instructor.html">🎓 ¿Querés acompañar a alguien más? Invitalo a estudiar</a>';
@@ -636,24 +562,6 @@ function render(){
   document.getElementById("app").innerHTML = h;
   renderDone();
   actualizarBotonCompleto();
-  actualizarScore();
-}
-
-/* Desbloquea la pregunta siguiente a la n recién respondida (idempotente) */
-function revelarSiguiente(n, conScroll){
-  const lista = ordenPreguntas();
-  const i = lista.findIndex(x => x.n === n);
-  if(i < 0) return;
-  const sig = lista[i+1];
-  if(!sig) return;
-  const lockEl = document.getElementById("lock_" + sig.n);
-  if(!lockEl) return;
-  const frag = document.createElement("div");
-  frag.innerHTML = htmlPregunta(sig, true, getResp());
-  const nuevo = frag.firstChild;
-  nuevo.classList.add("aparece");
-  lockEl.replaceWith(nuevo);
-  if(conScroll) setTimeout(() => { nuevo.scrollIntoView({ behavior: "smooth", block: "center" }); }, 80);
 }
 
 /* Cuando se responden TODAS, aparece disponible la decisión personal */
@@ -669,34 +577,6 @@ function revelarDecision(conScroll){
   if(conScroll) setTimeout(() => { nuevo.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 450);
 }
 
-/* Puntaje del día: aciertos a la primera sobre el total de preguntas multiple choice */
-function contarQuiz(){
-  let total = 0, aciertos = 0, respondidas = 0;
-  ordenPreguntas().forEach(p => {
-    if(window.QUIZ && window.QUIZ[L.d + ":" + p.n]){
-      total++;
-      const st = quizEstado[p.n];
-      if(st && st.ok){
-        respondidas++;
-        if(st.first) aciertos++;
-      }
-    }
-  });
-  return { total: total, aciertos: aciertos, respondidas: respondidas };
-}
-
-function actualizarScore(){
-  const box = document.getElementById("scoreBox");
-  if(!box) return;
-  const c = contarQuiz();
-  if(!c.total || !c.respondidas) return;
-  let msg = "🎯 Acertadas a la primera: " + c.aciertos + " de " + c.total;
-  if(c.aciertos === c.total) msg += "<br>⭐ ¡Puntaje perfecto! ¡Bendecido estudio!";
-  else msg += "<br><span style='font-weight:400;font-size:14px'>Cada respuesta acertada a la primera suma tu ⭐ — si te equivocás, volvé a intentar sin miedo.</span>";
-  box.innerHTML = msg;
-  box.classList.add("on");
-}
-
 /* El botón de completar se habilita solo cuando TODAS las preguntas están respondidas */
 function actualizarBotonCompleto(){
   const b = document.getElementById("btnCplt");
@@ -708,80 +588,27 @@ function actualizarBotonCompleto(){
     b.textContent = "🔒 Respondé todas las preguntas (" + e.hechas + " de " + e.total + ")";
   } else {
     b.disabled = false;
-    b.textContent = "Marcar estudio como completado";
+    b.textContent = "✅ Completar y enviar a mi instructor";
   }
 }
 
-/* Clic en una opción del multiple choice */
+/* Clic en una opción: se marca la elegida sin decir si es correcta */
 document.getElementById("app").addEventListener("click", function(e){
   const b = e.target.closest(".opt");
   if(!b || b.disabled) return;
   const qDiv = b.closest(".quiz");
   if(!qDiv) return;
   const n = +qDiv.getAttribute("data-q");
-  const ops = window.QUIZ[L.d + ":" + n];
-  if(!ops) return;
+  if(!window.QUIZ[L.d + ":" + n]) return;
+  if(getDone()[L.d]) return; /* día completado: vista de revisión fija */
 
-  /* ===== MODO REVISIÓN (sin respuesta revelada hasta la corrección) ===== */
-  if(modoRev() && !corregido()){
-    const esNols = b.getAttribute("data-nols") === "1";
-    quizEstado[n] = quizEstado[n] || { tries: 0 };
-    if(esNols){
-      quizEstado[n].sel = "🤔 No lo sé — quiero que el instructor me lo explique";
-      quizEstado[n].nols = true;
-      quizEstado[n].first = false;
-    } else {
-      quizEstado[n].sel = b.getAttribute("data-t");
-      quizEstado[n].nols = false;
-      quizEstado[n].first = true;
-    }
-    quizEstado[n].rev = true;
-    delete quizEstado[n].ok;
-    guardarQuiz();
-    qDiv.querySelectorAll(".opt").forEach(o => o.classList.toggle("sel", o === b));
-    actualizarBotonCompleto();
-    revelarSiguiente(n, true);
-    const e2 = estadoRespuestas();
-    if(e2.hechas === e2.total) revelarDecision(true);
-    return;
-  }
-
-  const texto = b.getAttribute("data-t");
-  const correcta = ops[0];
-
-  if(texto === correcta){
-    const primeraVez = !quizEstado[n];
-    if(!quizEstado[n]) quizEstado[n] = { tries: 0 };
-    quizEstado[n].sel = texto;
-    quizEstado[n].ok = true;
-    if(primeraVez) quizEstado[n].first = true;
-    guardarQuiz();
-    qDiv.querySelectorAll(".opt").forEach(o => {
-      o.disabled = true;
-      if(o.getAttribute("data-t") === texto) o.classList.add("ok");
-    });
-    const hi = document.getElementById("hi_" + n);
-    if(hi) hi.classList.remove("on");
-    const ens = document.getElementById("ens_" + n);
-    if(ens && !ens.classList.contains("on")){
-      ens.classList.add("on");
-      ens.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-    toast("✅ ¡Correcto!");
-    actualizarScore();
-    actualizarBotonCompleto();
-    revelarSiguiente(n, true);
-    const e2 = estadoRespuestas();
-    if(e2.hechas === e2.total) revelarDecision(true);
-  } else {
-    if(!quizEstado[n]) quizEstado[n] = { tries: 0 };
-    quizEstado[n].tries = (quizEstado[n].tries || 0) + 1;
-    guardarQuiz();
-    b.classList.add("mal");
-    setTimeout(() => b.classList.remove("mal"), 500);
-    const hi = document.getElementById("hi_" + n);
-    if(hi) hi.classList.add("on");
-  }
+  const esNols = b.getAttribute("data-nols") === "1";
+  quizEstado[n] = { sel: esNols ? "🤔 No lo sé — quiero que el instructor me lo explique" : b.getAttribute("data-t"), nols: esNols };
+  guardarQuiz();
+  qDiv.querySelectorAll(".opt").forEach(o => o.classList.toggle("sel", o === b));
+  actualizarBotonCompleto();
+  const e2 = estadoRespuestas();
+  if(e2.hechas === e2.total) revelarDecision(true);
 });
 
 function guardarResp(n, texto){
@@ -790,13 +617,8 @@ function guardarResp(n, texto){
   saveResp(r);
   const ens = document.getElementById("ens_" + n);
   if(ens){
-    /* en modo revisión la enseñanza queda oculta hasta que llega la corrección */
-    const abrir = texto.trim() && (!modoRev() || corregido());
-    if(abrir && !ens.classList.contains("on")){
-      ens.classList.add("on");
-    } else if(!texto.trim()){
-      ens.classList.remove("on");
-    }
+    if(texto.trim()){ if(!ens.classList.contains("on")) ens.classList.add("on"); }
+    else ens.classList.remove("on");
   }
   const motiva = document.getElementById("mo_" + n);
   if(motiva){
@@ -812,7 +634,6 @@ function guardarResp(n, texto){
       motiva.classList.add("on");
     }
   }
-  if(texto.trim()) revelarSiguiente(n, false); /* sin salto de pantalla: seguí escribiendo tranquilo */
   actualizarBotonCompleto();
   const e2 = estadoRespuestas();
   if(e2.hechas === e2.total) revelarDecision(false);
@@ -830,52 +651,67 @@ function decidir(v){
   toast(v === "si" ? "✅ ¡Bendecida decisión!" : "Decisión guardada");
 }
 
+/* Completar y enviar: marca el estudio, abre la revisión y manda las
+   respuestas por WhatsApp al instructor conectado (o al número principal). */
+function completarYEnviar(ev){
+  if(ev) ev.preventDefault();
+  const o = getDone();
+  if(!o[L.d]){
+    const e = estadoRespuestas();
+    if(e.hechas < e.total){ toast("📖 Respondé todas las preguntas primero (" + e.hechas + " de " + e.total + ")"); return; }
+    o[L.d] = 1;
+    setDone(o);
+    calcularCorreccion();
+    if(typeof window.fejRespaldo === "function") window.fejRespaldo();
+    toast("❤️ ¡Estudio " + L.d + " completado! Abriendo WhatsApp…");
+  }
+  enviarRespuestas();
+  render();
+}
+
 function enviarRespuestas(ev){
   if(ev) ev.preventDefault();
   const deces = getDecs();
   const perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
-  const nombre = (document.getElementById("decNombre").value || "").trim() || (perfil && perfil.nombre) || "Sin nombre";
-  const fecha = document.getElementById("decFecha").value || "";
+  const inNombre = document.getElementById("decNombre");
+  const nombre = (inNombre && inNombre.value.trim()) || (perfil && perfil.nombre) || "Sin nombre";
+  const inFecha = document.getElementById("decFecha");
+  const fecha = (inFecha && inFecha.value) || "";
   const misResp = getResp();
-  const cq = contarQuiz();
-  let txt = "📖 *Fe de Jesús — Día " + L.d + "*\n*" + L.t + "*\n\n👤 " + nombre + "\n📅 " + fecha + "\n\n✍️ *Mis respuestas:*\n";
+  let txt = "📖 *Fe de Jesús — Día " + L.d + "*\n*" + L.t + "*\n\n👤 " + nombre + (fecha ? "\n📅 " + fecha : "") + "\n\n✍️ *Mis respuestas (para tu revisión):*\n";
   let hay = false;
   (L.temas || []).forEach(t => t.ps.forEach(p => {
     const st = quizEstado[p.n];
-    if(st && (st.ok || st.rev) && st.sel){
+    if(st && st.sel){
       hay = true;
-      txt += "\n*" + p.n + ". " + p.p + "*\n→ " + (st.ok ? "✅ " : "") + st.sel + "\n";
+      txt += "\n*" + p.n + ". " + p.p + "*\n→ " + (st.nols ? "🤔 No lo sé — quiero que me lo expliques" : st.sel) + "\n";
       return;
     }
     const r = (misResp[p.n] || "").trim();
     if(r){ hay = true; txt += "\n*" + p.n + ". " + p.p + "*\n→ " + r + "\n"; }
   }));
   if(!hay) txt += "(sin respuestas registradas)\n";
-  if(cq.total && !(modoRev() && !corregido())) txt += "\n🎯 *Acertadas a la primera:* " + cq.aciertos + " de " + cq.total;
-  txt += "\n\n✍️ *Mi decisión personal:* " + (deces[L.d] === "si" ? "SÍ" : deces[L.d] === "no" ? "NO" : "sin marcar");
-  if(modoRev() && !corregido()) txt += "\n📨 *Enviado para corrección*";
-  if(typeof window.fejCfg === "function" && window.fejCfg()) txt += "\n🔁 Cuando lo revises, mandame el enlace de devolución para desbloquear los próximos estudios";
+  txt += "\n✍️ *Mi decisión personal:* " + (deces[L.d] === "si" ? "SÍ" : deces[L.d] === "no" ? "NO" : "sin marcar");
   const insN = nombreInstructor();
   if(insN) txt += "\n🎓 *Instructor conectado:* " + insN;
+  txt += "\n— Enviado desde la app Fe de Jesús";
   if(typeof window.fejRegistrar === "function"){
-    window.fejRegistrar("Envió sus respuestas", "Lección " + L.d + (cq.total ? " | Quiz " + cq.aciertos + "/" + cq.total : ""));
+    window.fejRegistrar("Envió el estudio para revisión", "Lección " + L.d);
     if(typeof window.fejRespaldo === "function") window.fejRespaldo();
   }
   window.open("https://wa.me/" + telDestino() + "?text=" + encodeURIComponent(txt), "_blank");
 }
 
-/* ===== CORRECCIÓN DEVUELTA: al abrir leccion.html?dia=N&c=1, ese día queda
-   marcado como corregido. Acá se revelan los aciertos y se habilitan las
-   enseñanzas (ida y vuelta con el instructor). ===== */
-if(modoRev() && corregido()){
+/* ===== AL COMPLETAR: se calcula una sola vez qué respuestas fueron correctas
+   (para la vista de revisión en verde/rojo y el respaldo del instructor). ===== */
+function calcularCorreccion(){
   let cambio = false;
   ordenPreguntas().forEach(p => {
     const clave = L.d + ":" + p.n;
     const st = quizEstado[p.n];
     if(st && !st.corr){
-      if(window.QUIZ && window.QUIZ[clave] && !st.nols && st.sel !== undefined){
+      if(window.QUIZ && window.QUIZ[clave] && !st.nols && st.sel){
         st.ok = (st.sel === window.QUIZ[clave][0]);
-        st.first = !!st.ok;
       }
       st.corr = true;
       cambio = true;
