@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fe de Jesús</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --fondo:#f0f2f5;--panel:#ffffff;--panel2:#f0f2f5;--borde:#e4e6eb;--inputb:#ccd0d5;
+  --texto:#050505;--texto2:#65676b;
+  --azul:#1877f2;--azulh:#166fe5;--azulsoft:#e7f3ff;--azultx:#1877f2;
+  --verde:#31a24c;--verdesoft:#e7f6ec;
+  --rojo:#e41e3f;--rojosoft:#ffe7ec;
+  --btnoffbg:#e4e6eb;--btnofftx:#bcc0c4;
+  --hdrbg:rgba(255,255,255,.95);--hdrb:#e4e6eb;
+  --toastbg:#050505;--toasttx:#ffffff;
+  --orb1:#fff8e1;--orb2:#fff3cd;--orbord:#f0e0a0;--orah:#b8860b;--oratx:#5c4a00;
+  --sombra:0 8px 24px rgba(0,0,0,.18)
+}
+html.modo-oscuro{
+  --fondo:#18191a;--panel:#242526;--panel2:#3a3b3c;--borde:#3e4042;--inputb:#606366;
+  --texto:#e4e6eb;--texto2:#b0b3b8;
+  --azul:#2d88ff;--azulh:#3a93ff;--azulsoft:rgba(45,136,255,.16);--azultx:#7ab3ff;
+  --verde:#2fae54;--verdesoft:rgba(47,174,84,.18);
+  --rojo:#ff6673;--rojosoft:rgba(228,30,63,.16);
+  --btnoffbg:#3a3b3c;--btnofftx:#8a8d91;
+  --hdrbg:rgba(24,25,26,.95);--hdrb:#3e4042;
+  --toastbg:#4a4b4d;--toasttx:#ffffff;
+  --orb1:#332c15;--orb2:#3d3418;--orbord:#5c4d24;--orah:#e8c766;--oratx:#e8d48b;
+  --sombra:0 8px 24px rgba(0,0,0,.5)
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:90px;transition:background .25s,color .25s}
+header{position:sticky;top:0;background:var(--hdrbg);backdrop-filter:blur(12px);border-bottom:1px solid var(--hdrb);z-index:20;display:flex;align-items:center;gap:12px;padding:10px 14px}
+header button{background:none;border:none;font-size:22px;cursor:pointer;color:var(--texto)}
+header .t{flex:1;font-weight:700;font-size:20px}
+#btnTema{font-size:19px}
+#btnDone{font-size:24px}
+.wrap{max-width:620px;margin:0 auto;padding:0 14px}
+.hero{margin:16px 0;border-radius:18px;color:#fff;padding:30px 22px;box-shadow:var(--sombra)}
+.hero .dia{font-size:16px;font-weight:800;letter-spacing:2px;opacity:.9}
+.hero .em{font-size:52px;margin:6px 0}
+.hero h1{font-size:29px;font-weight:800;line-height:1.2}
+.card{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:18px 16px;margin:12px 0}
+.card h2{font-size:23px;margin-bottom:10px}
+.intro{font-size:20px;line-height:1.7;color:var(--texto2)}
+.preg{border-left:3px solid var(--azul);padding-left:12px;margin:20px 0}
+.preg.aparece{animation:aparece .5s ease}
+@keyframes aparece{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.lockrow{display:flex;align-items:center;gap:8px;background:var(--panel);border:1.5px dashed var(--borde);border-radius:12px;padding:12px 14px;margin:20px 0;color:var(--texto2);font-size:15px;font-weight:600}
+.pnum{display:inline-flex;width:27px;height:27px;border-radius:50%;background:var(--azul);color:#fff;font-size:14px;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:middle}
+.pq{font-size:20px;font-weight:700;display:inline;vertical-align:middle}
+.chips{margin:8px 0;display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--azulsoft);color:var(--azultx);border:none;border-radius:16px;padding:7px 15px;font-size:17px;font-weight:600;cursor:pointer}
+.chip:active{filter:brightness(.93)}
+.respTa{width:100%;box-sizing:border-box;min-height:70px;padding:12px;border:1.5px solid var(--inputb);border-radius:10px;font-size:17px;font-family:inherit;line-height:1.5;resize:vertical;background:var(--panel2);color:var(--texto)}
+.respTa:focus{outline:none;border-color:var(--azul);background:var(--panel)}
+.respLbl{font-size:16px;font-weight:700;color:var(--texto);margin-top:12px;display:block}
+.motiva{font-size:14px;color:var(--verde);font-weight:600;margin-top:5px;display:none}
+.motiva.on{display:block}
+.quiz{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.opt{width:100%;text-align:left;background:var(--panel);border:1.5px solid var(--inputb);border-radius:12px;padding:12px 14px;font-size:17px;font-family:inherit;line-height:1.45;cursor:pointer;color:var(--texto);display:flex;gap:10px;align-items:flex-start;transition:background .15s,border-color .15s}
+.opt .letra{flex:none;width:26px;height:26px;border-radius:50%;background:var(--panel2);color:var(--texto2);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt:active{background:var(--azulsoft)}
+.opt.ok{background:var(--verdesoft);border-color:var(--verde)}
+.opt.ok .letra{background:var(--verde);color:#fff}
+.opt.mal{animation:treme .45s;border-color:var(--rojo);background:var(--rojosoft)}
+.opt.sel{border-color:var(--azul);background:var(--azulsoft)}
+.opt.sel .letra{background:var(--azul);color:#fff}
+.opt.err{border-color:var(--rojo);background:var(--rojosoft)}
+.opt.err .letra{background:var(--rojo);color:#fff}
+.opt.nolsb .letra{background:var(--panel2);font-size:15px}
+.nolsb.sel{border-color:var(--azul);background:var(--azulsoft)}
+.corrn{font-size:14px;font-weight:700;color:var(--verde);margin-top:8px}
+.opt:disabled{cursor:default}
+@keyframes treme{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.hint{font-size:14px;color:var(--rojo);font-weight:600;margin-top:2px;display:none}
+.hint.on{display:block}
+.score{background:var(--azulsoft);border:1px solid var(--borde);border-radius:14px;padding:16px;margin:14px 0;font-weight:700;font-size:17px;text-align:center;display:none}
+.score.on{display:block}
+.ensenanza{display:none;margin-top:14px;border-top:1px dashed var(--borde);padding-top:14px}
+.ensenanza.on{display:block;animation:abre .6s ease}
+@keyframes abre{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.des{font-size:20px;line-height:1.72;color:var(--texto)}
+a.ref{color:var(--azultx);text-decoration:none;font-weight:600;cursor:pointer;border-bottom:1px dotted var(--azultx)}
+ul.lis{list-style:none;margin-top:6px}
+ul.lis li{padding:9px 0;border-bottom:1px solid var(--borde);font-size:20px;line-height:1.6}
+ul.lis li:last-child{border:none}
+ul.lis li span{font-size:16px !important}
+.colwrap{display:flex;gap:12px;flex-wrap:wrap}
+.colwrap>div{flex:1;min-width:140px}
+.colwrap h4{font-size:18px;margin-bottom:6px;color:var(--texto2)}
+.dec{background:var(--panel);border:2px solid var(--azul);border-radius:14px;padding:18px 16px;margin:12px 0}
+.dec.bloqueada{border-style:dashed;border-color:var(--borde)}
+.dec h2{font-size:21px}
+.dec p{font-size:20px;line-height:1.6;margin:10px 0;font-weight:600}
+.dec label{display:block;font-weight:700;font-size:15px;color:var(--texto2);margin:12px 0 4px}
+.dec input{width:100%;box-sizing:border-box;padding:12px;border:1.5px solid var(--inputb);border-radius:10px;font-size:17px;font-family:inherit;color:var(--texto);background:var(--panel)}
+.dec input:focus{outline:none;border-color:var(--azul)}
+.dbtns{display:flex;gap:10px;margin-top:14px}
+.dbtns button{flex:1;border:2px solid var(--inputb);background:var(--panel);border-radius:10px;padding:12px;font-size:20px;font-weight:800;cursor:pointer;color:var(--texto2)}
+.dbtns button.on-si{background:var(--verde);border-color:var(--verde);color:#fff}
+.dbtns button.on-no{background:#8a8d91;border-color:#8a8d91;color:#fff}
+.enviarBtn{width:100%;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;background:var(--verde);color:#fff;margin-top:14px;text-decoration:none;display:block;text-align:center}
+.certBtn{width:100%;border:none;border-radius:12px;padding:15px;font-size:17px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff;margin-top:12px;text-decoration:none;display:block;text-align:center}
+.cplt{width:100%;border:none;border-radius:12px;padding:15px;font-size:20px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff;margin:8px 0}
+.cplt.on{background:var(--verde)}
+.cplt:disabled{background:var(--btnoffbg);color:var(--btnofftx);cursor:not-allowed}
+.navg{display:flex;gap:10px;margin:20px 0}
+.navg button{flex:1;border:1px solid var(--inputb);background:var(--panel);border-radius:12px;padding:14px;font-size:18px;font-weight:700;cursor:pointer;color:var(--texto)}
+.navg button.prim{background:var(--azul);border-color:var(--azul);color:#fff}
+.navg button:disabled{opacity:.35;cursor:default}
+.fin20{background:linear-gradient(135deg,#0d4dad,#1877f2);color:#fff;border-radius:14px;padding:22px;text-align:center;margin:12px 0;font-size:18px;font-weight:700}
+.oracion{background:linear-gradient(135deg,var(--orb1),var(--orb2));border:1px solid var(--orbord);border-left:4px solid var(--orah)}
+.oracion h2{color:var(--orah);font-size:21px}
+.oracion .pedir{font-size:19px;line-height:1.7;color:var(--oratx);font-style:italic;margin:8px 0}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+#overlay.on{opacity:1;pointer-events:auto}
+#sheet{position:fixed;left:0;right:0;bottom:0;max-height:75vh;background:var(--panel);border-radius:20px 20px 0 0;transform:translateY(100%);transition:.3s;z-index:51;display:flex;flex-direction:column}
+#sheet.on{transform:translateY(0)}
+#sheet .hd{padding:10px 18px 6px;text-align:center}
+#sheet .hd i{display:block;width:40px;height:4px;border-radius:2px;background:var(--borde);margin:0 auto}
+#sheet h3{font-size:26px;text-align:center;margin:6px 0 2px;color:var(--texto)}
+#sheet .vv{font-size:16px;text-align:center;color:var(--texto2);margin-bottom:8px}
+#sheet .bd{overflow-y:auto;padding:4px 20px 26px;font-size:25px;line-height:1.8;color:var(--texto)}
+#sheet .bd p{margin-bottom:12px}
+#sheet sup{color:var(--azul);font-weight:700;font-size:18px;margin-right:4px}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--toastbg);color:var(--toasttx);border-radius:20px;padding:10px 20px;font-size:18px;opacity:0;transition:.3s;z-index:60;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.conectado{background:var(--azulsoft);border:1px solid var(--borde);border-left:4px solid var(--azul);border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:15px;line-height:1.55;color:var(--texto)}
+.invitar{display:block;text-align:center;margin:4px 0 22px;color:var(--azultx);font-weight:600;font-size:15px;text-decoration:none}
+.invitar:active{opacity:.7}
+</style>
+<script>try{if(localStorage.getItem("fej_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
+</head>
+<body>
+
+<header>
+  <button onclick="location.href='index.html'">←</button>
+  <div class="t" id="hdTitle"></div>
+  <button id="btnTema" title="Modo claro / oscuro">🌙</button>
+  <button id="btnDone">🤍</button>
+</header>
+
+<div class="wrap" id="app"></div>
+
+<div id="overlay" onclick="cerrarSheet()"></div>
+<div id="sheet">
+  <div class="hd"><i></i></div>
+  <h3 id="shRef"></h3>
+  <div class="vv" id="shVer"></div>
+  <div class="bd" id="shBody"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="data-a.js"></script>
+<script src="data-b.js"></script>
+<script src="data-c.js"></script>
+<script src="data-d.js"></script>
+<script src="quiz-a.js"></script>
+<script src="quiz-b.js"></script>
+<script src="resumen.js"></script>
+
+<script>
+let API_BASE = null, BIBLE_VERSION = "RVR1960", apiOK = false;
+var TELEFONO_INSTRUCTOR = "5491128945261"; /* número principal (José) */
+
+/* ===== ENLACE DE INSTRUCTOR =====
+   Si la app se abrió con un enlace personalizado (?i=tel&n=nombre&a=alumno),
+   toda consulta/respuesta va al WhatsApp del instructor conectado.
+   Si el alumno comparte su propio enlace (generado en instructor.html),
+   la nueva persona queda conectada al teléfono del que compartió. */
+function telDestino(){
+  if(typeof window.fejTelDestino === "function") return window.fejTelDestino();
+  return TELEFONO_INSTRUCTOR;
+}
+function nombreInstructor(){
+  const c = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+  return (c && c.nombre) ? c.nombre : "";
+}
+/* ===== MODO REVISIÓN (ida y vuelta con el instructor) =====
+   El instructor comparte el enlace con &m=rev: el alumno responde TODO sin
+   ver las respuestas (con opción "No lo sé") y las envía por WhatsApp.
+   Cuando el instructor le devuelve leccion.html?dia=N&c=1, ese día queda
+   marcado como corregido y recién entonces se revelan los aciertos y las
+   enseñanzas de cada pregunta. */
+function modoRev(){
+  return (typeof window.fejModoRev === "function") ? window.fejModoRev() : false;
+}
+function corregido(){
+  return (typeof window.fejCorregido === "function") ? window.fejCorregido(L.d) : false;
+}
+/* ===== LÍMITE DE AVANCE EN MODO ACOMPAÑADO =====
+   Con enlace de instructor, el alumno adelanta como máximo 2 estudios sin
+   revisión: para seguir, el instructor le devuelve el estudio corregido
+   (leccion.html?dia=N&c=1). Sin conexión no hay límite (autoestudio libre). */
+function diaLimite(){
+  return (typeof window.fejLimite === "function") ? window.fejLimite() : 20;
+}
+function maxCorregidoDia(){
+  return (typeof window.fejMaxCorregido === "function") ? window.fejMaxCorregido() : 0;
+}
+
+async function discover(){
+  if(API_BASE !== null) return;
+  const bases = ["", "/fe-de-jesus", "..", "/biblia"];
+  for(const b of bases){
+    try{
+      const r = await fetch(b + "/api/versions");
+      if(!r.ok) continue;
+      const vs = await r.json();
+      API_BASE = b;
+      BIBLE_VERSION = vs.find(v => /rvr.*196|1960/i.test(v)) || vs.find(v => /rvr/i.test(v)) || vs[0];
+      apiOK = true;
+      return;
+    }catch(e){}
+  }
+  API_BASE = "";
+}
+
+const LIBROS = [
+["Génesis","Gén","Gn","Gen",1],["Éxodo","Exodo","Éxo","Exo",2],["Levítico","Lev",3],["Números","Núm","Nm","Num",4],
+["Deuteronomio","Deut","Dt",5],["Josué","Jos",6],["Jueces","Jue",7],["Rut","Rt",8],
+["1 Samuel","1 Sam",9],["2 Samuel","2 Sam",10],["1 Reyes","1 Rey",11],["2 Reyes","2 Rey",12],
+["1 Crónicas","1 Crón","1 Cro",13],["2 Crónicas","2 Crón","2 Cro",14],["Esdras","Esd",15],["Nehemías","Neh",16],
+["Ester","Est",17],["Job",18],["Salmos","Salmo","Sal",19],["Proverbios","Prov",20],
+["Eclesiastés","Ecl",21],["Cantares","Cant",22],["Isaías","Isa","Is",23],["Jeremías","Jer",24],
+["Lamentaciones","Lam",25],["Ezequiel","Eze",26],["Daniel","Dan",27],["Oseas","Os",28],
+["Joel",29],["Amós","Am",30],["Obadías","Obad",31],["Jonás","Jon",32],["Miqueas","Miq",33],
+["Nahúm","Nah",34],["Habacuc","Hab",35],["Sofonías","Sof",36],["Hageo","Hag",37],
+["Zacarías","Zac",38],["Malaquías","Mal",39],["Mateo","Mt",40],["Marcos","Mr","Mar",41],
+["Lucas","Lc","Luc",42],["Juan","Jn",43],["Hechos","Hch","Hech",44],["Romanos","Rom","Ro",45],
+["1 Corintios","1 Cor",46],["2 Corintios","2 Cor",47],["Gálatas","Gál","Gal",48],["Efesios","Efes","Ef",49],
+["Filipenses","Filip","Fil",50],["Colosenses","Colos","Col",51],["1 Tesalonicenses","1 Tes",52],
+["2 Tesalonicenses","2 Tes",53],["1 Timoteo","1 Tim",54],["2 Timoteo","2 Tim",55],["Tito","Tit",56],
+["Filemón","Filem",57],["Hebreos","Heb",58],["Santiago","Stg","Sant",59],["1 Pedro","1 Ped",60],
+["2 Pedro","2 Ped",61],["1 Juan","1 Jn",62],["2 Juan","2 Jn",63],["3 Juan","3 Jn",64],
+["Judas","Jud",65],["Apocalipsis","Apoc","Ap",66]
+];
+
+function norm(s){ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim(); }
+const reLibros = LIBROS.flatMap(g => g.slice(0,-1)).sort((a,b) => b.length - a.length).map(x => x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
+const V = "(\\d{1,3}(?:\\s?[-–—]\\s?\\d{1,3}(?::\\d{1,3})?)?(?:\\s?,\\s?\\d{1,3}(?:\\s?[-–—]\\s?\\d{1,3})?)*)";
+const REF_RE = new RegExp("(?<![\\p{L}\\p{N}])((?:" + reLibros + ")\\.?\\s?\\d{1,3}(?::\\s?" + V + ")?)", "gu");
+const REF_ONE = new RegExp("^(" + reLibros + ")\\.?\\s?(\\d{1,3})(?::\\s?" + V + ")?$","u");
+
+function numeroLibro(nombre){
+  const n = norm(nombre.replace(/\.$/,""));
+  const g = LIBROS.find(g => g.slice(0,-1).some(a => norm(a) === n));
+  return g ? g[g.length-1] : null;
+}
+function escapeHtml(t){ return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function linkRefs(texto){ return escapeHtml(texto).replace(REF_RE, (m, ref) => '<a class="ref" data-r="' + ref + '">' + ref + '</a>'); }
+function chips(refs){
+  const partes = refs.split(";").map(s => s.trim()).filter(Boolean);
+  let libroPrev = "";
+  return partes.map(p => {
+    const m = p.match(/^([A-Za-zÁÉÍÓÚÜÑáéíóúüñ][^\d]*?)\.?\s?\d/);
+    if(m && numeroLibro(m[1])) libroPrev = m[1].replace(/\.$/,"");
+    else if(libroPrev) p = libroPrev + " " + p;
+    return p;
+  });
+}
+
+function parseOne(ref){
+  const m = ref.replace(/\s+/g," ").match(REF_ONE);
+  if(!m) return null;
+  const b = numeroLibro(m[1]);
+  if(!b) return null;
+  return { b, c: +m[2], versos: m[3] || null };
+}
+
+async function fetchCap(b, c){
+  const r = await fetch(API_BASE + "/api/verses?version=" + encodeURIComponent(BIBLE_VERSION) + "&book=" + b + "&chapter=" + c);
+  if(!r.ok) throw 0;
+  return r.json();
+}
+
+async function openRef(ref){
+  const p = parseOne(ref);
+  if(!p){ return; }
+  document.getElementById("shRef").textContent = ref;
+  document.getElementById("shVer").textContent = "Cargando…";
+  document.getElementById("shBody").innerHTML = "";
+  abrirSheet();
+  try{
+    await discover();
+    let caps = [p.c];
+    let rango = null;
+    if(p.versos){
+      const rm = p.versos.match(/^(\d+)\s?[-–—]\s?(\d{1,3})(?::(\d{1,3}))?$/);
+      if(rm && rm[2]){
+        if(rm[3] !== undefined){ caps = [+p.c, +rm[2]]; rango = { de:+rm[1], hasta:+rm[3], capFin:+rm[2] }; }
+        else rango = { de:+p.versos.match(/^\d+/)[0], hasta:+rm[2], capFin:+p.c };
+      } else if(p.versos.includes(",")){
+        rango = { lista: p.versos.split(",").map(s=>+s.trim()) };
+      } else if(/^\d+$/.test(p.versos.trim())){
+        rango = { lista: [ +p.versos.trim() ] };
+      }
+    }
+    const datos = await Promise.all(caps.map(c => fetchCap(p.b, c)));
+    let html = "";
+    const pintar = (versos, capN) => {
+      let sel = versos;
+      if(rango){
+        if(rango.lista) sel = versos.filter(v => rango.lista.includes(+v.verse));
+        else sel = versos.filter(v => +v.verse >= rango.de && +v.verse <= (capN === rango.capFin ? rango.hasta : 999));
+      }
+      sel.forEach(v => { html += '<p><sup>' + v.verse + '</sup>' + escapeHtml(v.text) + '</p>'; });
+    };
+    caps.forEach((c,i) => pintar(datos[i], c));
+    document.getElementById("shVer").textContent = BIBLE_VERSION + (apiOK ? "" : " · modo sin conexión");
+    document.getElementById("shBody").innerHTML = html || "<p>No se encontraron los versículos.</p>";
+  }catch(e){
+    document.getElementById("shVer").textContent = "";
+    document.getElementById("shBody").innerHTML = '<p style="color:var(--texto2)">No se pudo cargar el texto bíblico. Verificá la conexión con la API de la Biblia.</p><p><a class="ref" style="pointer-events:none">' + ref + '</a></p>';
+  }
+}
+
+function abrirSheet(){
+  document.getElementById("sheet").classList.add("on");
+  document.getElementById("overlay").classList.add("on");
+}
+function cerrarSheet(){
+  document.getElementById("sheet").classList.remove("on");
+  document.getElementById("overlay").classList.remove("on");
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest("a.ref");
+  if(a) openRef(a.dataset.r);
+});
+
+const getDone = () => JSON.parse(localStorage.getItem("fej_done") || "{}");
+const setDone = o => localStorage.setItem("fej_done", JSON.stringify(o));
+const getDecs = () => JSON.parse(localStorage.getItem("fej_dec") || "{}");
+const setDecs = o => localStorage.setItem("fej_dec", JSON.stringify(o));
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  setTimeout(() => t.classList.remove("on"), 2600);
+}
+
+/* ===== MODO CLARO / OSCURO ===== */
+function aplicarIconoTema(){
+  const b = document.getElementById("btnTema");
+  if(b) b.textContent = document.documentElement.classList.contains("modo-oscuro") ? "☀️" : "🌙";
+}
+function toggleTema(){
+  const oscuro = document.documentElement.classList.toggle("modo-oscuro");
+  try{ localStorage.setItem("fej_tema", oscuro ? "oscuro" : "claro"); }catch(e){}
+  aplicarIconoTema();
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", oscuro ? "#18191a" : "#1877f2");
+}
+document.getElementById("btnTema").onclick = toggleTema;
+aplicarIconoTema();
+
+const params = new URLSearchParams(location.search);
+const dia = +params.get("dia") || 1;
+const L = LECCIONES.find(x => x.d === dia) || LECCIONES[0];
+
+/* GUARDIÁN PROGRESIVO */
+function diaVolverDe(d){ return Math.min(Math.max(1, d - 1), diaLimite()); }
+const doneMapGuard = getDone();
+const cfgGuard = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+const sinPermiso = L.d > diaLimite();
+const faltaPrevio = L.d > 1 && !doneMapGuard[L.d - 1];
+if(sinPermiso || faltaPrevio){
+  let inner = "";
+  if(sinPermiso){
+    /* Modo acompañado: toca esperar la devolución del instructor */
+    let pend = 0;
+    for(let d = 1; d <= 20; d++){
+      if(doneMapGuard[d] && !(typeof window.fejCorregido === "function" && window.fejCorregido(d))){ pend = d; break; }
+    }
+    if(!pend) pend = Math.min(20, maxCorregidoDia() + 1);
+    const nomIns = (cfgGuard && cfgGuard.nombre) ? cfgGuard.nombre : "tu instructor";
+    const nomAlu = (cfgGuard && cfgGuard.alumno) ? cfgGuard.alumno : "";
+    const txtWa = "Hola " + nomIns + "! 👋" + (nomAlu ? " Soy " + nomAlu + "." : "") + " Estoy haciendo Fe de Jesús y ya completé los estudios disponibles. ¿Me podés enviar el enlace del estudio corregido (Día " + pend + ") para seguir avanzando? 🙏";
+    const diaVolver = diaVolverDe(L.d);
+    inner = '<div style="text-align:center;padding:60px 20px">' +
+      '<div style="font-size:64px">⏳</div>' +
+      '<h2 style="font-size:22px;margin:16px 0 8px">Esperá a tu instructor</h2>' +
+      '<p style="font-size:17px;color:var(--texto2);line-height:1.6">En el modo acompañado podés adelantar hasta <b>2 estudios</b> sin revisión. Para desbloquear el <b>Día ' + L.d + '</b>, ' + escapeHtml(nomIns) + ' tiene que devolverte corregido el <b>Día ' + pend + '</b>.</p>' +
+      '<a href="https://wa.me/' + telDestino() + '?text=' + encodeURIComponent(txtWa) + '" target="_blank" rel="noopener" style="display:inline-block;margin-top:20px;background:var(--verde);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none">💬 Pedirle la devolución por WhatsApp</a><br>' +
+      '<button onclick="location.href=\'leccion.html?dia=' + diaVolver + '\' style="margin-top:14px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + diaVolver + '</button>' +
+      '<p style="margin:14px 0 0"><a href="index.html" style="color:var(--azultx);font-weight:600;font-size:15px">Volver al índice</a></p></div>';
+  } else {
+    inner = '<div style="text-align:center;padding:60px 20px"><div style="font-size:64px">🔒</div><h2 style="font-size:22px;margin:16px 0 8px">Estudio bloqueado</h2><p style="font-size:17px;color:var(--texto2);line-height:1.6">Para hacer el Día ' + L.d + ', primero completá el <b>Día ' + (L.d-1) + '</b>.</p><button onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'" style="margin-top:20px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + (L.d-1) + '</button><br><a href="index.html" style="display:inline-block;margin-top:14px;color:var(--azultx);font-weight:600;font-size:15px">Volver al índice</a></div>';
+  }
+  document.getElementById("app").innerHTML = inner;
+  document.getElementById("btnDone").style.display = "none";
+  document.getElementById("btnTema").style.display = "none";
+  throw new Error("bloqueado");
+}
+localStorage.setItem("fej_ultimo", L.d);
+document.getElementById("hdTitle").textContent = "Día " + L.d + " de 20";
+document.title = "Día " + L.d + " — " + L.t;
+document.getElementById("btnDone").onclick = function(){
+  if(!getDone()[L.d]){
+    const e = estadoRespuestas();
+    if(e.hechas < e.total){ toast("📖 Respondé todas las preguntas para completar el estudio"); return; }
+  }
+  toggleDone();
+};
+
+const getResp = () => JSON.parse(localStorage.getItem("fej_resp_" + L.d) || "{}");
+const saveResp = o => localStorage.setItem("fej_resp_" + L.d, JSON.stringify(o));
+
+/* ESTADO DEL QUIZ (multiple choice) del día: { "3": {sel:"texto", ok:true, first:true, tries:1} } */
+const getQuiz = () => JSON.parse(localStorage.getItem("fej_quiz_" + L.d) || "{}");
+const saveQuiz = o => localStorage.setItem("fej_quiz_" + L.d, JSON.stringify(o));
+let quizEstado = getQuiz();
+function guardarQuiz(){ saveQuiz(quizEstado); }
+
+function renderDone(){
+  const hecho = !!getDone()[L.d];
+  document.getElementById("btnDone").textContent = hecho ? "❤️" : "🤍";
+  const b = document.getElementById("btnCplt");
+  if(b){ b.classList.toggle("on", hecho); b.textContent = hecho ? "✓ Estudio completado" : "Marcar estudio como completado"; }
+}
+function toggleDone(){
+  const o = getDone();
+  const yaEstaba = !!o[L.d];
+  if(yaEstaba){ delete o[L.d]; toast("Estudio desmarcado"); }
+  else {
+    o[L.d] = 1;
+    toast("❤️ ¡Estudio " + L.d + " completado! Ya podés seguir al próximo día");
+    if(typeof window.fejRespaldo === "function") window.fejRespaldo();
+    if(L.d === 20) setTimeout(function(){ location.href = "certificado.html"; }, 1400);
+  }
+  setDone(o);
+  const y = window.scrollY;
+  render();
+  window.scrollTo(0, y);
+}
+
+function card(innerHTML, extraClass){ return '<section class="card ' + (extraClass||"") + '">' + innerHTML + '</section>'; }
+function listaHTML(items){
+  return '<ul class="lis">' + items.map(it => '<li>' + linkRefs(it.x) + (it.r ? ' <span style="color:var(--texto2);font-size:12px">(' + it.r + ')</span>' : "") + '</li>').join("") + '</ul>';
+}
+function extrasHTML(efs){
+  if(!efs) return "";
+  return efs.map(e => card(
+    '<h2>' + e.tt + '</h2>' +
+    (e.parrafo ? '<div class="des">' + linkRefs(e.parrafo) + '</div>' : "") +
+    (e.columnas ? '<div class="colwrap">' + e.columnas.map(col => '<div><h4>' + col.ct + '</h4>' + listaHTML(col.items) + '</div>').join("") + '</div>' : "") +
+    (e.lista ? listaHTML(e.lista) : "") +
+    (e.nota ? '<div class="des" style="margin-top:10px;font-size:16px;color:var(--texto2)">' + linkRefs(e.nota) + '</div>' : "")
+  )).join("");
+}
+
+/* Mezcla las opciones al azar (Fisher-Yates). La correcta (posición 0 en quiz-*.js) viaja por su texto. */
+function mezclar(arr){
+  const a = arr.map(x => x);
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+/* ===== ESTADO DE RESPUESTAS Y SECUENCIA ===== */
+function ordenPreguntas(){
+  const out = [];
+  (L.temas || []).forEach(t => t.ps.forEach(p => out.push(p)));
+  return out;
+}
+function respondida(p, misResp){
+  const clave = L.d + ":" + p.n;
+  if(window.QUIZ && window.QUIZ[clave]){
+    const st = quizEstado[p.n];
+    return !!(st && (st.ok || st.rev || st.nols));
+  }
+  return !!(misResp[p.n] && misResp[p.n].trim());
+}
+function estadoRespuestas(){
+  const misResp = getResp();
+  let total = 0, hechas = 0;
+  ordenPreguntas().forEach(p => {
+    total++;
+    if(respondida(p, misResp)) hechas++;
+  });
+  return { total: total, hechas: hechas };
+}
+
+/* ===== CONSTRUCTORES DE BLOQUES ===== */
+function htmlPregunta(p, desbloq, misResp){
+  const clave = L.d + ":" + p.n;
+  const ops = (window.QUIZ && window.QUIZ[clave]) || null;
+
+  if(!desbloq){
+    return '<div class="lockrow" id="lock_' + p.n + '">🔒 <span>Pregunta ' + p.n + ' — respondé la anterior para desbloquearla</span></div>';
+  }
+
+  const st = quizEstado[p.n];
+  const revPend = modoRev() && !corregido();  /* revisión: corrección aún no devuelta */
+  const revCorr = modoRev() && corregido();   /* revisión ya corregida */
+  const respondidaOk = !!(st && st.ok);
+  const yaEscribio = !!(misResp[p.n] && misResp[p.n].trim());
+
+  let cuerpo = "";
+  if(ops){
+    const lista = mezclar(ops);
+    const LETRAS = ["A","B","C","D"];
+    const botones = lista.map((o,i) => {
+      let cls = "opt";
+      if(respondidaOk && st.sel === o) cls += " ok";
+      if(revCorr && !respondidaOk && st && !st.nols && st.sel === o) cls += " err";
+      if(revPend && st && st.sel === o) cls += " sel";
+      const dis = (respondidaOk || revCorr) ? " disabled" : "";
+      return '<button type="button" class="' + cls + '"' + dis + ' data-t="' + escapeHtml(o) + '"><span class="letra">' + LETRAS[i] + '</span><span>' + escapeHtml(o) + '</span></button>';
+    }).join("");
+    const nols = revPend
+      ? '<button type="button" class="opt nolsb' + (st && st.nols ? " sel" : "") + '" data-nols="1"><span class="letra">🤔</span><span>No lo sé — quiero que mi instructor me lo explique</span></button>'
+      : "";
+    const etiqueta = revPend ? "👆 Marcá la respuesta que creés correcta:" : (revCorr ? "👆 La respuesta correcta está en verde:" : "👆 Elegí la respuesta correcta:");
+    cuerpo =
+      '<label class="respLbl">' + etiqueta + '</label>' +
+      '<div class="quiz" data-q="' + p.n + '">' + botones + nols +
+        (revPend ? "" : '<div class="hint" id="hi_' + p.n + '">📖 Volvé a leer el versículo y probá de nuevo</div>') +
+      '</div>' +
+      (revCorr ? '<div class="corrn">✅ Corregido por tu instructor</div>' : "");
+  } else {
+    cuerpo =
+      '<label class="respLbl">✍️ Tu respuesta:</label>' +
+      '<div class="motiva" id="mo_' + p.n + '"></div>' +
+      '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>';
+  }
+
+  const ensOn = !revPend && (respondidaOk || yaEscribio || revCorr);
+
+  return '<div class="preg" id="preg_' + p.n + '">' +
+     '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
+     '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
+     cuerpo +
+     '<div class="ensenanza ' + (ensOn ? "on" : "") + '" id="ens_' + p.n + '">' +
+       '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des) + '</div>' +
+     '</div>' +
+   '</div>';
+}
+
+function htmlDecision(completa){
+  if(!completa){
+    return '<section class="dec bloqueada" id="decLock">' +
+      '<h2>✍️ Decisión personal</h2>' +
+      '<div class="des" style="margin-top:8px;font-size:17px;color:var(--texto2)">🔒 Respondé todas las preguntas y acá va a aparecer tu decisión personal y el envío al instructor.</div>' +
+    '</section>';
+  }
+  const deces = getDecs();
+  const perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
+  const hoy = new Date().toLocaleDateString("en-CA");
+  const decFull = JSON.parse(localStorage.getItem("fej_decfull_" + L.d) || "null");
+  return '<section class="dec" id="decCard">' +
+    '<h2>✍️ Decisión personal</h2>' +
+    '<div class="des" style="margin-top:8px;font-size:18px">Después de haber leído y entendido, mi decisión personal es:</div>' +
+    '<p>“' + escapeHtml(L.dec) + '”</p>' +
+    '<label>Tu nombre</label>' +
+    '<input id="decNombre" placeholder="Escribí tu nombre" value="' + escapeHtml(decFull && decFull.nombre ? decFull.nombre : (perfil && perfil.nombre ? perfil.nombre : "")) + '">' +
+    '<label>Fecha</label>' +
+    '<input type="date" id="decFecha" value="' + (decFull && decFull.fecha ? decFull.fecha : hoy) + '">' +
+    '<div class="dbtns">' +
+      '<button id="btnSi" class="' + (deces[L.d] === "si" ? "on-si" : "") + '" onclick="decidir(\'si\')">SÍ</button>' +
+      '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
+    '</div>' +
+    '<a class="enviarBtn" id="btnEnviar" onclick="enviarRespuestas(event)">' + (modoRev() && !corregido() ? '📤 Enviar mis respuestas al instructor para corrección' : '📤 Enviar mis respuestas y mi decisión al instructor') + '</a>' +
+    (modoRev() && !corregido() ? '<div class="corrn" style="color:var(--azultx)">📨 Cuando tu instructor corrija el estudio, te manda un enlace: al abrirlo se revelan tus aciertos y la enseñanza de cada pregunta.</div>' : "") +
+  '</section>';
+}
+
+function render(){
+  const misResp = getResp();
+  const todoAbierto = !!getDone()[L.d]; /* días ya completados se muestran sin candados */
+
+  let h = '<div class="hero" style="background:' + L.g + '"><div class="dia">DÍA ' + L.d + ' DE 20</div><div class="em">' + L.e + '</div><h1>' + escapeHtml(L.t) + '</h1></div>';
+
+  const insNombre = nombreInstructor();
+  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b>' + (modoRev() ? ' — te devuelve el estudio corregido' : ' — tus respuestas y consultas le llegan a su WhatsApp') + '.<br><span style="font-size:13px">📘 Modo acompañado: podés adelantar hasta 2 estudios sin revisión — después esperás la devolución de tu instructor.</span></div>';
+  if(modoRev()){
+    if(corregido()){
+      h += '<div class="conectado" style="border-left-color:var(--verde)">✅ Tu instructor ya revisó este estudio: la respuesta correcta quedó marcada en verde y la enseñanza de cada pregunta está abierta.</div>';
+    } else {
+      h += '<div class="conectado" style="border-left-color:var(--orah)">📨 Modo revisión: respondé sin ver las respuestas — si no sabés una, marcá “No lo sé”. Al final, las enviás a tu instructor y él te devuelve el estudio corregido.</div>';
+    }
+  }
+
+  if(L.i) h += card('<h2>📖 Introducción</h2><div class="intro">' + linkRefs(L.i) + '</div>');
+
+  if(L.temas){
+    const lista = ordenPreguntas();
+    h += L.temas.map(t =>
+      card('<h2>✨ ' + escapeHtml(t.tt) + '</h2>' +
+        t.ps.map(p => {
+          const i = lista.indexOf(p);
+          const desbloq = todoAbierto || i === 0 || respondida(lista[i-1], misResp);
+          return htmlPregunta(p, desbloq, misResp);
+        }).join("")
+      )).join("");
+  }
+
+  const cq = contarQuiz();
+  if(cq.total && (!modoRev() || corregido())) h += '<div class="score" id="scoreBox"></div>';
+
+  if(L.extras){
+    const visibles = L.d === 20 ? L.extras : L.extras.filter(e => /^Sugerencias/i.test(e.tt));
+    h += extrasHTML(visibles);
+  }
+
+  const e = estadoRespuestas();
+  if(L.dec) h += htmlDecision(todoAbierto || e.hechas === e.total);
+
+  if(L.d === 20) h += '<div class="fin20">JESÚS VIENE PRONTO 🎉<br><span style="font-weight:400;font-size:16px">¡Completaste los 20 estudios de Fe de Jesús!</span></div>' +
+    '<a class="certBtn" href="certificado.html">🎓 Ver mi certificado</a>';
+
+  h += '<button class="cplt" id="btnCplt" onclick="toggleDone()"></button>';
+
+  const ant = LECCIONES.find(x => x.d === L.d - 1);
+  const sig = LECCIONES.find(x => x.d === L.d + 1);
+  const bloqueoIns = sig && sig.d > diaLimite();
+  const sigBloqueado = sig && !getDone()[L.d];
+  h += '<div class="navg">' +
+    '<button ' + (ant ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'">← Anterior</button>' +
+    (bloqueoIns
+      ? '<button class="prim" disabled>⏳ Esperá la revisión de tu instructor</button>'
+      : (sigBloqueado
+      ? '<button class="prim" disabled>🔒 Completá este estudio para continuar</button>'
+      : '<button class="prim" ' + (sig ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d+1) + '\'">Siguiente →</button>')) +
+  '</div>';
+
+  h += '<a class="invitar" href="instructor.html">🎓 ¿Querés acompañar a alguien más? Invitalo a estudiar</a>';
+
+  document.getElementById("app").innerHTML = h;
+  renderDone();
+  actualizarBotonCompleto();
+  actualizarScore();
+}
+
+/* Desbloquea la pregunta siguiente a la n recién respondida (idempotente) */
+function revelarSiguiente(n, conScroll){
+  const lista = ordenPreguntas();
+  const i = lista.findIndex(x => x.n === n);
+  if(i < 0) return;
+  const sig = lista[i+1];
+  if(!sig) return;
+  const lockEl = document.getElementById("lock_" + sig.n);
+  if(!lockEl) return;
+  const frag = document.createElement("div");
+  frag.innerHTML = htmlPregunta(sig, true, getResp());
+  const nuevo = frag.firstChild;
+  nuevo.classList.add("aparece");
+  lockEl.replaceWith(nuevo);
+  if(conScroll) setTimeout(() => { nuevo.scrollIntoView({ behavior: "smooth", block: "center" }); }, 80);
+}
+
+/* Cuando se responden TODAS, aparece disponible la decisión personal */
+function revelarDecision(conScroll){
+  const lockEl = document.getElementById("decLock");
+  if(!lockEl) return;
+  const frag = document.createElement("div");
+  frag.innerHTML = htmlDecision(true);
+  const nuevo = frag.firstChild;
+  nuevo.classList.add("aparece");
+  lockEl.replaceWith(nuevo);
+  toast("🎉 ¡Respondiste todo! Ya podés marcar tu decisión y completar el estudio");
+  if(conScroll) setTimeout(() => { nuevo.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 450);
+}
+
+/* Puntaje del día: aciertos a la primera sobre el total de preguntas multiple choice */
+function contarQuiz(){
+  let total = 0, aciertos = 0, respondidas = 0;
+  ordenPreguntas().forEach(p => {
+    if(window.QUIZ && window.QUIZ[L.d + ":" + p.n]){
+      total++;
+      const st = quizEstado[p.n];
+      if(st && st.ok){
+        respondidas++;
+        if(st.first) aciertos++;
+      }
+    }
+  });
+  return { total: total, aciertos: aciertos, respondidas: respondidas };
+}
+
+function actualizarScore(){
+  const box = document.getElementById("scoreBox");
+  if(!box) return;
+  const c = contarQuiz();
+  if(!c.total || !c.respondidas) return;
+  let msg = "🎯 Acertadas a la primera: " + c.aciertos + " de " + c.total;
+  if(c.aciertos === c.total) msg += "<br>⭐ ¡Puntaje perfecto! ¡Bendecido estudio!";
+  else msg += "<br><span style='font-weight:400;font-size:14px'>Cada respuesta acertada a la primera suma tu ⭐ — si te equivocás, volvé a intentar sin miedo.</span>";
+  box.innerHTML = msg;
+  box.classList.add("on");
+}
+
+/* El botón de completar se habilita solo cuando TODAS las preguntas están respondidas */
+function actualizarBotonCompleto(){
+  const b = document.getElementById("btnCplt");
+  if(!b) return;
+  if(getDone()[L.d]) return; /* ya completado: renderDone puso el texto correcto */
+  const e = estadoRespuestas();
+  if(e.hechas < e.total){
+    b.disabled = true;
+    b.textContent = "🔒 Respondé todas las preguntas (" + e.hechas + " de " + e.total + ")";
+  } else {
+    b.disabled = false;
+    b.textContent = "Marcar estudio como completado";
+  }
+}
+
+/* Clic en una opción del multiple choice */
+document.getElementById("app").addEventListener("click", function(e){
+  const b = e.target.closest(".opt");
+  if(!b || b.disabled) return;
+  const qDiv = b.closest(".quiz");
+  if(!qDiv) return;
+  const n = +qDiv.getAttribute("data-q");
+  const ops = window.QUIZ[L.d + ":" + n];
+  if(!ops) return;
+
+  /* ===== MODO REVISIÓN (sin respuesta revelada hasta la corrección) ===== */
+  if(modoRev() && !corregido()){
+    const esNols = b.getAttribute("data-nols") === "1";
+    quizEstado[n] = quizEstado[n] || { tries: 0 };
+    if(esNols){
+      quizEstado[n].sel = "🤔 No lo sé — quiero que el instructor me lo explique";
+      quizEstado[n].nols = true;
+      quizEstado[n].first = false;
+    } else {
+      quizEstado[n].sel = b.getAttribute("data-t");
+      quizEstado[n].nols = false;
+      quizEstado[n].first = true;
+    }
+    quizEstado[n].rev = true;
+    delete quizEstado[n].ok;
+    guardarQuiz();
+    qDiv.querySelectorAll(".opt").forEach(o => o.classList.toggle("sel", o === b));
+    actualizarBotonCompleto();
+    revelarSiguiente(n, true);
+    const e2 = estadoRespuestas();
+    if(e2.hechas === e2.total) revelarDecision(true);
+    return;
+  }
+
+  const texto = b.getAttribute("data-t");
+  const correcta = ops[0];
+
+  if(texto === correcta){
+    const primeraVez = !quizEstado[n];
+    if(!quizEstado[n]) quizEstado[n] = { tries: 0 };
+    quizEstado[n].sel = texto;
+    quizEstado[n].ok = true;
+    if(primeraVez) quizEstado[n].first = true;
+    guardarQuiz();
+    qDiv.querySelectorAll(".opt").forEach(o => {
+      o.disabled = true;
+      if(o.getAttribute("data-t") === texto) o.classList.add("ok");
+    });
+    const hi = document.getElementById("hi_" + n);
+    if(hi) hi.classList.remove("on");
+    const ens = document.getElementById("ens_" + n);
+    if(ens && !ens.classList.contains("on")){
+      ens.classList.add("on");
+      ens.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    toast("✅ ¡Correcto!");
+    actualizarScore();
+    actualizarBotonCompleto();
+    revelarSiguiente(n, true);
+    const e2 = estadoRespuestas();
+    if(e2.hechas === e2.total) revelarDecision(true);
+  } else {
+    if(!quizEstado[n]) quizEstado[n] = { tries: 0 };
+    quizEstado[n].tries = (quizEstado[n].tries || 0) + 1;
+    guardarQuiz();
+    b.classList.add("mal");
+    setTimeout(() => b.classList.remove("mal"), 500);
+    const hi = document.getElementById("hi_" + n);
+    if(hi) hi.classList.add("on");
+  }
+});
+
+function guardarResp(n, texto){
+  const r = getResp();
+  r[n] = texto;
+  saveResp(r);
+  const ens = document.getElementById("ens_" + n);
+  if(ens){
+    /* en modo revisión la enseñanza queda oculta hasta que llega la corrección */
+    const abrir = texto.trim() && (!modoRev() || corregido());
+    if(abrir && !ens.classList.contains("on")){
+      ens.classList.add("on");
+    } else if(!texto.trim()){
+      ens.classList.remove("on");
+    }
+  }
+  const motiva = document.getElementById("mo_" + n);
+  if(motiva){
+    const palabras = texto.trim().split(/\s+/).filter(Boolean).length;
+    let msg = "";
+    if(palabras >= 60) msg = "🌟 ¡WOW! " + palabras + " palabras — se nota que el Espíritu te está hablando. Tu reflexión va a bendecir a otros.";
+    else if(palabras >= 35) msg = "🔥 ¡Excelente! " + palabras + " palabras. Tu respuesta es profunda — seguí así.";
+    else if(palabras >= 15) msg = "💪 ¡Muy bien! " + palabras + " palabras. Agregá un ejemplo de tu vida y va a quedar aún mejor.";
+    else if(palabras >= 5) msg = "👏 Buen comienzo. ¿Qué significa esto para vos personalmente?";
+    else if(palabras >= 1) msg = "🌱 ¡Empezaste! Contá un poco más de qué se trata.";
+    if(msg){
+      motiva.textContent = msg;
+      motiva.classList.add("on");
+    }
+  }
+  if(texto.trim()) revelarSiguiente(n, false); /* sin salto de pantalla: seguí escribiendo tranquilo */
+  actualizarBotonCompleto();
+  const e2 = estadoRespuestas();
+  if(e2.hechas === e2.total) revelarDecision(false);
+}
+
+function decidir(v){
+  const o = getDecs();
+  o[L.d] = v;
+  setDecs(o);
+  const nombre = (document.getElementById("decNombre").value || "").trim();
+  const fecha = document.getElementById("decFecha").value || "";
+  localStorage.setItem("fej_decfull_" + L.d, JSON.stringify({ nombre: nombre, fecha: fecha, dec: v }));
+  document.getElementById("btnSi").className = v === "si" ? "on-si" : "";
+  document.getElementById("btnNo").className = v === "no" ? "on-no" : "";
+  toast(v === "si" ? "✅ ¡Bendecida decisión!" : "Decisión guardada");
+}
+
+function enviarRespuestas(ev){
+  if(ev) ev.preventDefault();
+  const deces = getDecs();
+  const perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
+  const nombre = (document.getElementById("decNombre").value || "").trim() || (perfil && perfil.nombre) || "Sin nombre";
+  const fecha = document.getElementById("decFecha").value || "";
+  const misResp = getResp();
+  const cq = contarQuiz();
+  let txt = "📖 *Fe de Jesús — Día " + L.d + "*\n*" + L.t + "*\n\n👤 " + nombre + "\n📅 " + fecha + "\n\n✍️ *Mis respuestas:*\n";
+  let hay = false;
+  (L.temas || []).forEach(t => t.ps.forEach(p => {
+    const st = quizEstado[p.n];
+    if(st && (st.ok || st.rev) && st.sel){
+      hay = true;
+      txt += "\n*" + p.n + ". " + p.p + "*\n→ " + (st.ok ? "✅ " : "") + st.sel + "\n";
+      return;
+    }
+    const r = (misResp[p.n] || "").trim();
+    if(r){ hay = true; txt += "\n*" + p.n + ". " + p.p + "*\n→ " + r + "\n"; }
+  }));
+  if(!hay) txt += "(sin respuestas registradas)\n";
+  if(cq.total && !(modoRev() && !corregido())) txt += "\n🎯 *Acertadas a la primera:* " + cq.aciertos + " de " + cq.total;
+  txt += "\n\n✍️ *Mi decisión personal:* " + (deces[L.d] === "si" ? "SÍ" : deces[L.d] === "no" ? "NO" : "sin marcar");
+  if(modoRev() && !corregido()) txt += "\n📨 *Enviado para corrección*";
+  if(typeof window.fejCfg === "function" && window.fejCfg()) txt += "\n🔁 Cuando lo revises, mandame el enlace de devolución para desbloquear los próximos estudios";
+  const insN = nombreInstructor();
+  if(insN) txt += "\n🎓 *Instructor conectado:* " + insN;
+  if(typeof window.fejRegistrar === "function"){
+    window.fejRegistrar("Envió sus respuestas", "Lección " + L.d + (cq.total ? " | Quiz " + cq.aciertos + "/" + cq.total : ""));
+    if(typeof window.fejRespaldo === "function") window.fejRespaldo();
+  }
+  window.open("https://wa.me/" + telDestino() + "?text=" + encodeURIComponent(txt), "_blank");
+}
+
+/* ===== CORRECCIÓN DEVUELTA: al abrir leccion.html?dia=N&c=1, ese día queda
+   marcado como corregido. Acá se revelan los aciertos y se habilitan las
+   enseñanzas (ida y vuelta con el instructor). ===== */
+if(modoRev() && corregido()){
+  let cambio = false;
+  ordenPreguntas().forEach(p => {
+    const clave = L.d + ":" + p.n;
+    const st = quizEstado[p.n];
+    if(st && !st.corr){
+      if(window.QUIZ && window.QUIZ[clave] && !st.nols && st.sel !== undefined){
+        st.ok = (st.sel === window.QUIZ[clave][0]);
+        st.first = !!st.ok;
+      }
+      st.corr = true;
+      cambio = true;
+    }
+  });
+  if(cambio) guardarQuiz();
+}
+
+render();
+discover();
+</script>
+
+<script>
+/* ORACIÓN SENCILLA — una por día, según el tema */
+(function(){
+  function colocar(){
+    var app = document.getElementById("app");
+    if(!app || !app.querySelector(".hero")) return false;
+
+    var temas = {
+      1:"entender que la Biblia es Tu Palabra inspirada",
+      2:"conocer a Dios como Padre lleno de amor",
+      3:"aprender a orar y confiar en Ti",
+      4:"entender de dónde vino el sufrimiento y cómo vencerlo",
+      5:"comprender la salvación que Jesús logró para mí",
+      6:"recibir Tu perdón y perdonar de corazón",
+      7:"esperar con fe el regreso de Jesús",
+      8:"reconocer las señales de Tu venida",
+      9:"descansar en la promesa de la resurrección",
+      10:"confiar en Jesús, mi Abogado en el Juicio",
+      11:"guardar Tu Ley escrita en mi corazón",
+      12:"valorar el sábado como Tu regalo",
+      13:"hacer del sábado mi día más feliz",
+      14:"encontrar la iglesia que Tú preparaste",
+      15:"decidirme al bautismo siguiendo a Jesús",
+      16:"crecer cada día como discípulo tuyo",
+      17:"cuidar mi cuerpo como templo de Tu Espíritu",
+      18:"ser fiel mayordomo de lo que me das",
+      19:"valorar la guía que das a Tu iglesia",
+      20:"abrirte la puerta de mi corazón para siempre"
+    };
+
+    var d = +(new URLSearchParams(location.search).get("dia")) || 1;
+    var tema = temas[d] || "entender las verdades de este estudio";
+
+    var card = document.createElement("section");
+    card.className = "card oracion";
+    card.innerHTML =
+      '<h2>🙏 Orá antes de comenzar:</h2>' +
+      '<div class="pedir">"Padre celestial, en el nombre de Jesús, te pido que tu Espíritu Santo me ayude a ' + tema + '. Amén."</div>';
+
+    var hero = app.querySelector(".hero");
+    if(hero && hero.nextSibling) app.insertBefore(card, hero.nextSibling);
+    else app.insertBefore(card, app.firstChild);
+    return true;
+  }
+  var timer = setInterval(function(){ if(colocar()) clearInterval(timer); }, 250);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+═══════════════════════════════════════════════════════════
+ FE DE JESÚS — VERSIÓN 5
+ · NUEVO: LÍMITE DE AVANCE — el alumno conectado no adelanta
+   más de 2 estudios sin la revisión del instructor
+ · Preguntas más difíciles (el alumno tiene que pensar)
+ · Opción "No lo sé — quiero que mi instructor me lo explique"
+ · MODO CON DEVOLUCIÓN: ida y vuelta del estudio corregido
+═══════════════════════════════════════════════════════════
+
+DÓNDE EDITAR (todo dentro de tu repo GitHub → carpeta public/estudios/):
+
+ 1) REEMPLAZAR COMPLETO  quiz-a.js       (opciones más difíciles, Días 1-10)
+ 2) REEMPLAZAR COMPLETO  quiz-b.js       (opciones más difíciles, Días 11-20)
+ 3) REEMPLAZAR COMPLETO  leccion.html    (límite de avance + modo revisión)
+ 4) REEMPLAZAR COMPLETO  instructor.html (devolver corrección + días anteriores)
+ 5) REEMPLAZAR COMPLETO  data.js         (límite, modo revisión y corrección)
+ 6) REEMPLAZAR COMPLETO  sw.js           (caché fej-v7: fuerza actualización)
+
+⚠️ IMPORTANTE: cada archivo se sube en su propio "Add file". Copiá TODO el
+   contenido, de la primera a la última línea.
+   registro.js, data-a..d.js, resumen.js, acerca.js, manifest.json,
+   icon.svg y certificado.html NO se tocan en esta versión
+   (si todavía no subiste los de la v3, subí también index.html y registro.js
+   de esta misma carpeta: ya vienen listos).
+
+Después de subir, Render hace el deploy solo (o botón Manual Deploy).
+En el celular: cerrar y volver a abrir la app una vez.
+
+═══════════════════════════════════════════════════════════
+ 1) LÍMITE DE AVANCE (nuevo en v5)
+═══════════════════════════════════════════════════════════
+
+Todo alumno que entra POR ENLACE de instructor (con o sin modo devolución)
+puede adelantar como MÁXIMO 2 estudios sin revisión. Al llegar al tope, la
+app le muestra "⏳ Esperá a tu instructor" con un botón para pedirte la
+devolución por WhatsApp, y el índice marca los días con "⏳".
+
+Para desbloquearlo: entrá a instructor.html → "✅ Devolver un estudio
+corregido" → poné el día que ya revisaste → le mandás el enlace.
+Al abrirlo, se desbloquean los próximos 2 estudios otra vez.
+
+· NUEVO: casilla "Devolver también todos los días anteriores" — genera un
+  enlace con &t=1 que marca revisados TODOS los días hasta el que pongas.
+  Ideal para alumnos viejos con varios días pendientes de una sola vez.
+
+· Quien entra a la app SIN enlace (directo de la página) no tiene límite:
+  sigue en autoestudio libre, como siempre.
+
+· Alumnos que ya tenías conectados: al abrir la app nueva la primera vez,
+  la app guarda su progreso como punto de partida — no quedan bloqueados
+  en lo que ya hicieron, pero para AVANZAR necesitan tus devoluciones.
+
+· Si reabren el MISMO enlace de siempre, no se agranda el límite (evita
+  que se salteen la revisión reabriendo el enlace).
+
+· Para probar libre en tu propio aparato: instructor.html → "Quitar la
+  conexión de este dispositivo".
+
+═══════════════════════════════════════════════════════════
+ 2) PREGUNTAS MÁS DIFÍCILES
+═══════════════════════════════════════════════════════════
+
+Reescribí las opciones incorrectas de las 150 preguntas multiple choice:
+ahora son plausibles — casi todas son conceptos bíblicos reales o casi
+correctos (ej: "¿A qué se compara la Biblia?" ya no tiene opciones absurdas,
+sino espejo / espada / alimento, que también son metáforas bíblicas).
+El alumno tiene que recordar lo estudiado, no descartar lo ridículo.
+
+Si querés ajustar una pregunta a mano: las opciones están en quiz-a.js
+(Días 1-10) y quiz-b.js (Días 11-20). La PRIMERA opción de cada línea es
+la CORRECTA, las demás se mezclan al azar.
+
+═══════════════════════════════════════════════════════════
+ 3) OPCIÓN "NO LO SÉ"
+═══════════════════════════════════════════════════════════
+
+En el MODO CON DEVOLUCIÓN, cada pregunta multiple choice tiene al final
+un botón: "🤔 No lo sé — quiero que mi instructor me lo explique".
+Al tocarlo, la pregunta queda respondida (se avanza a la siguiente) y el
+instructor recibe por WhatsApp: "→ 🤔 No lo sé — quiero que el instructor
+me lo explique", para saber dónde explicarle más.
+
+═══════════════════════════════════════════════════════════
+ 4) MODO CON DEVOLUCIÓN (ida y vuelta)
+═══════════════════════════════════════════════════════════
+
+En instructor.html, al generar el enlace del alumno, hay una casilla:
+"📖 Modo con devolución".
+
+· CASILLA MARCADA → el enlace trae &m=rev y el alumno estudia en
+  MODO REVISIÓN:
+   - NO se muestra si acierta ni las enseñanzas (solo piensa y responde).
+   - Puede marcar "No lo sé" en lo que no sepa.
+   - Al responder todo, aparece la decisión personal y el botón
+     "📤 Enviar mis respuestas al instructor para corrección".
+   - El instructor recibe las respuestas por WhatsApp (sin puntaje).
+   - Cuando el instructor las corrige, entra a instructor.html y usa la
+     sección "✅ Devolver un estudio corregido": pone el día (ej: 3) y
+     le genera un enlace: leccion.html?dia=3&c=1
+   - Cuando el ALUMNO abre ese enlace, ese día queda devuelto: se revela
+     la respuesta correcta (verde), su elección (roja si erró), la
+     enseñanza de cada pregunta y su puntaje.
+   - Con el límite de avance, además se desbloquean los próximos estudios.
+
+· CASILLA SIN MARCAR → feedback inmediato (verde/rojo + enseñanza), pero
+  con el mismo límite de avance: cada 2 estudios espera tu devolución.
+
+Los alumnos que ya tenías conectados siguen en autoestudio con feedback:
+el modo revisión solo cambia con un enlace nuevo que lo traiga (&m=rev).
+
+═══════════════════════════════════════════════════════════
+ PRUEBA RÁPIDA (5 minutos)
+═══════════════════════════════════════════════════════════
+
+1) instructor.html → poné tu nombre, tu WhatsApp, "Alumno Prueba",
+   MARCÁ "Modo con devolución" → "Probar el enlace".
+2) Abrí el Día 1: no verás verdes ni rojos, y sí el botón "No lo sé".
+   Respondé todo (algunas mal a propósito) → enviá para corrección.
+3) Hacé también el Día 2. Cuando lo completes, el Día 3 te muestra
+   "⏳ Esperá a tu instructor" — así se ve el límite de avance.
+4) instructor.html → "Devolver un estudio corregido" → Día 1 →
+   copiá el enlace y abrilo en el mismo aparato.
+5) Vas a ver: correctas en verde, tus errores marcados, la enseñanza
+   abierta en cada pregunta, tu puntaje… y el Día 3 desbloqueado.
+6) Probá la casilla "Devolver también los días anteriores" con el Día 2:
+   el enlace con &t=1 deja revisados los días 1 y 2 juntos.
+7) instructor.html → "Quitar la conexión de este dispositivo" para dejar
+   tu aparato como estaba (así no tenés límite en tus pruebas).

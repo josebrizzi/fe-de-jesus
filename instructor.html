@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enlace de instructor — Fe de Jesús</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --fondo:#f0f2f5;--panel:#ffffff;--panel2:#f0f2f5;--borde:#e4e6eb;--inputb:#ccd0d5;
+  --texto:#050505;--texto2:#65676b;
+  --azul:#1877f2;--azulh:#166fe5;--azulsoft:#e7f3ff;--azultx:#1877f2;
+  --verde:#31a24c;--verdesoft:#e7f6ec;
+  --hdrbg:rgba(255,255,255,.95);--hdrb:#e4e6eb;
+  --toastbg:#050505;--toasttx:#ffffff
+}
+html.modo-oscuro{
+  --fondo:#18191a;--panel:#242526;--panel2:#3a3b3c;--borde:#3e4042;--inputb:#606366;
+  --texto:#e4e6eb;--texto2:#b0b3b8;
+  --azul:#2d88ff;--azulh:#3a93ff;--azulsoft:rgba(45,136,255,.16);--azultx:#7ab3ff;
+  --verde:#2fae54;--verdesoft:rgba(47,174,84,.18);
+  --hdrbg:rgba(24,25,26,.95);--hdrb:#3e4042;
+  --toastbg:#4a4b4d;--toasttx:#ffffff
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:40px;transition:background .25s,color .25s}
+header{position:sticky;top:0;background:var(--hdrbg);backdrop-filter:blur(12px);border-bottom:1px solid var(--hdrb);z-index:20;display:flex;align-items:center;gap:12px;padding:10px 14px}
+header button{background:none;border:none;font-size:22px;cursor:pointer;color:var(--texto)}
+header .t{flex:1;font-weight:700;font-size:20px}
+.wrap{max-width:620px;margin:0 auto;padding:0 14px}
+.card{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:18px 16px;margin:12px 0}
+.card h2{font-size:23px;margin-bottom:10px}
+.card p{font-size:16px;line-height:1.6;color:var(--texto2);margin:8px 0}
+.des{font-size:16px;line-height:1.65;color:var(--texto2)}
+.des b{color:var(--texto)}
+label{display:block;font-weight:700;font-size:15px;margin:14px 0 5px}
+label small{font-weight:400;color:var(--texto2)}
+input{width:100%;padding:13px;border:1.5px solid var(--inputb);border-radius:10px;font-size:17px;font-family:inherit;color:var(--texto);background:var(--panel2)}
+input:focus{outline:none;border-color:var(--azul);background:var(--panel)}
+.linkbox{width:100%;padding:12px;border:1.5px dashed var(--azul);border-radius:10px;font-size:14px;font-family:monospace;color:var(--azultx);background:var(--azulsoft);word-break:break-all;margin-top:8px}
+.btns{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.wa{width:100%;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;background:var(--verde);color:#fff;text-decoration:none;text-align:center;display:block}
+.wa.off{opacity:.45;cursor:not-allowed}
+.azul{width:100%;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff}
+.azul:active{filter:brightness(.95)}
+.plain{width:100%;border:2px solid var(--inputb);border-radius:12px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--panel);color:var(--texto)}
+#qrWrap{text-align:center;margin-top:18px;display:none}
+#qrWrap img{border-radius:12px;border:1px solid var(--borde);background:#fff;padding:8px;max-width:220px}
+#qrWrap p{font-size:13px;margin-top:8px}
+.aviso{background:var(--azulsoft);border-left:4px solid var(--azul);border-radius:12px;padding:14px;font-size:15px;line-height:1.65;color:var(--texto);margin:12px 0}
+.checkrow{display:flex;align-items:flex-start;gap:10px;margin-top:16px}
+.checkrow input{width:auto;margin-top:3px;accent-color:var(--azul)}
+.checkrow label{margin:0;font-size:14.5px;line-height:1.5;font-weight:600;color:var(--texto)}
+.checkrow small{display:block;font-weight:400;color:var(--texto2);margin-top:2px}
+.paso{display:flex;gap:10px;margin:12px 0;align-items:flex-start}
+.paso .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--azul);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.paso div{font-size:15.5px;line-height:1.6;color:var(--texto2)}
+.paso b{color:var(--texto)}
+.estado{display:flex;align-items:center;gap:10px;background:var(--panel2);border-radius:12px;padding:13px 14px;font-size:14.5px;line-height:1.5;color:var(--texto2)}
+.estado b{color:var(--texto)}
+.reset{background:none;border:none;color:var(--rojo,#e41e3f);font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;text-decoration:underline}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--toastbg);color:var(--toasttx);border-radius:20px;padding:10px 20px;font-size:16px;opacity:0;transition:.3s;z-index:60;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.pie{text-align:center;color:var(--texto2);font-size:12px;padding:20px}
+</style>
+<script>try{if(localStorage.getItem("fej_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
+</head>
+<body>
+
+<header>
+  <button onclick="location.href='index.html'">←</button>
+  <div class="t">🎓 Enlace de instructor</div>
+  <button id="btnTema" title="Modo claro / oscuro">🌙</button>
+</header>
+
+<div class="wrap">
+
+  <section class="card">
+    <h2>📖 Compartí el estudio conectado</h2>
+    <p>Generá un <b>enlace personal</b> y enviaselo a tu alumno: cuando lo abra, la app queda conectada a <b>tu WhatsApp</b>. Sus respuestas, sus decisiones y sus consultas le llegan a vos — no a otra persona.</p>
+
+    <label>Tu nombre <small>(como instructor)</small></label>
+    <input id="fNombre" placeholder="Ej: José Brizzi" autocomplete="name">
+
+    <label>Tu WhatsApp <small>(con código de país, sin 0 ni 15)</small></label>
+    <input id="fTel" placeholder="Ej: 5491128945261" inputmode="tel" autocomplete="tel">
+
+    <label>Nombre del alumno</label>
+    <input id="fAlumno" placeholder="Ej: María González" autocomplete="off">
+
+    <label>WhatsApp del alumno <small>(opcional — para enviarle el enlace directo)</small></label>
+    <input id="fTelAlumno" placeholder="Ej: 5491122334455" inputmode="tel">
+
+    <div class="checkrow">
+      <input type="checkbox" id="fRev">
+      <label for="fRev">📖 Modo con devolución<small>El alumno responde SIN ver las respuestas (con opción “No lo sé”). Me las envía, yo se las corrijo y le devuelvo el estudio — recién entonces ve los aciertos y las enseñanzas.</small></label>
+    </div>
+
+    <div class="linkbox" id="linkBox">Completá tu nombre, tu WhatsApp y el nombre del alumno…</div>
+
+    <div class="btns">
+      <a class="wa off" id="btnWa" target="_blank" rel="noopener">📲 Enviar el enlace por WhatsApp al alumno</a>
+      <button class="azul" id="btnCopiar">📋 Copiar mi enlace personal</button>
+      <button class="plain" id="btnAbrir">🔗 Probar el enlace (abrir la app conectada)</button>
+    </div>
+
+    <div id="qrWrap">
+      <img id="qrImg" alt="QR del enlace personal" width="200" height="200">
+      <p>📱 Si estás en la computadora: tu alumno escanea este QR con la cámara del celular y entra directo a la app conectada contigo.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>¿Cómo funciona?</h2>
+    <div class="paso"><div class="n">1</div><div>Completás tus datos arriba y tocá <b>“Enviar por WhatsApp”</b> (o copiás el enlace y se lo pasás como quieras).</div></div>
+    <div class="paso"><div class="n">2</div><div>Tu alumno abre el enlace y la app queda <b>conectada a tu número</b>. Todo lo que responda te llega a vos.</div></div>
+    <div class="paso"><div class="n">3</div><div>Dentro de la app, tu alumno también ve el botón <b>“Invitar a alguien más”</b>: si comparte su propio enlace con un tercero, esa nueva persona queda conectada <b>al teléfono de él</b>, no al tuyo. Así el estudio se multiplica en cadena. 🙌</div></div>
+    <div class="paso"><div class="n">4</div><div>Con el <b>modo con devolución</b> marcado, el alumno responde sin ver las respuestas y te las manda para corrección. Vos se las devolvés con el botón <b>“Devolver un estudio corregido”</b> de esta misma página. 🔁</div></div>
+    <div class="paso"><div class="n">5</div><div><b>Límite de avance:</b> tu alumno adelanta como máximo <b>2 estudios</b> sin tu revisión — después la app le muestra “Esperá a tu instructor”. Para que siga avanzando, devolvéle el estudio corregido desde la tarjeta de abajo (sirve en ambos modos). ⏳</div></div>
+    <div class="aviso">💡 La conexión se guarda en el celular de cada persona. Si más adelante alguien abre otro enlace de otro instructor, la app pasa a estar conectada con ese último instructor.</div>
+  </section>
+
+  <section class="card">
+    <h2>✅ Devolver un estudio corregido</h2>
+    <p>¿Un alumno ya te envió sus respuestas (o completó sus 2 estudios sin revisión)? Poné el día que ya revisaste y mandale este enlace: al abrirlo ese día queda <b>devuelto</b>, se revelan sus aciertos y las enseñanzas (en modo con devolución) y <b>se desbloquean los próximos estudios</b>.</p>
+
+    <label>Día corregido <small>(1 a 20)</small></label>
+    <input id="cDia" type="number" min="1" max="20" inputmode="numeric" placeholder="Ej: 3">
+
+    <div class="checkrow">
+      <input type="checkbox" id="cTodos">
+      <label for="cTodos">Devolver también todos los días anteriores<small>Útil si el alumno tenía varios días pendientes: los marca a todos como revisados de una sola vez y quedan habilitados de una.</small></label>
+    </div>
+
+    <label>WhatsApp de ese alumno <small>(opcional — para el envío directo)</small></label>
+    <input id="cTel" inputmode="tel" placeholder="Ej: 5491122334455">
+
+    <div class="linkbox" id="cBox">Poné el número de día corregido…</div>
+
+    <div class="btns">
+      <a class="wa off" id="btnWaCorr" target="_blank" rel="noopener">📲 Enviar la corrección por WhatsApp</a>
+      <button class="azul" id="btnCopiarCorr">📋 Copiar el enlace de corrección</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🔌 Estado de la conexión en ESTE dispositivo</h2>
+    <div class="estado" id="estado">…</div>
+    <button class="reset" id="btnReset">Quitar la conexión de este dispositivo (volver al número principal)</button>
+  </section>
+
+  <div class="pie">Fe de Jesús · "JESÚS VIENE PRONTO"</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== MODO CLARO / OSCURO ===== */
+function aplicarIconoTema(){
+  const b = document.getElementById("btnTema");
+  if(b) b.textContent = document.documentElement.classList.contains("modo-oscuro") ? "☀️" : "🌙";
+}
+function toggleTema(){
+  const oscuro = document.documentElement.classList.toggle("modo-oscuro");
+  try{ localStorage.setItem("fej_tema", oscuro ? "oscuro" : "claro"); }catch(e){}
+  aplicarIconoTema();
+}
+document.getElementById("btnTema").onclick = toggleTema;
+aplicarIconoTema();
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  setTimeout(() => t.classList.remove("on"), 2600);
+}
+
+const NUM_PRINCIPAL = "5491128945261"; /* José */
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function soloDigitos(v){ return (v||"").replace(/\D/g,""); }
+
+/* Precarga: si ya hay perfil o conexión guardada, aprovecho los datos */
+(function(){
+  try{
+    const cfg = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+    const per = JSON.parse(localStorage.getItem("fej_alumno") || "null");
+    if(cfg && cfg.nombre) document.getElementById("fNombre").value = cfg.nombre;
+    else if(per && per.nombre) document.getElementById("fNombre").value = per.nombre;
+    if(cfg && cfg.tel) document.getElementById("fTel").value = cfg.tel;
+    else if(per && per.telefono) document.getElementById("fTel").value = per.telefono;
+  }catch(e){}
+  mostrarEstado();
+})();
+
+/* Estado de conexión actual */
+function mostrarEstado(){
+  const e = document.getElementById("estado");
+  const cfg = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+  if(cfg && cfg.tel){
+    let t = "✅ Conectada con <b>" + esc(cfg.nombre || "(sin nombre)") + "</b>";
+    if(cfg.alumno) t += " — alumno: <b>" + esc(cfg.alumno) + "</b>";
+    t += "<br>📞 " + esc(cfg.tel) + " · desde " + esc(cfg.desde || "—");
+    e.innerHTML = t;
+  } else {
+    e.innerHTML = "ℹ️ Sin conexión personal: las consultas van al <b>número principal</b> (" + NUM_PRINCIPAL + ").";
+  }
+}
+
+/* Construye el enlace cada vez que cambia un campo */
+let enlaceActual = "";
+function armarEnlace(){
+  const nom = document.getElementById("fNombre").value.trim();
+  const tel = soloDigitos(document.getElementById("fTel").value);
+  const alu = document.getElementById("fAlumno").value.trim();
+  const telA = soloDigitos(document.getElementById("fTelAlumno").value);
+  const rev = document.getElementById("fRev").checked;
+
+  const base = new URL("./", location.href).href; /* .../estudios/ */
+  const qs = new URLSearchParams();
+  if(tel) qs.set("i", tel);
+  if(nom) qs.set("n", nom);
+  if(alu) qs.set("a", alu);
+  if(rev) qs.set("m", "rev");
+  enlaceActual = qs.toString() ? base + "?" + qs.toString() : base;
+
+  const box = document.getElementById("linkBox");
+  const wa = document.getElementById("btnWa");
+  const qrWrap = document.getElementById("qrWrap");
+
+  const okTel = tel.length >= 8 && tel.length <= 15;
+  if(nom && okTel && alu){
+    box.textContent = enlaceActual;
+    if(telA.length >= 8){
+      const msg = "¡Hola " + alu + "! 📖 Te comparto *Fe de Jesús*, un camino de 20 días estudiando la Biblia desde tu celular. Hacés un estudio por día, con versículos y preguntas, y tus respuestas me llegan directo para poder acompañarte. Empezá acá: " + enlaceActual;
+      wa.href = "https://wa.me/" + telA + "?text=" + encodeURIComponent(msg);
+      wa.classList.remove("off");
+    } else {
+      wa.removeAttribute("href");
+      wa.classList.add("off");
+    }
+    qrWrap.style.display = "block";
+    const img = document.getElementById("qrImg");
+    img.onerror = function(){ qrWrap.style.display = "none"; };
+    img.src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(enlaceActual);
+  } else {
+    box.textContent = "Completá tu nombre, tu WhatsApp" + (alu ? "" : " y el nombre del alumno") + "…";
+    wa.removeAttribute("href");
+    wa.classList.add("off");
+    qrWrap.style.display = "none";
+  }
+  return { nom: nom, tel: tel, alu: alu, okTel: okTel };
+}
+
+["fNombre","fTel","fAlumno","fTelAlumno"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", armarEnlace);
+});
+document.getElementById("fRev").addEventListener("change", armarEnlace);
+armarEnlace();
+
+/* Copiar enlace */
+document.getElementById("btnCopiar").onclick = function(){
+  const d = armarEnlace();
+  if(!(d.nom && d.okTel && d.alu)){ toast("⚠ Completá tus datos y el nombre del alumno"); return; }
+  const done = function(){ toast("📋 Enlace copiado — pegalo en el chat de tu alumno"); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(enlaceActual).then(done).catch(function(){ copiarViejo(enlaceActual, done); });
+  } else copiarViejo(enlaceActual, done);
+};
+function copiarViejo(valor, cb){
+  const ta = document.createElement("textarea");
+  ta.value = valor;
+  ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand("copy"); cb(); }catch(e){ toast("No se pudo copiar — copiá a mano el enlace"); }
+  document.body.removeChild(ta);
+}
+
+/* Probar el enlace */
+document.getElementById("btnAbrir").onclick = function(){
+  const d = armarEnlace();
+  if(!(d.nom && d.okTel && d.alu)){ toast("⚠ Completá tus datos y el nombre del alumno"); return; }
+  location.href = enlaceActual;
+};
+
+/* Quitar conexión de este dispositivo */
+document.getElementById("btnReset").onclick = function(){
+  try{ localStorage.removeItem("fej_cfg"); }catch(e){}
+  mostrarEstado();
+  toast("🔓 Conexión quitada — volvés al número principal");
+};
+
+/* ===== DEVOLVER ESTUDIO CORREGIDO ===== */
+let enlaceCorr = "";
+function armarCorr(){
+  const dia = parseInt(document.getElementById("cDia").value, 10);
+  const telC = soloDigitos(document.getElementById("cTel").value);
+  const todos = document.getElementById("cTodos").checked;
+  const box = document.getElementById("cBox");
+  const wa = document.getElementById("btnWaCorr");
+  const okDia = dia >= 1 && dia <= 20;
+  if(okDia){
+    enlaceCorr = new URL("./", location.href).href + "leccion.html?dia=" + dia + "&c=1" + (todos ? "&t=1" : "");
+    box.textContent = enlaceCorr;
+    if(telC.length >= 8){
+      const msg = "¡Hola! 📖 ✅ Ya revisé tu estudio del Día " + dia + " de Fe de Jesús. Abrí este enlace: vas a ver tus aciertos y la enseñanza de cada pregunta, y quedan desbloqueados los próximos estudios: " + enlaceCorr;
+      wa.href = "https://wa.me/" + telC + "?text=" + encodeURIComponent(msg);
+      wa.classList.remove("off");
+    } else {
+      wa.removeAttribute("href");
+      wa.classList.add("off");
+    }
+  } else {
+    enlaceCorr = "";
+    box.textContent = "Poné el número de día corregido…";
+    wa.removeAttribute("href");
+    wa.classList.add("off");
+  }
+  return { okDia: okDia, telC: telC };
+}
+["cDia","cTel"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", armarCorr);
+});
+document.getElementById("cTodos").addEventListener("change", armarCorr);
+armarCorr();
+
+document.getElementById("btnCopiarCorr").onclick = function(){
+  const d = armarCorr();
+  if(!d.okDia){ toast("⚠ Poné el número del día (1 a 20)"); return; }
+  const listo = function(){ toast("📋 Enlace de corrección copiado — enviaselo a tu alumno"); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(enlaceCorr).then(listo).catch(function(){ copiarViejo(enlaceCorr, listo); });
+  } else copiarViejo(enlaceCorr, listo);
+};
+</script>
+</body>
+</html>
