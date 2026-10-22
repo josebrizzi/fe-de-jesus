@@ -6,97 +6,132 @@
 <title>Fe de Jesús</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#fafafa;color:#262626;padding-bottom:90px}
-header{position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid #dbdbdb;z-index:20;display:flex;align-items:center;gap:12px;padding:10px 14px}
-header button{background:none;border:none;font-size:22px;cursor:pointer}
+:root{
+  --fondo:#f0f2f5;--panel:#ffffff;--panel2:#f0f2f5;--borde:#e4e6eb;--inputb:#ccd0d5;
+  --texto:#050505;--texto2:#65676b;
+  --azul:#1877f2;--azulh:#166fe5;--azulsoft:#e7f3ff;--azultx:#1877f2;
+  --verde:#31a24c;--verdesoft:#e7f6ec;
+  --rojo:#e41e3f;--rojosoft:#ffe7ec;
+  --btnoffbg:#e4e6eb;--btnofftx:#bcc0c4;
+  --hdrbg:rgba(255,255,255,.95);--hdrb:#e4e6eb;
+  --toastbg:#050505;--toasttx:#ffffff;
+  --orb1:#fff8e1;--orb2:#fff3cd;--orbord:#f0e0a0;--orah:#b8860b;--oratx:#5c4a00;
+  --sombra:0 8px 24px rgba(0,0,0,.18)
+}
+html.modo-oscuro{
+  --fondo:#18191a;--panel:#242526;--panel2:#3a3b3c;--borde:#3e4042;--inputb:#606366;
+  --texto:#e4e6eb;--texto2:#b0b3b8;
+  --azul:#2d88ff;--azulh:#3a93ff;--azulsoft:rgba(45,136,255,.16);--azultx:#7ab3ff;
+  --verde:#2fae54;--verdesoft:rgba(47,174,84,.18);
+  --rojo:#ff6673;--rojosoft:rgba(228,30,63,.16);
+  --btnoffbg:#3a3b3c;--btnofftx:#8a8d91;
+  --hdrbg:rgba(24,25,26,.95);--hdrb:#3e4042;
+  --toastbg:#4a4b4d;--toasttx:#ffffff;
+  --orb1:#332c15;--orb2:#3d3418;--orbord:#5c4d24;--orah:#e8c766;--oratx:#e8d48b;
+  --sombra:0 8px 24px rgba(0,0,0,.5)
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:90px;transition:background .25s,color .25s}
+header{position:sticky;top:0;background:var(--hdrbg);backdrop-filter:blur(12px);border-bottom:1px solid var(--hdrb);z-index:20;display:flex;align-items:center;gap:12px;padding:10px 14px}
+header button{background:none;border:none;font-size:22px;cursor:pointer;color:var(--texto)}
 header .t{flex:1;font-weight:700;font-size:20px}
+#btnTema{font-size:19px}
 #btnDone{font-size:24px}
 .wrap{max-width:620px;margin:0 auto;padding:0 14px}
-.hero{margin:16px 0;border-radius:18px;color:#fff;padding:30px 22px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.hero{margin:16px 0;border-radius:18px;color:#fff;padding:30px 22px;box-shadow:var(--sombra)}
 .hero .dia{font-size:16px;font-weight:800;letter-spacing:2px;opacity:.9}
 .hero .em{font-size:52px;margin:6px 0}
 .hero h1{font-size:29px;font-weight:800;line-height:1.2}
-.card{background:#fff;border:1px solid #efefef;border-radius:14px;padding:18px 16px;margin:12px 0}
+.card{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:18px 16px;margin:12px 0}
 .card h2{font-size:23px;margin-bottom:10px}
-.intro{font-size:20px;line-height:1.7;color:#444}
-.preg{border-left:3px solid #0095f6;padding-left:12px;margin:20px 0}
-.pnum{display:inline-flex;width:27px;height:27px;border-radius:50%;background:#0095f6;color:#fff;font-size:14px;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:middle}
+.intro{font-size:20px;line-height:1.7;color:var(--texto2)}
+.preg{border-left:3px solid var(--azul);padding-left:12px;margin:20px 0}
+.preg.aparece{animation:aparece .5s ease}
+@keyframes aparece{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.lockrow{display:flex;align-items:center;gap:8px;background:var(--panel);border:1.5px dashed var(--borde);border-radius:12px;padding:12px 14px;margin:20px 0;color:var(--texto2);font-size:15px;font-weight:600}
+.pnum{display:inline-flex;width:27px;height:27px;border-radius:50%;background:var(--azul);color:#fff;font-size:14px;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:middle}
 .pq{font-size:20px;font-weight:700;display:inline;vertical-align:middle}
 .chips{margin:8px 0;display:flex;flex-wrap:wrap;gap:6px}
-.chip{background:#e8f3fd;color:#0095f6;border:none;border-radius:16px;padding:7px 15px;font-size:17px;font-weight:600;cursor:pointer}
-.chip:active{background:#cde8fc}
-.respTa{width:100%;box-sizing:border-box;min-height:70px;padding:12px;border:1.5px solid #dbdbdb;border-radius:10px;font-size:17px;font-family:inherit;line-height:1.5;resize:vertical;background:#fafafa;color:#262626}
-.respTa:focus{outline:none;border-color:#0095f6;background:#fff}
-.respLbl{font-size:16px;font-weight:700;color:#262626;margin-top:12px;display:block}
-.motiva{font-size:14px;color:#00a86b;font-weight:600;margin-top:5px;display:none}
+.chip{background:var(--azulsoft);color:var(--azultx);border:none;border-radius:16px;padding:7px 15px;font-size:17px;font-weight:600;cursor:pointer}
+.chip:active{filter:brightness(.93)}
+.respTa{width:100%;box-sizing:border-box;min-height:70px;padding:12px;border:1.5px solid var(--inputb);border-radius:10px;font-size:17px;font-family:inherit;line-height:1.5;resize:vertical;background:var(--panel2);color:var(--texto)}
+.respTa:focus{outline:none;border-color:var(--azul);background:var(--panel)}
+.respLbl{font-size:16px;font-weight:700;color:var(--texto);margin-top:12px;display:block}
+.motiva{font-size:14px;color:var(--verde);font-weight:600;margin-top:5px;display:none}
 .motiva.on{display:block}
 .quiz{margin-top:12px;display:flex;flex-direction:column;gap:8px}
-.opt{width:100%;text-align:left;background:#fff;border:1.5px solid #dbdbdb;border-radius:12px;padding:12px 14px;font-size:17px;font-family:inherit;line-height:1.45;cursor:pointer;color:#262626;display:flex;gap:10px;align-items:flex-start;transition:background .15s,border-color .15s}
-.opt .letra{flex:none;width:26px;height:26px;border-radius:50%;background:#efefef;color:#555;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px}
-.opt:active{background:#f0f8ff}
-.opt.ok{background:#e6f7ee;border-color:#00a86b}
-.opt.ok .letra{background:#00a86b;color:#fff}
-.opt.mal{animation:treme .45s;border-color:#e0245e;background:#fdeef3}
+.opt{width:100%;text-align:left;background:var(--panel);border:1.5px solid var(--inputb);border-radius:12px;padding:12px 14px;font-size:17px;font-family:inherit;line-height:1.45;cursor:pointer;color:var(--texto);display:flex;gap:10px;align-items:flex-start;transition:background .15s,border-color .15s}
+.opt .letra{flex:none;width:26px;height:26px;border-radius:50%;background:var(--panel2);color:var(--texto2);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt:active{background:var(--azulsoft)}
+.opt.ok{background:var(--verdesoft);border-color:var(--verde)}
+.opt.ok .letra{background:var(--verde);color:#fff}
+.opt.mal{animation:treme .45s;border-color:var(--rojo);background:var(--rojosoft)}
 .opt:disabled{cursor:default}
 @keyframes treme{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.hint{font-size:14px;color:#e0245e;font-weight:600;margin-top:2px;display:none}
+.hint{font-size:14px;color:var(--rojo);font-weight:600;margin-top:2px;display:none}
 .hint.on{display:block}
-.score{background:linear-gradient(135deg,#e8f3fd,#fdeef3);border:1px solid #cfe3f7;border-radius:14px;padding:16px;margin:14px 0;font-weight:700;font-size:17px;text-align:center;display:none}
+.score{background:var(--azulsoft);border:1px solid var(--borde);border-radius:14px;padding:16px;margin:14px 0;font-weight:700;font-size:17px;text-align:center;display:none}
 .score.on{display:block}
-.ensenanza{display:none;margin-top:14px;border-top:1px dashed #dbdbdb;padding-top:14px}
+.ensenanza{display:none;margin-top:14px;border-top:1px dashed var(--borde);padding-top:14px}
 .ensenanza.on{display:block;animation:abre .6s ease}
 @keyframes abre{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-.des{font-size:20px;line-height:1.72;color:#333}
-a.ref{color:#0095f6;text-decoration:none;font-weight:600;cursor:pointer;border-bottom:1px dotted #99c9f0}
+.des{font-size:20px;line-height:1.72;color:var(--texto)}
+a.ref{color:var(--azultx);text-decoration:none;font-weight:600;cursor:pointer;border-bottom:1px dotted var(--azultx)}
 ul.lis{list-style:none;margin-top:6px}
-ul.lis li{padding:9px 0;border-bottom:1px solid #f2f2f2;font-size:20px;line-height:1.6}
+ul.lis li{padding:9px 0;border-bottom:1px solid var(--borde);font-size:20px;line-height:1.6}
 ul.lis li:last-child{border:none}
 ul.lis li span{font-size:16px !important}
 .colwrap{display:flex;gap:12px;flex-wrap:wrap}
 .colwrap>div{flex:1;min-width:140px}
-.colwrap h4{font-size:18px;margin-bottom:6px;color:#555}
-.dec{background:#fff;border:2px solid #ff5c8a;border-radius:14px;padding:18px 16px;margin:12px 0}
+.colwrap h4{font-size:18px;margin-bottom:6px;color:var(--texto2)}
+.dec{background:var(--panel);border:2px solid var(--azul);border-radius:14px;padding:18px 16px;margin:12px 0}
+.dec.bloqueada{border-style:dashed;border-color:var(--borde)}
 .dec h2{font-size:21px}
 .dec p{font-size:20px;line-height:1.6;margin:10px 0;font-weight:600}
-.dec label{display:block;font-weight:700;font-size:15px;color:#555;margin:12px 0 4px}
-.dec input{width:100%;box-sizing:border-box;padding:12px;border:1.5px solid #dbdbdb;border-radius:10px;font-size:17px;font-family:inherit;color:#262626}
-.dec input:focus{outline:none;border-color:#0095f6}
+.dec label{display:block;font-weight:700;font-size:15px;color:var(--texto2);margin:12px 0 4px}
+.dec input{width:100%;box-sizing:border-box;padding:12px;border:1.5px solid var(--inputb);border-radius:10px;font-size:17px;font-family:inherit;color:var(--texto);background:var(--panel)}
+.dec input:focus{outline:none;border-color:var(--azul)}
 .dbtns{display:flex;gap:10px;margin-top:14px}
-.dbtns button{flex:1;border:2px solid #dbdbdb;background:#fff;border-radius:10px;padding:12px;font-size:20px;font-weight:800;cursor:pointer;color:#8e8e8e}
-.dbtns button.on-si{background:#00a86b;border-color:#00a86b;color:#fff}
-.dbtns button.on-no{background:#8e8e8e;border-color:#8e8e8e;color:#fff}
-.enviarBtn{width:100%;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;background:#25d366;color:#fff;margin-top:14px;text-decoration:none;display:block;text-align:center}
-.certBtn{width:100%;border:none;border-radius:12px;padding:15px;font-size:17px;font-weight:800;cursor:pointer;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;margin-top:12px;text-decoration:none;display:block;text-align:center}
-.cplt{width:100%;border:none;border-radius:12px;padding:15px;font-size:20px;font-weight:800;cursor:pointer;background:#0095f6;color:#fff;margin:8px 0}
-.cplt.on{background:#00a86b}
+.dbtns button{flex:1;border:2px solid var(--inputb);background:var(--panel);border-radius:10px;padding:12px;font-size:20px;font-weight:800;cursor:pointer;color:var(--texto2)}
+.dbtns button.on-si{background:var(--verde);border-color:var(--verde);color:#fff}
+.dbtns button.on-no{background:#8a8d91;border-color:#8a8d91;color:#fff}
+.enviarBtn{width:100%;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;background:var(--verde);color:#fff;margin-top:14px;text-decoration:none;display:block;text-align:center}
+.certBtn{width:100%;border:none;border-radius:12px;padding:15px;font-size:17px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff;margin-top:12px;text-decoration:none;display:block;text-align:center}
+.cplt{width:100%;border:none;border-radius:12px;padding:15px;font-size:20px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff;margin:8px 0}
+.cplt.on{background:var(--verde)}
+.cplt:disabled{background:var(--btnoffbg);color:var(--btnofftx);cursor:not-allowed}
 .navg{display:flex;gap:10px;margin:20px 0}
-.navg button{flex:1;border:1px solid #dbdbdb;background:#fff;border-radius:12px;padding:14px;font-size:18px;font-weight:700;cursor:pointer;color:#262626}
-.navg button.prim{background:#0095f6;border-color:#0095f6;color:#fff}
+.navg button{flex:1;border:1px solid var(--inputb);background:var(--panel);border-radius:12px;padding:14px;font-size:18px;font-weight:700;cursor:pointer;color:var(--texto)}
+.navg button.prim{background:var(--azul);border-color:var(--azul);color:#fff}
 .navg button:disabled{opacity:.35;cursor:default}
-.fin20{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border-radius:14px;padding:22px;text-align:center;margin:12px 0;font-size:18px;font-weight:700}
-.oracion{background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1px solid #f0e0a0;border-left:4px solid #f5a623}
-.oracion h2{color:#b8860b;font-size:21px}
-.oracion .pedir{font-size:19px;line-height:1.7;color:#5c4a00;font-style:italic;margin:8px 0}
+.fin20{background:linear-gradient(135deg,#0d4dad,#1877f2);color:#fff;border-radius:14px;padding:22px;text-align:center;margin:12px 0;font-size:18px;font-weight:700}
+.oracion{background:linear-gradient(135deg,var(--orb1),var(--orb2));border:1px solid var(--orbord);border-left:4px solid var(--orah)}
+.oracion h2{color:var(--orah);font-size:21px}
+.oracion .pedir{font-size:19px;line-height:1.7;color:var(--oratx);font-style:italic;margin:8px 0}
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:50}
 #overlay.on{opacity:1;pointer-events:auto}
-#sheet{position:fixed;left:0;right:0;bottom:0;max-height:75vh;background:#fff;border-radius:20px 20px 0 0;transform:translateY(100%);transition:.3s;z-index:51;display:flex;flex-direction:column}
+#sheet{position:fixed;left:0;right:0;bottom:0;max-height:75vh;background:var(--panel);border-radius:20px 20px 0 0;transform:translateY(100%);transition:.3s;z-index:51;display:flex;flex-direction:column}
 #sheet.on{transform:translateY(0)}
 #sheet .hd{padding:10px 18px 6px;text-align:center}
-#sheet .hd i{display:block;width:40px;height:4px;border-radius:2px;background:#dbdbdb;margin:0 auto}
-#sheet h3{font-size:26px;text-align:center;margin:6px 0 2px}
-#sheet .vv{font-size:16px;text-align:center;color:#8e8e8e;margin-bottom:8px}
-#sheet .bd{overflow-y:auto;padding:4px 20px 26px;font-size:25px;line-height:1.8}
+#sheet .hd i{display:block;width:40px;height:4px;border-radius:2px;background:var(--borde);margin:0 auto}
+#sheet h3{font-size:26px;text-align:center;margin:6px 0 2px;color:var(--texto)}
+#sheet .vv{font-size:16px;text-align:center;color:var(--texto2);margin-bottom:8px}
+#sheet .bd{overflow-y:auto;padding:4px 20px 26px;font-size:25px;line-height:1.8;color:var(--texto)}
 #sheet .bd p{margin-bottom:12px}
-#sheet sup{color:#0095f6;font-weight:700;font-size:18px;margin-right:4px}
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:#262626;color:#fff;border-radius:20px;padding:10px 20px;font-size:18px;opacity:0;transition:.3s;z-index:60;pointer-events:none}
+#sheet sup{color:var(--azul);font-weight:700;font-size:18px;margin-right:4px}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--toastbg);color:var(--toasttx);border-radius:20px;padding:10px 20px;font-size:18px;opacity:0;transition:.3s;z-index:60;pointer-events:none}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.conectado{background:var(--azulsoft);border:1px solid var(--borde);border-left:4px solid var(--azul);border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:15px;line-height:1.55;color:var(--texto)}
+.invitar{display:block;text-align:center;margin:4px 0 22px;color:var(--azultx);font-weight:600;font-size:15px;text-decoration:none}
+.invitar:active{opacity:.7}
 </style>
+<script>try{if(localStorage.getItem("fej_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
 </head>
 <body>
 
 <header>
   <button onclick="location.href='index.html'">←</button>
   <div class="t" id="hdTitle"></div>
+  <button id="btnTema" title="Modo claro / oscuro">🌙</button>
   <button id="btnDone">🤍</button>
 </header>
 
@@ -122,7 +157,21 @@ ul.lis li span{font-size:16px !important}
 
 <script>
 let API_BASE = null, BIBLE_VERSION = "RVR1960", apiOK = false;
-var TELEFONO_INSTRUCTOR = "5491128945261";
+var TELEFONO_INSTRUCTOR = "5491128945261"; /* número principal (José) */
+
+/* ===== ENLACE DE INSTRUCTOR =====
+   Si la app se abrió con un enlace personalizado (?i=tel&n=nombre&a=alumno),
+   toda consulta/respuesta va al WhatsApp del instructor conectado.
+   Si el alumno comparte su propio enlace (generado en instructor.html),
+   la nueva persona queda conectada al teléfono del que compartió. */
+function telDestino(){
+  if(typeof window.fejTelDestino === "function") return window.fejTelDestino();
+  return TELEFONO_INSTRUCTOR;
+}
+function nombreInstructor(){
+  const c = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+  return (c && c.nombre) ? c.nombre : "";
+}
 
 async function discover(){
   if(API_BASE !== null) return;
@@ -236,7 +285,7 @@ async function openRef(ref){
     document.getElementById("shBody").innerHTML = html || "<p>No se encontraron los versículos.</p>";
   }catch(e){
     document.getElementById("shVer").textContent = "";
-    document.getElementById("shBody").innerHTML = '<p style="color:#8e8e8e">No se pudo cargar el texto bíblico. Verificá la conexión con la API de la Biblia.</p><p><a class="ref" style="pointer-events:none">' + ref + '</a></p>';
+    document.getElementById("shBody").innerHTML = '<p style="color:var(--texto2)">No se pudo cargar el texto bíblico. Verificá la conexión con la API de la Biblia.</p><p><a class="ref" style="pointer-events:none">' + ref + '</a></p>';
   }
 }
 
@@ -262,8 +311,23 @@ function toast(msg){
   const t = document.getElementById("toast");
   t.textContent = msg;
   t.classList.add("on");
-  setTimeout(() => t.classList.remove("on"), 2200);
+  setTimeout(() => t.classList.remove("on"), 2600);
 }
+
+/* ===== MODO CLARO / OSCURO ===== */
+function aplicarIconoTema(){
+  const b = document.getElementById("btnTema");
+  if(b) b.textContent = document.documentElement.classList.contains("modo-oscuro") ? "☀️" : "🌙";
+}
+function toggleTema(){
+  const oscuro = document.documentElement.classList.toggle("modo-oscuro");
+  try{ localStorage.setItem("fej_tema", oscuro ? "oscuro" : "claro"); }catch(e){}
+  aplicarIconoTema();
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", oscuro ? "#18191a" : "#1877f2");
+}
+document.getElementById("btnTema").onclick = toggleTema;
+aplicarIconoTema();
 
 const params = new URLSearchParams(location.search);
 const dia = +params.get("dia") || 1;
@@ -272,14 +336,21 @@ const L = LECCIONES.find(x => x.d === dia) || LECCIONES[0];
 /* GUARDIÁN PROGRESIVO */
 const doneMapGuard = getDone();
 if(L.d > 1 && !doneMapGuard[L.d - 1]){
-  document.getElementById("app").innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:64px">🔒</div><h2 style="font-size:22px;margin:16px 0 8px">Estudio bloqueado</h2><p style="font-size:17px;color:#666;line-height:1.6">Para hacer el Día ' + L.d + ', primero completá el <b>Día ' + (L.d-1) + '</b>.</p><button onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'" style="margin-top:20px;background:#0095f6;color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + (L.d-1) + '</button><br><a href="index.html" style="display:inline-block;margin-top:14px;color:#0095f6;font-weight:600;font-size:15px">Volver al índice</a></div>';
+  document.getElementById("app").innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:64px">🔒</div><h2 style="font-size:22px;margin:16px 0 8px">Estudio bloqueado</h2><p style="font-size:17px;color:var(--texto2);line-height:1.6">Para hacer el Día ' + L.d + ', primero completá el <b>Día ' + (L.d-1) + '</b>.</p><button onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\'" style="margin-top:20px;background:var(--azul);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:16px;font-weight:700;cursor:pointer">← Ir al Día ' + (L.d-1) + '</button><br><a href="index.html" style="display:inline-block;margin-top:14px;color:var(--azultx);font-weight:600;font-size:15px">Volver al índice</a></div>';
   document.getElementById("btnDone").style.display = "none";
+  document.getElementById("btnTema").style.display = "none";
   throw new Error("bloqueado");
 }
 localStorage.setItem("fej_ultimo", L.d);
 document.getElementById("hdTitle").textContent = "Día " + L.d + " de 20";
 document.title = "Día " + L.d + " — " + L.t;
-document.getElementById("btnDone").onclick = toggleDone;
+document.getElementById("btnDone").onclick = function(){
+  if(!getDone()[L.d]){
+    const e = estadoRespuestas();
+    if(e.hechas < e.total){ toast("📖 Respondé todas las preguntas para completar el estudio"); return; }
+  }
+  toggleDone();
+};
 
 const getResp = () => JSON.parse(localStorage.getItem("fej_resp_" + L.d) || "{}");
 const saveResp = o => localStorage.setItem("fej_resp_" + L.d, JSON.stringify(o));
@@ -302,17 +373,19 @@ function toggleDone(){
   if(yaEstaba){ delete o[L.d]; toast("Estudio desmarcado"); }
   else {
     o[L.d] = 1;
-    toast("❤️ ¡Estudio " + L.d + " completado!");
+    toast("❤️ ¡Estudio " + L.d + " completado! Ya podés seguir al próximo día");
     if(typeof window.fejRespaldo === "function") window.fejRespaldo();
-    if(L.d === 20) setTimeout(function(){ location.href = "certificado.html"; }, 1200);
+    if(L.d === 20) setTimeout(function(){ location.href = "certificado.html"; }, 1400);
   }
   setDone(o);
-  renderDone();
+  const y = window.scrollY;
+  render();
+  window.scrollTo(0, y);
 }
 
 function card(innerHTML, extraClass){ return '<section class="card ' + (extraClass||"") + '">' + innerHTML + '</section>'; }
 function listaHTML(items){
-  return '<ul class="lis">' + items.map(it => '<li>' + linkRefs(it.x) + (it.r ? ' <span style="color:#8e8e8e;font-size:12px">(' + it.r + ')</span>' : "") + '</li>').join("") + '</ul>';
+  return '<ul class="lis">' + items.map(it => '<li>' + linkRefs(it.x) + (it.r ? ' <span style="color:var(--texto2);font-size:12px">(' + it.r + ')</span>' : "") + '</li>').join("") + '</ul>';
 }
 function extrasHTML(efs){
   if(!efs) return "";
@@ -321,7 +394,7 @@ function extrasHTML(efs){
     (e.parrafo ? '<div class="des">' + linkRefs(e.parrafo) + '</div>' : "") +
     (e.columnas ? '<div class="colwrap">' + e.columnas.map(col => '<div><h4>' + col.ct + '</h4>' + listaHTML(col.items) + '</div>').join("") + '</div>' : "") +
     (e.lista ? listaHTML(e.lista) : "") +
-    (e.nota ? '<div class="des" style="margin-top:10px;font-size:16px;color:#666">' + linkRefs(e.nota) + '</div>' : "")
+    (e.nota ? '<div class="des" style="margin-top:10px;font-size:16px;color:var(--texto2)">' + linkRefs(e.nota) + '</div>' : "")
   )).join("");
 }
 
@@ -335,66 +408,82 @@ function mezclar(arr){
   return a;
 }
 
-function render(){
-  const deces = getDecs();
+/* ===== ESTADO DE RESPUESTAS Y SECUENCIA ===== */
+function ordenPreguntas(){
+  const out = [];
+  (L.temas || []).forEach(t => t.ps.forEach(p => out.push(p)));
+  return out;
+}
+function respondida(p, misResp){
+  const clave = L.d + ":" + p.n;
+  if(window.QUIZ && window.QUIZ[clave]) return !!(quizEstado[p.n] && quizEstado[p.n].ok);
+  return !!(misResp[p.n] && misResp[p.n].trim());
+}
+function estadoRespuestas(){
   const misResp = getResp();
+  let total = 0, hechas = 0;
+  ordenPreguntas().forEach(p => {
+    total++;
+    if(respondida(p, misResp)) hechas++;
+  });
+  return { total: total, hechas: hechas };
+}
+
+/* ===== CONSTRUCTORES DE BLOQUES ===== */
+function htmlPregunta(p, desbloq, misResp){
+  const clave = L.d + ":" + p.n;
+  const ops = (window.QUIZ && window.QUIZ[clave]) || null;
+
+  if(!desbloq){
+    return '<div class="lockrow" id="lock_' + p.n + '">🔒 <span>Pregunta ' + p.n + ' — respondé la anterior para desbloquearla</span></div>';
+  }
+
+  const st = quizEstado[p.n];
+  const respondidaOk = !!(st && st.ok);
+  const yaEscribio = !!(misResp[p.n] && misResp[p.n].trim());
+
+  let cuerpo = "";
+  if(ops){
+    const lista = mezclar(ops);
+    const LETRAS = ["A","B","C","D"];
+    cuerpo =
+      '<label class="respLbl">👆 Elegí la respuesta correcta:</label>' +
+      '<div class="quiz" data-q="' + p.n + '">' +
+        lista.map((o,i) => {
+          const marcada = respondidaOk && st.sel === o;
+          return '<button type="button" class="opt' + (marcada ? " ok" : "") + '"' + (respondidaOk ? " disabled" : "") + ' data-t="' + escapeHtml(o) + '"><span class="letra">' + LETRAS[i] + '</span><span>' + escapeHtml(o) + '</span></button>';
+        }).join("") +
+        '<div class="hint" id="hi_' + p.n + '">📖 Volvé a leer el versículo y probá de nuevo</div>' +
+      '</div>';
+  } else {
+    cuerpo =
+      '<label class="respLbl">✍️ Tu respuesta:</label>' +
+      '<div class="motiva" id="mo_' + p.n + '"></div>' +
+      '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>';
+  }
+
+  return '<div class="preg" id="preg_' + p.n + '">' +
+     '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
+     '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
+     cuerpo +
+     '<div class="ensenanza ' + ((respondidaOk || yaEscribio) ? "on" : "") + '" id="ens_' + p.n + '">' +
+       '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des) + '</div>' +
+     '</div>' +
+   '</div>';
+}
+
+function htmlDecision(completa){
+  if(!completa){
+    return '<section class="dec bloqueada" id="decLock">' +
+      '<h2>✍️ Decisión personal</h2>' +
+      '<div class="des" style="margin-top:8px;font-size:17px;color:var(--texto2)">🔒 Respondé todas las preguntas y acá va a aparecer tu decisión personal y el envío al instructor.</div>' +
+    '</section>';
+  }
+  const deces = getDecs();
   const perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
   const hoy = new Date().toLocaleDateString("en-CA");
   const decFull = JSON.parse(localStorage.getItem("fej_decfull_" + L.d) || "null");
-
-  let h = '<div class="hero" style="background:' + L.g + '"><div class="dia">DÍA ' + L.d + ' DE 20</div><div class="em">' + L.e + '</div><h1>' + escapeHtml(L.t) + '</h1></div>';
-
-  if(L.i) h += card('<h2>📖 Introducción</h2><div class="intro">' + linkRefs(L.i) + '</div>');
-
-  if(L.temas) h += L.temas.map(t =>
-    card('<h2>✨ ' + escapeHtml(t.tt) + '</h2>' +
-      t.ps.map(p => {
-        const clave = L.d + ":" + p.n;
-        const ops = (window.QUIZ && window.QUIZ[clave]) || null;
-        const st = quizEstado[p.n];
-        const respondida = !!(st && st.ok);
-        const yaEscribio = !!(misResp[p.n] && misResp[p.n].trim());
-
-        let cuerpo = "";
-        if(ops){
-          const lista = mezclar(ops);
-          const LETRAS = ["A","B","C","D"];
-          cuerpo =
-            '<label class="respLbl">👆 Elegí la respuesta correcta:</label>' +
-            '<div class="quiz" data-q="' + p.n + '">' +
-              lista.map((o,i) => {
-                const marcada = respondida && st.sel === o;
-                return '<button type="button" class="opt' + (marcada ? " ok" : "") + '"' + (respondida ? " disabled" : "") + ' data-t="' + escapeHtml(o) + '"><span class="letra">' + LETRAS[i] + '</span><span>' + escapeHtml(o) + '</span></button>';
-              }).join("") +
-              '<div class="hint" id="hi_' + p.n + '">📖 Volvé a leer el versículo y probá de nuevo</div>' +
-            '</div>';
-        } else {
-          cuerpo =
-            '<label class="respLbl">✍️ Tu respuesta:</label>' +
-            '<div class="motiva" id="mo_' + p.n + '"></div>' +
-            '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>';
-        }
-
-        return '<div class="preg">' +
-           '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
-           '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
-           cuerpo +
-           '<div class="ensenanza ' + ((respondida || yaEscribio) ? "on" : "") + '" id="ens_' + p.n + '">' +
-             '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des) + '</div>' +
-           '</div>' +
-         '</div>';
-      }).join("")
-    )).join("");
-
-  const cq = contarQuiz();
-  if(cq.total) h += '<div class="score" id="scoreBox"></div>';
-
-  if(L.extras){
-    const visibles = L.d === 20 ? L.extras : L.extras.filter(e => /^Sugerencias/i.test(e.tt));
-    h += extrasHTML(visibles);
-  }
-
-  if(L.dec) h += '<section class="dec">' +
+  return '<section class="dec" id="decCard">' +
     '<h2>✍️ Decisión personal</h2>' +
     '<div class="des" style="margin-top:8px;font-size:18px">Después de haber leído y entendido, mi decisión personal es:</div>' +
     '<p>“' + escapeHtml(L.dec) + '”</p>' +
@@ -408,6 +497,41 @@ function render(){
     '</div>' +
     '<a class="enviarBtn" id="btnEnviar" onclick="enviarRespuestas(event)">📤 Enviar mis respuestas y mi decisión al instructor</a>' +
   '</section>';
+}
+
+function render(){
+  const misResp = getResp();
+  const todoAbierto = !!getDone()[L.d]; /* días ya completados se muestran sin candados */
+
+  let h = '<div class="hero" style="background:' + L.g + '"><div class="dia">DÍA ' + L.d + ' DE 20</div><div class="em">' + L.e + '</div><h1>' + escapeHtml(L.t) + '</h1></div>';
+
+  const insNombre = nombreInstructor();
+  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b> — tus respuestas y consultas le llegan a su WhatsApp.</div>';
+
+  if(L.i) h += card('<h2>📖 Introducción</h2><div class="intro">' + linkRefs(L.i) + '</div>');
+
+  if(L.temas){
+    const lista = ordenPreguntas();
+    h += L.temas.map(t =>
+      card('<h2>✨ ' + escapeHtml(t.tt) + '</h2>' +
+        t.ps.map(p => {
+          const i = lista.indexOf(p);
+          const desbloq = todoAbierto || i === 0 || respondida(lista[i-1], misResp);
+          return htmlPregunta(p, desbloq, misResp);
+        }).join("")
+      )).join("");
+  }
+
+  const cq = contarQuiz();
+  if(cq.total) h += '<div class="score" id="scoreBox"></div>';
+
+  if(L.extras){
+    const visibles = L.d === 20 ? L.extras : L.extras.filter(e => /^Sugerencias/i.test(e.tt));
+    h += extrasHTML(visibles);
+  }
+
+  const e = estadoRespuestas();
+  if(L.dec) h += htmlDecision(todoAbierto || e.hechas === e.total);
 
   if(L.d === 20) h += '<div class="fin20">JESÚS VIENE PRONTO 🎉<br><span style="font-weight:400;font-size:16px">¡Completaste los 20 estudios de Fe de Jesús!</span></div>' +
     '<a class="certBtn" href="certificado.html">🎓 Ver mi certificado</a>';
@@ -424,15 +548,48 @@ function render(){
       : '<button class="prim" ' + (sig ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d+1) + '\'">Siguiente →</button>') +
   '</div>';
 
+  h += '<a class="invitar" href="instructor.html">🎓 ¿Querés acompañar a alguien más? Invitalo a estudiar</a>';
+
   document.getElementById("app").innerHTML = h;
   renderDone();
+  actualizarBotonCompleto();
   actualizarScore();
+}
+
+/* Desbloquea la pregunta siguiente a la n recién respondida (idempotente) */
+function revelarSiguiente(n, conScroll){
+  const lista = ordenPreguntas();
+  const i = lista.findIndex(x => x.n === n);
+  if(i < 0) return;
+  const sig = lista[i+1];
+  if(!sig) return;
+  const lockEl = document.getElementById("lock_" + sig.n);
+  if(!lockEl) return;
+  const frag = document.createElement("div");
+  frag.innerHTML = htmlPregunta(sig, true, getResp());
+  const nuevo = frag.firstChild;
+  nuevo.classList.add("aparece");
+  lockEl.replaceWith(nuevo);
+  if(conScroll) setTimeout(() => { nuevo.scrollIntoView({ behavior: "smooth", block: "center" }); }, 80);
+}
+
+/* Cuando se responden TODAS, aparece disponible la decisión personal */
+function revelarDecision(conScroll){
+  const lockEl = document.getElementById("decLock");
+  if(!lockEl) return;
+  const frag = document.createElement("div");
+  frag.innerHTML = htmlDecision(true);
+  const nuevo = frag.firstChild;
+  nuevo.classList.add("aparece");
+  lockEl.replaceWith(nuevo);
+  toast("🎉 ¡Respondiste todo! Ya podés marcar tu decisión y completar el estudio");
+  if(conScroll) setTimeout(() => { nuevo.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 450);
 }
 
 /* Puntaje del día: aciertos a la primera sobre el total de preguntas multiple choice */
 function contarQuiz(){
   let total = 0, aciertos = 0, respondidas = 0;
-  (L.temas || []).forEach(t => t.ps.forEach(p => {
+  ordenPreguntas().forEach(p => {
     if(window.QUIZ && window.QUIZ[L.d + ":" + p.n]){
       total++;
       const st = quizEstado[p.n];
@@ -441,7 +598,7 @@ function contarQuiz(){
         if(st.first) aciertos++;
       }
     }
-  }));
+  });
   return { total: total, aciertos: aciertos, respondidas: respondidas };
 }
 
@@ -455,6 +612,21 @@ function actualizarScore(){
   else msg += "<br><span style='font-weight:400;font-size:14px'>Cada respuesta acertada a la primera suma tu ⭐ — si te equivocás, volvé a intentar sin miedo.</span>";
   box.innerHTML = msg;
   box.classList.add("on");
+}
+
+/* El botón de completar se habilita solo cuando TODAS las preguntas están respondidas */
+function actualizarBotonCompleto(){
+  const b = document.getElementById("btnCplt");
+  if(!b) return;
+  if(getDone()[L.d]) return; /* ya completado: renderDone puso el texto correcto */
+  const e = estadoRespuestas();
+  if(e.hechas < e.total){
+    b.disabled = true;
+    b.textContent = "🔒 Respondé todas las preguntas (" + e.hechas + " de " + e.total + ")";
+  } else {
+    b.disabled = false;
+    b.textContent = "Marcar estudio como completado";
+  }
 }
 
 /* Clic en una opción del multiple choice */
@@ -489,6 +661,10 @@ document.getElementById("app").addEventListener("click", function(e){
     }
     toast("✅ ¡Correcto!");
     actualizarScore();
+    actualizarBotonCompleto();
+    revelarSiguiente(n, true);
+    const e2 = estadoRespuestas();
+    if(e2.hechas === e2.total) revelarDecision(true);
   } else {
     if(!quizEstado[n]) quizEstado[n] = { tries: 0 };
     quizEstado[n].tries = (quizEstado[n].tries || 0) + 1;
@@ -508,7 +684,6 @@ function guardarResp(n, texto){
   if(ens){
     if(texto.trim() && !ens.classList.contains("on")){
       ens.classList.add("on");
-      ens.scrollIntoView({ behavior: "smooth", block: "nearest" });
     } else if(!texto.trim()){
       ens.classList.remove("on");
     }
@@ -527,6 +702,10 @@ function guardarResp(n, texto){
       motiva.classList.add("on");
     }
   }
+  if(texto.trim()) revelarSiguiente(n, false); /* sin salto de pantalla: seguí escribiendo tranquilo */
+  actualizarBotonCompleto();
+  const e2 = estadoRespuestas();
+  if(e2.hechas === e2.total) revelarDecision(false);
 }
 
 function decidir(v){
@@ -560,11 +739,13 @@ function enviarRespuestas(ev){
   if(!hay) txt += "(sin respuestas registradas)\n";
   if(cq.total) txt += "\n🎯 *Acertadas a la primera:* " + cq.aciertos + " de " + cq.total;
   txt += "\n\n✍️ *Mi decisión personal:* " + (deces[L.d] === "si" ? "SÍ" : deces[L.d] === "no" ? "NO" : "sin marcar");
+  const insN = nombreInstructor();
+  if(insN) txt += "\n🎓 *Instructor conectado:* " + insN;
   if(typeof window.fejRegistrar === "function"){
     window.fejRegistrar("Envió sus respuestas", "Lección " + L.d + (cq.total ? " | Quiz " + cq.aciertos + "/" + cq.total : ""));
     if(typeof window.fejRespaldo === "function") window.fejRespaldo();
   }
-  window.open("https://wa.me/" + TELEFONO_INSTRUCTOR + "?text=" + encodeURIComponent(txt), "_blank");
+  window.open("https://wa.me/" + telDestino() + "?text=" + encodeURIComponent(txt), "_blank");
 }
 
 render();

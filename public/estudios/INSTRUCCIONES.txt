@@ -1,71 +1,89 @@
 ═══════════════════════════════════════════════════════════
- FE DE JESÚS — VERSIÓN MULTIPLE CHOICE (más activa e interactiva)
+ FE DE JESÚS — VERSIÓN 3
+ Quiz secuencial + modo oscuro + azul Facebook + ENLACES DE INSTRUCTOR
 ═══════════════════════════════════════════════════════════
 
 DÓNDE EDITAR (todo dentro de tu repo GitHub → carpeta public/estudios/):
 
- 1) CREAR  quiz-a.js      → opciones de los Días 1 a 10 (archivo nuevo)
- 2) CREAR  quiz-b.js      → opciones de los Días 11 a 20 (archivo nuevo)
- 3) REEMPLAZAR COMPLETO   leccion.html  (borrá el contenido actual y pegá este)
- 4) REEMPLAZAR COMPLETO   sw.js         (bump de caché + precarga del quiz)
- 5) REEMPLAZAR COMPLETO   registro.js   (estaba con código duplicado; esta versión
-                                          está limpia y envía el puntaje a tu planilla)
+ 1) CREAR   instructor.html  → página nueva: genera el enlace personal
+                             de cada instructor (archivo nuevo)
+ 2) REEMPLAZAR COMPLETO  index.html   (banner de bienvenida + botón
+                             "Generar mi enlace personal de instructor")
+ 3) REEMPLAZAR COMPLETO  leccion.html (todo lo de abajo + WhatsApp
+                             dinámico + botón "Invitar a alguien más")
+ 4) REEMPLAZAR COMPLETO  data.js      (detecta el enlace del instructor)
+ 5) REEMPLAZAR COMPLETO  registro.js  (precarga el nombre del alumno y
+                             manda a tu planilla quién es su instructor)
+ 6) REEMPLAZAR COMPLETO  sw.js        (caché fej-v5 + instructor.html)
 
 ⚠️ IMPORTANTE: cada archivo se sube en su propio "Add file". Copiá TODO el
    contenido de cada archivo, de la primera a la última línea.
-   Los otros archivos (index.html, data.js, data-a..d.js, resumen.js,
+   quiz-a.js y quiz-b.js NO cambian en esta versión (si ya los subiste,
+   quedan como están). Los otros archivos (data-a..d.js, resumen.js,
    acerca.js, manifest.json, icon.svg, certificado.html) NO se tocan.
 
-Después de subir los 5, Render hace el deploy solo (o botón Manual Deploy).
+Después de subir, Render hace el deploy solo (o botón Manual Deploy).
 En el celular: cerrar y volver a abrir la app una vez para que entre la
 versión nueva (el sw.js nuevo fuerza la actualización de la caché).
 
 ═══════════════════════════════════════════════════════════
- CÓMO FUNCIONA LA NUEVA VERSIÓN (mi sugerencia ya implementada)
+ QUÉ HAY DE NUEVO EN ESTA VERSIÓN
 ═══════════════════════════════════════════════════════════
 
-• 150 de las 154 preguntas ahora son MULTIPLE CHOICE con 3 o 4 opciones
-  (entre ellas la correcta), que se mezclan al azar en cada visita.
+1) PREGUNTAS SECUENCIALES
+   Las preguntas aparecen una a una: hasta no responder la actual
+   (multiple choice = acertar; escrita = escribir algo), la siguiente
+   queda como "🔒 Pregunta N — respondé la anterior para desbloquearla".
+   Al responder, la próxima aparece con una animación suave.
 
-• El alumno toca una opción:
-   - Si es correcta → se pone verde, se abre la enseñanza breve
-     (misma animación de siempre) y suena el aviso "✅ ¡Correcto!".
-   - Si es incorrecta → tiembla en rojo y le sugiere volver a leer
-     el versículo. Puede reintentar las veces que quiera (no castiga).
+2) BOTÓN COMPLETAR CON CANDADO
+   "Marcar estudio como completado" (y el ❤️ del header) están
+   deshabilitados mientras queden preguntas sin responder. Muestran
+   "🔒 Respondé todas las preguntas (X de Y)". Cuando respondés la
+   última, el botón se habilita solo y aparece la DECISIÓN PERSONAL
+   con el envío al instructor.
 
-• PUNTAJE SUAVE (sin presión): se cuenta cuántas acertó A LA PRIMERA.
-  Aparece una tarjeta "🎯 Acertadas a la primera: X de Y" al terminar
-  las preguntas, con felicitación de puntaje perfecto (⭐).
+3) MODO OSCURO
+   Botón 🌙/☀️ en el header de la app y en el índice. Se guarda solo
+   (localStorage) y responde al estilo Facebook oscuro.
 
-• 4 preguntas siguen siendo ESCRITAS (reflexión personal, van al
-  instructor por WhatsApp con sus propias palabras):
-   - Día 1:9  → ¿Qué siente al saber cuánto perdurará la Santa Biblia?
-   - Día 2:6  → ¿Le importan a Dios nuestros problemas?
-   - Día 16:3 → ¿Cuál es la actitud correcta ante las pruebas?
-   - Día 20:6 → ¿Cuán importante es que todos testifiquemos?
+4) PALETA FACEBOOK
+   Azul #1877F2 predominante, fondos #F0F2F5 claro / #18191A oscuro,
+   tarjetas #242526 en oscuro. Las fuentes y tamaños no cambiaron.
 
-• El mensaje de WhatsApp al instructor ahora incluye:
-   las respuestas elegidas (✅) + las escritas + el puntaje del día
-   ("🎯 Acertadas a la primera: X de Y").
-
-• Tu planilla de Google Sheets también recibe el puntaje: el respaldo
-  de progreso ahora lleva "Quiz (aciertos 1a): D1:7 D2:6 ..." y el
-  registro de envío dice "Lección N | Quiz X/Y".
-
-• Todo lo demás queda igual: oración inicial, decisión personal,
-  ❤️ para completar, candado progresivo, certificado del Día 20.
+5) ENLACES DE INSTRUCTOR (lo nuevo importante)
+   • En el índice hay una sección "Invitá a otros a estudiar" y en cada
+     lección un enlace "🎓 Invitalo a estudiar" → página instructor.html.
+   • El instructor completa: su nombre, su WhatsApp y el nombre del
+     alumno → la página genera un ENLACE PERSONAL:
+        https://fe-de-jesus.onrender.com/estudios/?i=TEL&n=NOMBRE&a=ALUMNO
+   • Con el WhatsApp del alumno cargado, un botón manda el enlace por
+     WhatsApp con un mensaje listo. También se genera un CÓDIGO QR
+     para cuando el instructor está en la PC y el alumno cerca.
+   • Cuando el alumno abre ese enlace, la app queda CONECTADA: ve un
+     cartel "🎓 Estás estudiando con [instructor]" y TODAS sus
+     respuestas y decisiones llegan al WhatsApp DEL INSTRUCTOR,
+     no al número principal (el tuyo sigue siendo el destino por
+     defecto de quien entra sin enlace).
+   • CADENA: el alumno también puede generar SU propio enlace (botón
+     "Invitalo a estudiar") y la persona que se lo acepta queda
+     conectada al teléfono DEL ALUMNO que compartió. El estudio se
+     multiplica sin pasar por vos.
+   • Tu planilla de Google Sheets ahora también recibe dos columnas
+     nuevas en cada registro: "instructor" e "instructorTel" (quién
+     acompaña a ese alumno). Si el Apps Script no las espera, las
+     ignora sin problema.
 
 ═══════════════════════════════════════════════════════════
- CÓMO CAMBIAR OTRA PREGUNTA A ESCRITA (o al revés)
+ PRUEBA RÁPIDA (2 minutos)
 ═══════════════════════════════════════════════════════════
 
-• Para que una pregunta sea ESCRITA: borrá su línea en quiz-a.js o
-  quiz-b.js. Ejemplo: borrá la línea que empieza con "12:5": y el
-  Día 12 pregunta 5 vuelve a ser de escritura libre.
+1) Abrí  https://fe-de-jesus.onrender.com/estudios/instructor.html
+2) Poné tu nombre y tu WhatsApp (5491128945261) + un nombre de prueba
+3) Tocá "Probar el enlace" → la app abre conectada con vos
+4) Respondé las preguntas de un día y tocá "Enviar mis respuestas..."
+   → te abre WhatsApp a TU número (así lo verá cualquier instructor)
+5) En el índice vas a ver el cartel "🎓 Estás estudiando con vos"
 
-• Para que una pregunta ESCRITA sea multiple choice: agregá su línea
-  en el archivo correspondiente con la correcta PRIMERO:
-  "12:5":["El sábado","El domingo","Cualquiera"],
-
-Las claves son "día:pregunta" según el número (n) que tiene cada
-pregunta en data-a/b/c/d.js.
+Para dejar el celular como estaba: instructor.html → "Quitar la
+conexión de este dispositivo".
