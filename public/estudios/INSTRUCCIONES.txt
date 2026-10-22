@@ -1,0 +1,71 @@
+═══════════════════════════════════════════════════════════
+ FE DE JESÚS — VERSIÓN MULTIPLE CHOICE (más activa e interactiva)
+═══════════════════════════════════════════════════════════
+
+DÓNDE EDITAR (todo dentro de tu repo GitHub → carpeta public/estudios/):
+
+ 1) CREAR  quiz-a.js      → opciones de los Días 1 a 10 (archivo nuevo)
+ 2) CREAR  quiz-b.js      → opciones de los Días 11 a 20 (archivo nuevo)
+ 3) REEMPLAZAR COMPLETO   leccion.html  (borrá el contenido actual y pegá este)
+ 4) REEMPLAZAR COMPLETO   sw.js         (bump de caché + precarga del quiz)
+ 5) REEMPLAZAR COMPLETO   registro.js   (estaba con código duplicado; esta versión
+                                          está limpia y envía el puntaje a tu planilla)
+
+⚠️ IMPORTANTE: cada archivo se sube en su propio "Add file". Copiá TODO el
+   contenido de cada archivo, de la primera a la última línea.
+   Los otros archivos (index.html, data.js, data-a..d.js, resumen.js,
+   acerca.js, manifest.json, icon.svg, certificado.html) NO se tocan.
+
+Después de subir los 5, Render hace el deploy solo (o botón Manual Deploy).
+En el celular: cerrar y volver a abrir la app una vez para que entre la
+versión nueva (el sw.js nuevo fuerza la actualización de la caché).
+
+═══════════════════════════════════════════════════════════
+ CÓMO FUNCIONA LA NUEVA VERSIÓN (mi sugerencia ya implementada)
+═══════════════════════════════════════════════════════════
+
+• 150 de las 154 preguntas ahora son MULTIPLE CHOICE con 3 o 4 opciones
+  (entre ellas la correcta), que se mezclan al azar en cada visita.
+
+• El alumno toca una opción:
+   - Si es correcta → se pone verde, se abre la enseñanza breve
+     (misma animación de siempre) y suena el aviso "✅ ¡Correcto!".
+   - Si es incorrecta → tiembla en rojo y le sugiere volver a leer
+     el versículo. Puede reintentar las veces que quiera (no castiga).
+
+• PUNTAJE SUAVE (sin presión): se cuenta cuántas acertó A LA PRIMERA.
+  Aparece una tarjeta "🎯 Acertadas a la primera: X de Y" al terminar
+  las preguntas, con felicitación de puntaje perfecto (⭐).
+
+• 4 preguntas siguen siendo ESCRITAS (reflexión personal, van al
+  instructor por WhatsApp con sus propias palabras):
+   - Día 1:9  → ¿Qué siente al saber cuánto perdurará la Santa Biblia?
+   - Día 2:6  → ¿Le importan a Dios nuestros problemas?
+   - Día 16:3 → ¿Cuál es la actitud correcta ante las pruebas?
+   - Día 20:6 → ¿Cuán importante es que todos testifiquemos?
+
+• El mensaje de WhatsApp al instructor ahora incluye:
+   las respuestas elegidas (✅) + las escritas + el puntaje del día
+   ("🎯 Acertadas a la primera: X de Y").
+
+• Tu planilla de Google Sheets también recibe el puntaje: el respaldo
+  de progreso ahora lleva "Quiz (aciertos 1a): D1:7 D2:6 ..." y el
+  registro de envío dice "Lección N | Quiz X/Y".
+
+• Todo lo demás queda igual: oración inicial, decisión personal,
+  ❤️ para completar, candado progresivo, certificado del Día 20.
+
+═══════════════════════════════════════════════════════════
+ CÓMO CAMBIAR OTRA PREGUNTA A ESCRITA (o al revés)
+═══════════════════════════════════════════════════════════
+
+• Para que una pregunta sea ESCRITA: borrá su línea en quiz-a.js o
+  quiz-b.js. Ejemplo: borrá la línea que empieza con "12:5": y el
+  Día 12 pregunta 5 vuelve a ser de escritura libre.
+
+• Para que una pregunta ESCRITA sea multiple choice: agregá su línea
+  en el archivo correspondiente con la correcta PRIMERO:
+  "12:5":["El sábado","El domingo","Cualquiera"],
+
+Las claves son "día:pregunta" según el número (n) que tiene cada
+pregunta en data-a/b/c/d.js.

@@ -30,6 +30,19 @@ header .t{flex:1;font-weight:700;font-size:20px}
 .respLbl{font-size:16px;font-weight:700;color:#262626;margin-top:12px;display:block}
 .motiva{font-size:14px;color:#00a86b;font-weight:600;margin-top:5px;display:none}
 .motiva.on{display:block}
+.quiz{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.opt{width:100%;text-align:left;background:#fff;border:1.5px solid #dbdbdb;border-radius:12px;padding:12px 14px;font-size:17px;font-family:inherit;line-height:1.45;cursor:pointer;color:#262626;display:flex;gap:10px;align-items:flex-start;transition:background .15s,border-color .15s}
+.opt .letra{flex:none;width:26px;height:26px;border-radius:50%;background:#efefef;color:#555;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt:active{background:#f0f8ff}
+.opt.ok{background:#e6f7ee;border-color:#00a86b}
+.opt.ok .letra{background:#00a86b;color:#fff}
+.opt.mal{animation:treme .45s;border-color:#e0245e;background:#fdeef3}
+.opt:disabled{cursor:default}
+@keyframes treme{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.hint{font-size:14px;color:#e0245e;font-weight:600;margin-top:2px;display:none}
+.hint.on{display:block}
+.score{background:linear-gradient(135deg,#e8f3fd,#fdeef3);border:1px solid #cfe3f7;border-radius:14px;padding:16px;margin:14px 0;font-weight:700;font-size:17px;text-align:center;display:none}
+.score.on{display:block}
 .ensenanza{display:none;margin-top:14px;border-top:1px dashed #dbdbdb;padding-top:14px}
 .ensenanza.on{display:block;animation:abre .6s ease}
 @keyframes abre{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
@@ -103,6 +116,8 @@ ul.lis li span{font-size:16px !important}
 <script src="data-b.js"></script>
 <script src="data-c.js"></script>
 <script src="data-d.js"></script>
+<script src="quiz-a.js"></script>
+<script src="quiz-b.js"></script>
 <script src="resumen.js"></script>
 
 <script>
@@ -269,6 +284,12 @@ document.getElementById("btnDone").onclick = toggleDone;
 const getResp = () => JSON.parse(localStorage.getItem("fej_resp_" + L.d) || "{}");
 const saveResp = o => localStorage.setItem("fej_resp_" + L.d, JSON.stringify(o));
 
+/* ESTADO DEL QUIZ (multiple choice) del día: { "3": {sel:"texto", ok:true, first:true, tries:1} } */
+const getQuiz = () => JSON.parse(localStorage.getItem("fej_quiz_" + L.d) || "{}");
+const saveQuiz = o => localStorage.setItem("fej_quiz_" + L.d, JSON.stringify(o));
+let quizEstado = getQuiz();
+function guardarQuiz(){ saveQuiz(quizEstado); }
+
 function renderDone(){
   const hecho = !!getDone()[L.d];
   document.getElementById("btnDone").textContent = hecho ? "❤️" : "🤍";
@@ -304,6 +325,16 @@ function extrasHTML(efs){
   )).join("");
 }
 
+/* Mezcla las opciones al azar (Fisher-Yates). La correcta (posición 0 en quiz-*.js) viaja por su texto. */
+function mezclar(arr){
+  const a = arr.map(x => x);
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
 function render(){
   const deces = getDecs();
   const misResp = getResp();
@@ -318,19 +349,45 @@ function render(){
   if(L.temas) h += L.temas.map(t =>
     card('<h2>✨ ' + escapeHtml(t.tt) + '</h2>' +
       t.ps.map(p => {
+        const clave = L.d + ":" + p.n;
+        const ops = (window.QUIZ && window.QUIZ[clave]) || null;
+        const st = quizEstado[p.n];
+        const respondida = !!(st && st.ok);
         const yaEscribio = !!(misResp[p.n] && misResp[p.n].trim());
+
+        let cuerpo = "";
+        if(ops){
+          const lista = mezclar(ops);
+          const LETRAS = ["A","B","C","D"];
+          cuerpo =
+            '<label class="respLbl">👆 Elegí la respuesta correcta:</label>' +
+            '<div class="quiz" data-q="' + p.n + '">' +
+              lista.map((o,i) => {
+                const marcada = respondida && st.sel === o;
+                return '<button type="button" class="opt' + (marcada ? " ok" : "") + '"' + (respondida ? " disabled" : "") + ' data-t="' + escapeHtml(o) + '"><span class="letra">' + LETRAS[i] + '</span><span>' + escapeHtml(o) + '</span></button>';
+              }).join("") +
+              '<div class="hint" id="hi_' + p.n + '">📖 Volvé a leer el versículo y probá de nuevo</div>' +
+            '</div>';
+        } else {
+          cuerpo =
+            '<label class="respLbl">✍️ Tu respuesta:</label>' +
+            '<div class="motiva" id="mo_' + p.n + '"></div>' +
+            '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>';
+        }
+
         return '<div class="preg">' +
            '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
            '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
-           '<label class="respLbl">✍️ Tu respuesta:</label>' +
-           '<div class="motiva" id="mo_' + p.n + '"></div>' +
-           '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>' +
-           '<div class="ensenanza ' + (yaEscribio ? "on" : "") + '" id="ens_' + p.n + '">' +
-             '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[L.d + ":" + p.n]) || p.des) + '</div>' +
+           cuerpo +
+           '<div class="ensenanza ' + ((respondida || yaEscribio) ? "on" : "") + '" id="ens_' + p.n + '">' +
+             '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des) + '</div>' +
            '</div>' +
          '</div>';
       }).join("")
     )).join("");
+
+  const cq = contarQuiz();
+  if(cq.total) h += '<div class="score" id="scoreBox"></div>';
 
   if(L.extras){
     const visibles = L.d === 20 ? L.extras : L.extras.filter(e => /^Sugerencias/i.test(e.tt));
@@ -369,7 +426,79 @@ function render(){
 
   document.getElementById("app").innerHTML = h;
   renderDone();
+  actualizarScore();
 }
+
+/* Puntaje del día: aciertos a la primera sobre el total de preguntas multiple choice */
+function contarQuiz(){
+  let total = 0, aciertos = 0, respondidas = 0;
+  (L.temas || []).forEach(t => t.ps.forEach(p => {
+    if(window.QUIZ && window.QUIZ[L.d + ":" + p.n]){
+      total++;
+      const st = quizEstado[p.n];
+      if(st && st.ok){
+        respondidas++;
+        if(st.first) aciertos++;
+      }
+    }
+  }));
+  return { total: total, aciertos: aciertos, respondidas: respondidas };
+}
+
+function actualizarScore(){
+  const box = document.getElementById("scoreBox");
+  if(!box) return;
+  const c = contarQuiz();
+  if(!c.total || !c.respondidas) return;
+  let msg = "🎯 Acertadas a la primera: " + c.aciertos + " de " + c.total;
+  if(c.aciertos === c.total) msg += "<br>⭐ ¡Puntaje perfecto! ¡Bendecido estudio!";
+  else msg += "<br><span style='font-weight:400;font-size:14px'>Cada respuesta acertada a la primera suma tu ⭐ — si te equivocás, volvé a intentar sin miedo.</span>";
+  box.innerHTML = msg;
+  box.classList.add("on");
+}
+
+/* Clic en una opción del multiple choice */
+document.getElementById("app").addEventListener("click", function(e){
+  const b = e.target.closest(".opt");
+  if(!b || b.disabled) return;
+  const qDiv = b.closest(".quiz");
+  if(!qDiv) return;
+  const n = +qDiv.getAttribute("data-q");
+  const texto = b.getAttribute("data-t");
+  const ops = window.QUIZ[L.d + ":" + n];
+  if(!ops) return;
+  const correcta = ops[0];
+
+  if(texto === correcta){
+    const primeraVez = !quizEstado[n];
+    if(!quizEstado[n]) quizEstado[n] = { tries: 0 };
+    quizEstado[n].sel = texto;
+    quizEstado[n].ok = true;
+    if(primeraVez) quizEstado[n].first = true;
+    guardarQuiz();
+    qDiv.querySelectorAll(".opt").forEach(o => {
+      o.disabled = true;
+      if(o.getAttribute("data-t") === texto) o.classList.add("ok");
+    });
+    const hi = document.getElementById("hi_" + n);
+    if(hi) hi.classList.remove("on");
+    const ens = document.getElementById("ens_" + n);
+    if(ens && !ens.classList.contains("on")){
+      ens.classList.add("on");
+      ens.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    toast("✅ ¡Correcto!");
+    actualizarScore();
+  } else {
+    if(!quizEstado[n]) quizEstado[n] = { tries: 0 };
+    quizEstado[n].tries = (quizEstado[n].tries || 0) + 1;
+    guardarQuiz();
+    b.classList.add("mal");
+    setTimeout(() => b.classList.remove("mal"), 500);
+    const hi = document.getElementById("hi_" + n);
+    if(hi) hi.classList.add("on");
+  }
+});
 
 function guardarResp(n, texto){
   const r = getResp();
@@ -419,16 +548,20 @@ function enviarRespuestas(ev){
   const nombre = (document.getElementById("decNombre").value || "").trim() || (perfil && perfil.nombre) || "Sin nombre";
   const fecha = document.getElementById("decFecha").value || "";
   const misResp = getResp();
+  const cq = contarQuiz();
   let txt = "📖 *Fe de Jesús — Día " + L.d + "*\n*" + L.t + "*\n\n👤 " + nombre + "\n📅 " + fecha + "\n\n✍️ *Mis respuestas:*\n";
   let hay = false;
   (L.temas || []).forEach(t => t.ps.forEach(p => {
+    const st = quizEstado[p.n];
+    if(st && st.ok){ hay = true; txt += "\n*" + p.n + ". " + p.p + "*\n→ ✅ " + st.sel + "\n"; return; }
     const r = (misResp[p.n] || "").trim();
     if(r){ hay = true; txt += "\n*" + p.n + ". " + p.p + "*\n→ " + r + "\n"; }
   }));
-  if(!hay) txt += "(sin respuestas escritas)\n";
-  txt += "\n✍️ *Mi decisión personal:* " + (deces[L.d] === "si" ? "SÍ" : deces[L.d] === "no" ? "NO" : "sin marcar");
+  if(!hay) txt += "(sin respuestas registradas)\n";
+  if(cq.total) txt += "\n🎯 *Acertadas a la primera:* " + cq.aciertos + " de " + cq.total;
+  txt += "\n\n✍️ *Mi decisión personal:* " + (deces[L.d] === "si" ? "SÍ" : deces[L.d] === "no" ? "NO" : "sin marcar");
   if(typeof window.fejRegistrar === "function"){
-    window.fejRegistrar("Envió sus respuestas", "Lección " + L.d);
+    window.fejRegistrar("Envió sus respuestas", "Lección " + L.d + (cq.total ? " | Quiz " + cq.aciertos + "/" + cq.total : ""));
     if(typeof window.fejRespaldo === "function") window.fejRespaldo();
   }
   window.open("https://wa.me/" + TELEFONO_INSTRUCTOR + "?text=" + encodeURIComponent(txt), "_blank");
