@@ -1,110 +1,97 @@
-========================================================
-FE DE JESÚS — PAQUETE FINAL v5 (subida única y completa)
-========================================================
+==========================================================
+FE DE JESÚS — VERSIÓN 6: ESTUDIO LIBRE Y SIMPLE
+==========================================================
 
-¿POR QUÉ NO VISTE LOS CAMBIOS?
-------------------------------
-Revisamos el sitio en vivo (fe-de-jesus.onrender.com/estudios/) y los
-archivos nuevos NUNCA llegaron a GitHub. En el servidor hay una mezcla
-de versiones:
+QUÉ CAMBIÓ (simplificación total, como pediste)
+------------------------------------------------
+ANTES (v3–v5): modos (autoestudio / con devolución), candados entre
+preguntas, límite de 2 estudios, enlaces de corrección, "esperá a tu
+instructor". Demasiadas vueltas para los hermanos.
 
-  - leccion.html, index.html, instructor.html  → de la v3 (sin "No lo sé")
-  - quiz-a.js y quiz-b.js                      → los ORIGINALES (opciones fáciles)
-  - data.js                                    → anterior a la v2 (sin conexión
-                                                 de instructor, barra rosa vieja)
-  - registro.js                                → original
-  - sw.js                                      → viejo (caché fej-v3)
+AHORA (v6) — una sola forma de estudiar para todos:
 
-Por eso las quiz no se actualizaban y no aparecía la opción de consultar
-al instructor. La solución es subir TODO el contenido de esta carpeta,
-reemplazando todo, en UNA sola pasada.
+  1. EL ESTUDIO ES LIBRE: los 20 días abiertos, las preguntas en
+     cualquier orden, sin candados ni esperas.
+
+  2. RESPONDEN A CIEGAS: al tocar una opción se marca en azul, pero la
+     app NO dice si es correcta (ni verde ni rojo). Así todos piensan
+     su respuesta. Si no saben una, marcan "🤔 No lo sé — quiero que
+     mi instructor me lo explique" (en todas las preguntas).
+
+  3. AL TERMINAR, SE ENVÍA SOLO: cuando responden todo y marcan su
+     decisión personal, tocan "Completar y enviar a mi instructor" y
+     la app abre SOLA el WhatsApp con todas las respuestas, dirigido
+     al número del instructor que les pasó el enlace (si nadie les
+     pasó enlace, llega a tu número principal).
+
+  4. CORRECCIÓN POR WHATSAPP, COMO SIEMPRE: vos recibís las respuestas
+     en tu chat, las revisás y les contestás con tu palabra. Se terminó
+     el ida y vuelta de enlaces de corrección.
+
+  5. DESPUÉS DE ENVIAR, cada pregunta muestra su enseñanza y la
+     respuesta correcta en verde (el alumno ya envió lo suyo; la
+     revisión fina la hacés vos por WhatsApp).
 
 QUÉ HAY EN ESTA CARPETA (9 archivos)
 -------------------------------------
-  data.js          → conexión de instructor, modo revisión, límite de avance,
-                     auto-actualización y versión v5 visible
-  index.html       → inicio con banner de conexión + "v5" en el pie
-  leccion.html     → quiz secuencial + "No lo sé" + modo revisión con
-                     devolución + límite de 2 estudios + "v5" en el pie
-  instructor.html  → panel del instructor: enlaces, modo con devolución,
-                     devolver estudio corregido (día por día o todos juntos)
-  registro.js      → registro con nombre + envío a Google Sheets
-  quiz-a.js        → preguntas días 1-10 con distractores difíciles
-  quiz-b.js        → preguntas días 11-20 con distractores difíciles
-  sw.js            → service worker nuevo (caché fej-v7)
-  INSTRUCCIONES.txt → este archivo (puede subirse o no, no afecta)
+  data.js          → captura el enlace del instructor (sin modos ni límites)
+  index.html       → inicio: los 20 días libres, sin "esperá al instructor"
+  leccion.html     → estudio libre: respuesta a ciegas + "No lo sé" +
+                     envío automático al completar
+  instructor.html  → solo genera y comparte el enlace (sin devoluciones)
+  registro.js      → registro y respaldo a Google Sheets (sin puntaje viejo)
+  quiz-a.js        → preguntas días 1-10 (sin cambios)
+  quiz-b.js        → preguntas días 11-20 (sin cambios)
+  sw.js            → service worker (caché fej-v8)
+  INSTRUCCIONES.txt → este archivo
 
-PASO A PASO DE SUBIDA (GitHub, 5 minutos)
-------------------------------------------
-1. Entrá a github.com con tu usuario y abrí tu repositorio:
-   github.com/josebrizzi/fe-de-jesus
-2. Entrá a la carpeta  public  → después a la carpeta  estudios
-   (IMPORTANTE: tenés que estar DENTRO de public/estudios antes de subir,
-   si subís en otra carpeta los archivos no se ven en la app)
-3. Tocá "Add file" → "Upload files"
-4. ARRASTRÁ LOS 9 ARCHIVOS de esta carpeta, todos juntos de una vez
-   - No cambies los nombres de los archivos
-   - GitHub avisa "This edit overwrites existing files": está bien,
-     eso es exactamente lo que queremos (reemplazar los viejos)
-5. Abajo tocá "Commit changes" (podés escribir "v5" como descripción)
-6. Esperá 2-3 minutos: Render detecta los cambios y publica solo
-   (se puede ver en dashboard.render.com → tu servicio → Events)
+SUBIDA A GITHUB (igual que la última vez, 5 minutos)
+-----------------------------------------------------
+1. Entrá a github.com → tu repositorio josebrizzi/fe-de-jesus
+2. Carpeta public → estudios
+3. "Add file" → "Upload files"
+4. ARRASTRÁ LOS 9 ARCHIVOS juntos (reemplazan a los viejos — está bien)
+5. "Commit changes" (descripción: "v6")
+6. Esperá 2-3 minutos a que Render publique solo
 
-Si subís desde el CELULAR: abrí github.com en el navegador (no la app),
-menú del navegador → "Versión para escritorio", y seguí los mismos pasos.
+Si subís desde el celular: github.com en el navegador →
+"Versión para escritorio" → mismos pasos.
 
-CÓMO VERIFICAR QUE LLEGÓ AL CELULAR
-------------------------------------
+CÓMO VERIFICAR QUE LLEGÓ
+-------------------------
 1. Abrí la app: fe-de-jesus.onrender.com/estudios/
-2. Bajá hasta el pie de la pantalla de inicio: tiene que decir
-      "Fe de Jesús · v5 · JESÚS VIENE PRONTO"
-3. Adentro de cualquier lección, al pie también dice "Fe de Jesús · v5"
-4. Si todavía no dice v5: cerrá la app por completo (desde el multitarea)
-   y volvé a abrir con internet. La app ahora se auto-actualiza sola en
-   cada arranque; no hace falta borrar nada.
+2. El pie de la pantalla de inicio tiene que decir:
+      "Fe de Jesús · v6 · JESÚS VIENE PRONTO"
+3. Entra a cualquier estudio del medio (ej: Día 7) SIN haber hecho los
+   anteriores: tiene que ABRIR normal (antes decía "Estudio bloqueado").
+4. Tocá una opción: se marca en azul, sin verde ni rojo.
+   Abajo aparece "🤔 No lo sé — quiero que mi instructor me lo explique".
+5. Al responder todo, aparece la decisión personal y el botón
+   "📤 Completar y enviar a mi instructor".
 
-QUÉ VA A NOTAR EL ALUMNO (resumen de todo lo nuevo)
-----------------------------------------------------
-- QUIZ MÁS EXIGENTE: opciones que parecen correctas y obligan a pensar.
-  Las respuestas correctas no cambian, solo los distractores.
+QUÉ VEN LOS ALUMNOS QUE YA ESTABAN ESTUDIANDO
+----------------------------------------------
+- Su progreso guardado (días completados, decisiones, respuestas) se
+  conserva. Nada se borra.
+- Los candados desaparecen: pueden entrar a cualquier día.
+- Los días que ya habían completado se muestran en vista de revisión
+  (respuesta correcta en verde + enseñanza abierta).
 
-- MODO ACOMPAÑADO (enlace generado con "Modo con devolución" tildado):
-  · el alumno responde SIN ver si acierta (no hay verde ni rojo)
-  · aparece el botón "🤔 No lo sé — quiero que mi instructor me lo explique"
-  · al terminar envía todo por WhatsApp al instructor
-  · el instructor corrige y le devuelve el enlace de corrección
-  · recién ahí el alumno ve aciertos, errores, enseñanzas y puntaje
-    (ida y vuelta, como querías)
-  · el alumno NO puede adelantar más de 2 estudios sin revisión:
-    ve "⏳ Esperá a tu instructor" con un botón para pedirla por WhatsApp
-  · cada devolución del instructor desbloquea los siguientes estudios
+FLUJO COMPLETO DE PRUEBA (5 minutos)
+-------------------------------------
+1. instructor.html → tus datos + nombre del alumno → "📲 Enviar el
+   enlace por WhatsApp al alumno"
+2. El alumno abre el enlace → responde el Día 1 a ciegas (azul, sin
+   verde/rojo). Si no sabe una, marca "🤔 No lo sé".
+3. Al terminar: escribe su decisión personal → "📤 Completar y enviar
+   a mi instructor" → SE ABRE SOLO WhatsApp con todo adentro.
+4. A TI te llega el mensaje: lo revisás y le respondés por WhatsApp
+   como siempre. Listo. Sin enlaces de corrección ni vueltas.
 
-- MODO AUTOESTUDIO (sin enlace de instructor): igual que siempre, responde
-  y ve la corrección al instante. La opción "No lo sé" no aparece acá
-  porque en este modo la corrección es inmediata — solo tiene sentido en
-  el modo acompañado, donde el instructor es quien corrige.
-
-PRUEBA RÁPIDA (5 minutos, dos teléfonos)
------------------------------------------
-1. Abrí instructor.html en tu teléfono → tildá "Modo con devolución" →
-   generá el enlace y mandáselo a alguien (o abrilo vos en otro navegador)
-2. En ese teléfono: estudiá el Día 1 → no hay verde/rojo, aparece
-   "No lo sé", y el envío por WhatsApp dice "Enviado para corrección"
-3. En tu teléfono: instructor.html → "Devolver un estudio corregido" →
-   Día 1 → mandale el enlace de corrección
-4. En el teléfono del alumno: al abrir ese enlace se revelan aciertos,
-   errores, enseñanzas y puntaje, y quedan habilitados los próximos días
-
-SI ALGO SIGUIERA VIEJO (poco probable)
----------------------------------------
-Chrome del celular: ⋮ → Configuración → Privacidad y seguridad →
-Borrar datos de navegación → tildá SOLO "Imágenes y archivos almacenados
-en caché" → Borrar → abrí la app de nuevo.
-(No hace falta borrar historial ni contraseñas.)
-
-DATOS TÉCNICOS
---------------
-  window.fejVersion = "5"   (en data.js, se muestra en el pie)
-  Caché del service worker  =  "fej-v7"
-  Auto-actualización: en cada arranque la app pide al servidor la versión
-  nueva y se recarga una sola vez si hubo cambios (sessionStorage fej_sw_re).
+NOTAS
+-----
+- El enlace del instructor ahora es más simple:
+  ...estudios/?i=TELEFONO&n=NOMBRE&a=ALUMNO (ya no lleva &m=rev)
+- Los enlaces viejos con &m=rev siguen funcionando: el modo se ignora.
+- Para la próxima versión: window.fejVersion = "6" en data.js,
+  caché "fej-v8" en sw.js, y el pie de pantalla dice v6.
