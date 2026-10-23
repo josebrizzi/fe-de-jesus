@@ -94,10 +94,10 @@ footer{text-align:center;color:var(--texto2);font-size:12px;padding:24px}
 
   <div class="sec">
     <h2>Invitá a otros a estudiar</h2>
-    <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: sus respuestas te llegan a vos</small></a>
+    <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: al terminar te envía el PDF con sus respuestas</small></a>
   </div>
 
-  <footer>Fe de Jesús · v6 · "JESÚS VIENE PRONTO"</footer>
+  <footer>Fe de Jesús · v7 · "JESÚS VIENE PRONTO"</footer>
 </div>
 
 <script src="data.js"></script>
@@ -118,7 +118,7 @@ function escHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
   d.className = "conectado";
   let msg = "🎓 Estás estudiando con <b>" + escHtml(cfg.nombre) + "</b>";
   if(cfg.alumno) msg += ", " + escHtml(cfg.alumno);
-  msg += " — al completar cada estudio, sus respuestas le llegan a tu WhatsApp. ¡Bendecido camino!";
+  msg += " — al completar cada estudio te envía un PDF con sus respuestas y su decisión. ¡Bendecido camino!";
   d.innerHTML = msg;
   const hero = document.querySelector(".hero");
   if(hero && hero.parentNode) hero.parentNode.insertBefore(d, hero);
