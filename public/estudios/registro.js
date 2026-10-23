@@ -1,4 +1,4 @@
-// REGISTRO Y RESPALDO DE ALUMNOS - Fe de Jesús (v7: estudio libre, envío del PDF al instructor)
+// REGISTRO Y RESPALDO DE ALUMNOS - Fe de Jesús (v8: agrega la página de clase en vivo)
 (function(){
   var REGISTRO_URL = "https://script.google.com/macros/s/AKfycbykRiG6IoNWWkGrVv9aHDKv5kZtsbkl11Z-Y2uOXHbqctptrjNeTrlupTgre7mkiGlh/exec";
 

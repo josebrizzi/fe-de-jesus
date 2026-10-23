@@ -11,7 +11,7 @@ const LECCIONES = [];
 // ============ VERSIÓN DE LA APP ============
 /* Se muestra en el pie de pantalla ("Fe de Jesús · v7") para poder verificar
    en el celular que la última versión subida a GitHub llegó al teléfono. */
-window.fejVersion = "7";
+window.fejVersion = "8"; /* v8: agrega envivo.html (clase en vivo por YouTube) */
 
 // ============ ENLACE PERSONALIZADO DE INSTRUCTOR ============
 /* Un instructor comparte: ...estudios/?i=SU_TELEFONO&n=SU_NOMBRE&a=NOMBRE_ALUMNO
