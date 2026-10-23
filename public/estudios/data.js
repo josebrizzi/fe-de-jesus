@@ -9,16 +9,17 @@ const CURSO = {
 const LECCIONES = [];
 
 // ============ VERSIÓN DE LA APP ============
-/* Se muestra en el pie de pantalla ("Fe de Jesús · v6") para poder verificar
+/* Se muestra en el pie de pantalla ("Fe de Jesús · v7") para poder verificar
    en el celular que la última versión subida a GitHub llegó al teléfono. */
-window.fejVersion = "6";
+window.fejVersion = "7";
 
 // ============ ENLACE PERSONALIZADO DE INSTRUCTOR ============
 /* Un instructor comparte: ...estudios/?i=SU_TELEFONO&n=SU_NOMBRE&a=NOMBRE_ALUMNO
    Al abrir ese enlace, la app queda "conectada": al completar cada estudio,
-   las respuestas y la decisión del alumno se envían por WhatsApp al teléfono
-   del instructor que lo envió. El estudio es LIBRE: sin candados, sin modos,
-   sin límites de avance. Sin enlace, todo va al número principal (José). */
+   se genera un PDF con las respuestas y la decisión del alumno, y se comparte
+   por WhatsApp al teléfono del instructor que lo envió. El estudio es LIBRE:
+   sin candados, sin modos, sin límites de avance. Sin enlace, todo va al
+   número principal (José). */
 (function(){
   try{
     var p = new URLSearchParams(location.search);
