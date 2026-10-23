@@ -152,7 +152,7 @@ ul.lis li span{font-size:16px !important}
   <div class="bd" id="shBody"></div>
 </div>
 <div class="toast" id="toast"></div>
-<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · v6</footer>
+<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · v7</footer>
 
 <script src="data.js"></script>
 <script src="data-a.js"></script>
@@ -162,6 +162,7 @@ ul.lis li span{font-size:16px !important}
 <script src="quiz-a.js"></script>
 <script src="quiz-b.js"></script>
 <script src="resumen.js"></script>
+<script src="pdf.js"></script>
 
 <script>
 let API_BASE = null, BIBLE_VERSION = "RVR1960", apiOK = false;
@@ -180,13 +181,14 @@ function nombreInstructor(){
   const c = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
   return (c && c.nombre) ? c.nombre : "";
 }
-/* ===== ESTUDIO LIBRE (v6 — un solo modo para todos) =====
+/* ===== ESTUDIO LIBRE (v7 — un solo modo para todos) =====
    Las preguntas se responden SIN mostrar si son correctas, en cualquier orden
    y sin candados (ni entre preguntas ni entre días). Si el alumno no sabe una,
    marca "No lo sé — quiero que mi instructor me lo explique". Al completar el
-   estudio, las respuestas se envían SOLAS por WhatsApp al instructor conectado
-   (o al número principal si no hay enlace) y recién entonces se abren la
-   enseñanza y las respuestas correctas de ese día. */
+   estudio la app GENERA UN PDF con las respuestas y lo comparte por WhatsApp
+   con el instructor conectado (o con el número principal si no hay enlace);
+   sin respuestas sueltas en el chat: todo va dentro del PDF. Recién después
+   de enviar se abren la enseñanza y las respuestas correctas de ese día. */
 
 async function discover(){
   if(API_BASE !== null) return;
@@ -515,7 +517,7 @@ function htmlDecision(completa){
       '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
     '</div>' +
     '<a class="enviarBtn" id="btnEnviar" onclick="completarYEnviar(event)">' + (getDone()[L.d] ? '📤 Reenviar a mi instructor' : '📤 Completar y enviar a mi instructor') + '</a>' +
-    '<div class="corrn" style="color:var(--azultx)">📨 Al tocar acá el estudio se marca como completado y tus respuestas se envían solas por WhatsApp' + (nombreInstructor() ? " a " + escapeHtml(nombreInstructor()) : "") + '. Recién entonces se abren la enseñanza y las respuestas correctas.</div>' +
+    '<div class="corrn" style="color:var(--azultx)">📄 Al tocar acá el estudio se marca como completado, se arma tu PDF con las respuestas y lo compartís por WhatsApp' + (nombreInstructor() ? " con " + escapeHtml(nombreInstructor()) : " con tu instructor") + '. Recién entonces se abren la enseñanza y las respuestas correctas.</div>' +
   '</section>';
 }
 
@@ -526,7 +528,7 @@ function render(){
   let h = '<div class="hero" style="background:' + L.g + '"><div class="dia">DÍA ' + L.d + ' DE 20</div><div class="em">' + L.e + '</div><h1>' + escapeHtml(L.t) + '</h1></div>';
 
   const insNombre = nombreInstructor();
-  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b> — al completar el estudio, tus respuestas se envían solas a su WhatsApp.<br><span style="font-size:13px">📘 Respondé sin ver las respuestas, en el orden que quieras. Si no sabés una, marcá “🤔 No lo sé”.</span></div>';
+  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b> — al completar el estudio le enviás un <b>PDF con tus respuestas</b> por WhatsApp.<br><span style="font-size:13px">📘 Respondé sin ver las respuestas, en el orden que quieras. Si no sabés una, marcá “🤔 No lo sé”.</span></div>';
 
   if(L.i) h += card('<h2>📖 Introducción</h2><div class="intro">' + linkRefs(L.i) + '</div>');
 
@@ -651,8 +653,10 @@ function decidir(v){
   toast(v === "si" ? "✅ ¡Bendecida decisión!" : "Decisión guardada");
 }
 
-/* Completar y enviar: marca el estudio, abre la revisión y manda las
-   respuestas por WhatsApp al instructor conectado (o al número principal). */
+/* ===== COMPLETAR Y ENVIAR (v7): marca el estudio, arma el PDF con las
+   respuestas y lo comparte por WhatsApp con el instructor conectado
+   (o con el número principal). Sin respuestas en el chat: todo va dentro
+   del PDF. ===== */
 function completarYEnviar(ev){
   if(ev) ev.preventDefault();
   const o = getDone();
@@ -662,44 +666,119 @@ function completarYEnviar(ev){
     o[L.d] = 1;
     setDone(o);
     calcularCorreccion();
-    if(typeof window.fejRespaldo === "function") window.fejRespaldo();
-    toast("❤️ ¡Estudio " + L.d + " completado! Abriendo WhatsApp…");
+    toast("❤️ ¡Estudio " + L.d + " completado! Preparando tu PDF…");
   }
-  enviarRespuestas();
+  const datos = capturarDatos();   /* leo nombre y fecha ANTES de re-renderizar */
   render();
+  if(typeof window.fejRespaldo === "function") window.fejRespaldo();
+  enviarEstudioPdf(datos);
 }
 
-function enviarRespuestas(ev){
-  if(ev) ev.preventDefault();
-  const deces = getDecs();
+/* Nombre y fecha del alumno: primero el campo de la decisión personal,
+   si no el perfil registrado, si no el nombre que vino en el enlace. */
+function capturarDatos(){
   const perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
+  const cfg = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
   const inNombre = document.getElementById("decNombre");
-  const nombre = (inNombre && inNombre.value.trim()) || (perfil && perfil.nombre) || "Sin nombre";
   const inFecha = document.getElementById("decFecha");
-  const fecha = (inFecha && inFecha.value) || "";
+  const nombre = (inNombre && inNombre.value.trim()) || (perfil && perfil.nombre) || (cfg && cfg.alumno) || "Sin nombre";
+  const fecha = (inFecha && inFecha.value) || new Date().toLocaleDateString("es-AR");
+  return { nombre: nombre, fecha: fecha };
+}
+
+/* Junta todo lo necesario para el PDF: preguntas, referencias, opciones,
+   lo que eligió el alumno y sus respuestas escritas. */
+function armarDocPdf(datos){
+  const deces = getDecs();
   const misResp = getResp();
-  let txt = "📖 *Fe de Jesús — Día " + L.d + "*\n*" + L.t + "*\n\n👤 " + nombre + (fecha ? "\n📅 " + fecha : "") + "\n\n✍️ *Mis respuestas (para tu revisión):*\n";
-  let hay = false;
-  (L.temas || []).forEach(t => t.ps.forEach(p => {
-    const st = quizEstado[p.n];
-    if(st && st.sel){
-      hay = true;
-      txt += "\n*" + p.n + ". " + p.p + "*\n→ " + (st.nols ? "🤔 No lo sé — quiero que me lo expliques" : st.sel) + "\n";
-      return;
-    }
-    const r = (misResp[p.n] || "").trim();
-    if(r){ hay = true; txt += "\n*" + p.n + ". " + p.p + "*\n→ " + r + "\n"; }
-  }));
-  if(!hay) txt += "(sin respuestas registradas)\n";
-  txt += "\n✍️ *Mi decisión personal:* " + (deces[L.d] === "si" ? "SÍ" : deces[L.d] === "no" ? "NO" : "sin marcar");
+  const items = [];
+  (L.temas || []).forEach(function(t){
+    t.ps.forEach(function(p){
+      const clave = L.d + ":" + p.n;
+      const ops = (window.QUIZ && window.QUIZ[clave]) || null;
+      if(ops){
+        const st = quizEstado[p.n];
+        items.push({
+          n: p.n,
+          pregunta: p.p,
+          referencia: p.r || "",
+          opciones: ops.slice().sort(function(a, b){ return a.localeCompare(b, "es"); }),
+          elegida: (st && st.sel && !st.nols) ? st.sel : null,
+          nols: !!(st && st.nols)
+        });
+      } else {
+        items.push({ n: p.n, pregunta: p.p, referencia: p.r || "", escrita: (misResp[p.n] || "").trim() });
+      }
+    });
+  });
+  return {
+    dia: L.d,
+    titulo: L.t,
+    alumno: datos.nombre,
+    fecha: datos.fecha,
+    instructor: nombreInstructor(),
+    decision: L.dec ? { texto: L.dec, valor: deces[L.d] || "", nombre: datos.nombre, fecha: datos.fecha } : null,
+    items: items
+  };
+}
+
+/* Genera el PDF y lo envía:
+   1º intenta COMPARTIR el archivo (menú "Compartir" del celular: ahí elige
+      WhatsApp y el chat del instructor);
+   2º si el navegador no puede compartir archivos, DESCARGA el PDF y abre el
+      chat de WhatsApp con un aviso corto para adjuntarlo. */
+async function enviarEstudioPdf(datos){
   const insN = nombreInstructor();
-  if(insN) txt += "\n🎓 *Instructor conectado:* " + insN;
-  txt += "\n— Enviado desde la app Fe de Jesús";
-  if(typeof window.fejRegistrar === "function"){
-    window.fejRegistrar("Envió el estudio para revisión", "Lección " + L.d);
-    if(typeof window.fejRespaldo === "function") window.fejRespaldo();
+  if(!window.fejPdf){ /* pdf.js no llegó a cargar (red vieja): plan C */
+    abrirChat("✅ ¡Terminé el estudio del Día " + L.d + "! Escribime acá y te paso mis respuestas.");
+    return;
   }
-  window.open("https://wa.me/" + telDestino() + "?text=" + encodeURIComponent(txt), "_blank");
+  try{
+    const doc = armarDocPdf(datos);
+    const pdfStr = window.fejPdf.construirPdf(doc);
+    const nombre = window.fejPdf.nombreArchivo(doc);
+    const blob = window.fejPdf.blobDe(pdfStr);
+    let archivo = null;
+    try{ archivo = new File([blob], nombre, { type: "application/pdf" }); }catch(e){}
+    if(archivo && navigator.canShare && navigator.canShare({ files: [archivo] })){
+      try{
+        await navigator.share({
+          files: [archivo],
+          title: "Fe de Jesús — Día " + L.d,
+          text: "✅ ¡Terminé el estudio! Te adjunto el PDF con mis respuestas para tu revisión." + (insN ? " — para " + insN : "")
+        });
+        if(typeof window.fejRegistrar === "function") window.fejRegistrar("Envió el estudio en PDF", "Lección " + L.d);
+        toast("📤 Estudio enviado" + (insN ? " a " + insN : "") + " ✅");
+        return;
+      }catch(err){
+        if(err && err.name === "AbortError"){ toast("Envío cancelado — tocá “Reenviar” cuando quieras"); return; }
+        /* el navegador anunció soporte pero falló: sigo al plan B */
+      }
+    }
+    /* Plan B: descarga el PDF + abre el chat listo para adjuntarlo */
+    descargarPdf(blob, nombre);
+    if(typeof window.fejRegistrar === "function") window.fejRegistrar("Descargó el estudio en PDF", "Lección " + L.d);
+    abrirChat("✅ ¡Terminé el estudio! *Fe de Jesús — Día " + L.d + "*\nEl PDF con mis respuestas quedó descargado en mi celular: te lo adjunto en este chat. 📎");
+  }catch(e){
+    toast("No se pudo generar el PDF — abriendo el chat…");
+    abrirChat("✅ ¡Terminé el estudio del Día " + L.d + "! Escribime acá y te paso mis respuestas.");
+  }
+}
+
+function abrirChat(mensaje){
+  window.open("https://wa.me/" + telDestino() + "?text=" + encodeURIComponent(mensaje), "_blank");
+}
+
+function descargarPdf(blob, nombre){
+  try{
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nombre;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 6000);
+  }catch(e){}
 }
 
 /* ===== AL COMPLETAR: se calcula una sola vez qué respuestas fueron correctas
