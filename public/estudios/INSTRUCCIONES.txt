@@ -1,125 +1,96 @@
 ==========================================================
-FE DE JESÚS — VERSIÓN 8: CLASE EN VIVO (tu pantalla en la web)
+FE DE JESÚS — VOLVEMOS A LA VERSIÓN 7 (sin clase en vivo)
 ==========================================================
 
-QUÉ CAMBIÓ (tu pedido: "mostrar mi pantalla del celular en una página
-web para enseñar en vivo y en directo cómo se usa la app")
+QUÉ PASÓ (tu pedido: "no me gustó la v8, quiero volver a la anterior")
 --------------------------------------------------------------------
-NADA del estudio cambió: todo lo de la v7 sigue igual (estudio libre,
-respuestas a ciegas, PDF al instructor por WhatsApp).
+La v8 agregó la página envivo.html (clase en vivo por YouTube con
+Streamlabs). Nada más. Volvemos a la v7: el estudio libre con PDF
+al instructor por WhatsApp, que ya conocés de memoria.
 
-LO NUEVO es una página nueva: envivo.html
+VOLVER ATRÁS NO ROMPE NADA
+--------------------------------------------------------------------
+- Los alumnos que ya hicieron días: sus respuestas y su avance
+  están guardados en SU PROPIO celular. No se tocan, no se pierde
+  nada.
+- El estudio, el PDF, la decisión personal y el registro son
+  EXACTAMENTE los mismos archivos de la v7 (los quiz ni el pdf.js
+  cambiaron entre v7 y v8).
+- Los celulares se actualizan solos al abrir la app: el service
+  worker borra la caché vieja de la v8 y baja la v7. En un par de
+  minutos todos ven la v7.
 
-  · Tu pantalla del celular se ve EN VIVO en esa página, por YouTube.
-  · Cuando NO estás transmitiendo, la misma página muestra sola tu
-    ÚLTIMA CLASE GRABADA (no hay que editar nada cada semana).
-  · Botón grande "📖 Abrir Fe de Jesús" para que los hermanos abran
-    la app y hagan los pasos al mismo tiempo que vos.
-  · Modo claro/oscuro, igual que toda la app.
-  · En el inicio (index.html) quedó el botón "🔴 Mirar la clase en vivo".
-
-CÓMO SE VE PARA EL HERMANO
----------------------------
-1. Abrís el link:  https://fe-de-jesus.onrender.com/estudios/envivo.html
-2. Si estás AL AIRE: se ve tu pantalla en directo (cartel rojo
-   "EN VIVO AHORA").
-3. Si NO estás al aire: se ve tu última clase grabada (cartel
-   "CLASE GRABADA").
-4. Abajo, el botón azul abre la app para seguir los pasos.
-
-PREPARACIÓN — SE HACE UNA SOLA VEZ (15 minutos + 24 hs de espera)
-------------------------------------------------------------------
-1. CANAL DE YOUTUBE: ✓ YA LO TENÉS — "José Brizzi"
-   (youtube.com/@panchobrizzi8810)
-
-2. ACTIVAR EL DIRECTO: YouTube Studio → Configuración → Canal →
-   Verificación de teléfono. ATENCIÓN: YouTube tarda 24 HORAS en
-   habilitar la transmisión en vivo después de verificar. Hacelo
-   con tiempo a la primera clase.
-
-3. ID DE CANAL PEGADO EN LA APP: ✓ YA ESTÁ HECHO.
-   El canal "José Brizzi" (UCwUtLsCLOCs2FwNgUL01ZTA) ya quedó
-   configurado dentro de envivo.html. No tenés que tocar nada.
-
-4. SUBIR envivo.html A GITHUB (ver más abajo: sube TODO junto).
-
-TRANSMITIR UNA CLASE (cada vez, 2 minutos)
--------------------------------------------
-1. Instalá en tu celular la app gratis STREAMLABS (Play Store).
-2. Abrila → entrá con tu cuenta de YouTube → elegí "Compartir
-   pantalla" (Screen share) como fuente.
-3. Título de la transmisión, ej: "Cómo usar Fe de Jesús · clase 1".
-4. Tocá EN VIVO. En 10-20 segundos tu pantalla ya se está viendo
-   en envivo.html, sin tocar nada más.
-5. Avisá a los hermanos el link de la página (envivo.html) por
-   WhatsApp o lo compartís desde la propia página.
-6. Al terminar la clase, cortás la transmisión en Streamlabs.
-   YouTube guarda la clase automáticamente y la página pasa a
-   mostrarla como "última clase grabada".
-
-Consejo: en YouTube Studio podés marcar el directo como "No listado":
-solo lo ven los que tengan el link de tu página.
-
-QUÉ HAY EN ESTA CARPETA (11 archivos)
+QUÉ HAY EN ESTA CARPETA (10 archivos)
 --------------------------------------
-  envivo.html      → NUEVO: página de la clase en vivo (YouTube)
-  data.js          → ahora dice v8
-  pdf.js           → genera el PDF del estudio completado (igual v7)
-  index.html       → inicio + botón "🔴 Mirar la clase en vivo" (pie v8)
-  leccion.html     → estudio libre + generación y envío del PDF (pie v8)
-  instructor.html  → enlace personal (pie v8)
+  data.js          → dice v7 (sin mención a la clase en vivo)
+  pdf.js           → genera el PDF del estudio completado
+  index.html       → inicio SIN el botón "🔴 Mirar la clase en vivo" (pie v7)
+  leccion.html     → estudio libre + generación y envío del PDF (pie v7)
+  instructor.html  → enlace personal (pie v7)
   registro.js      → registro y respaldo a Google Sheets
   quiz-a.js        → preguntas días 1-10 (sin cambios)
   quiz-b.js        → preguntas días 11-20 (sin cambios)
-  sw.js            → service worker (caché fej-v10, incluye envivo.html)
+  sw.js            → service worker (caché fej-v9, sin envivo.html)
   INSTRUCCIONES.txt → este archivo
 
-SUBIDA A GITHUB (igual que la última vez, 5 minutos)
+SUBIDA A GITHUB — SON 2 PASOS (5 minutos)
 -----------------------------------------------------
+PASO 1 — SUBIR LOS 10 ARCHIVOS (reemplaza a la v8):
+
 1. Entrá a github.com → tu repositorio josebrizzi/fe-de-jesus
 2. Carpeta public → estudios
 3. "Add file" → "Upload files"
-4. ARRASTRÁ LOS 11 ARCHIVOS JUNTOS (los 10 viejos se reemplazan y se
-   AGREGA envivo.html — es la página nueva de la clase en vivo)
-5. "Commit changes" (descripción: "v8")
+4. ARRASTRÁ LOS 10 ARCHIVOS JUNTOS (los de la v8 se reemplazan
+   solos, menos envivo.html — ese se borra en el Paso 2)
+5. "Commit changes" (descripción: "vuelvo a v7")
 6. Esperá 2-3 minutos a que Render publique solo
 
-Si subís desde el celular: github.com en el navegador →
+PASO 2 — BORRAR envivo.html DE GITHUB (¡IMPORTANTE!):
+
+Atención: subir archivos NO borra los que ya están. Si no borrás
+envivo.html, la página de la clase en vivo sigue existiendo (aunque
+nadie la vea, porque el botón desapareció). Para dejarla limpia:
+
+1. En la misma carpeta public → estudios de GitHub, tocá el
+   archivo envivo.html para abrirlo
+2. Arriba a la derecha, tocá el ícono de basura (🗑️ "Delete this
+   file"). Si no lo ves, tocá los tres puntitos "..."
+3. Te pide confirmar: escribí una descripción ("borro envivo") y
+   tocá "Commit changes" (o "Delete file" en el botón final)
+4. Listo: la página de la clase en vivo desaparece de la web.
+
+Si lo hacés desde el celular: github.com en el navegador →
 "Versión para escritorio" → mismos pasos.
 
-CÓMO VERIFICAR QUE LLEGÓ
--------------------------
+CÓMO VERIFICAR QUE VOLVIÓ A LA v7
+----------------------------------
 1. Abrí la app: fe-de-jesus.onrender.com/estudios/
-2. El pie de inicio tiene que decir: "Fe de Jesús · v8"
-   (si sigue diciendo v7, esperá 2 minutos y recargá)
-3. En el inicio tiene que aparecer el botón "🔴 Mirar la clase en
-   vivo" → al tocarlo abre la página nueva.
-4. La página de en vivo ya sale conectada a tu canal "José Brizzi":
-   se ve el reproductor (vacío hasta tu primera clase) y los chips
-   "🔴 En vivo" / "🎥 Última clase".
+2. El pie de la pantalla de inicio tiene que decir:
+      "Fe de Jesús · v7 · JESÚS VIENE PRONTO"
+   (si sigue diciendo v8, esperá 2 minutos, cerrá y volvé a abrir)
+3. En el inicio YA NO tiene que aparecer el botón
+   "🔴 Mirar la clase en vivo".
+4. La dirección fe-de-jesus.onrender.com/estudios/envivo.html
+   tiene que dejar de responder (página no encontrada).
 
-PRUEBA RÁPIDA (5 minutos)
---------------------------
-1. Subí la v8 a GitHub (11 archivos, ver SUBIDA) y esperá 2-3 min.
-2. Abrí envivo.html → se ve el reproductor con tu canal
-   (todavía sin clases hasta la primera transmisión).
-3. Probá Streamlabs 2 minutos con un directo "No listado" →
-   abrí la página en otro teléfono (o en la misma, en otra pestaña)
-   → tu pantalla tiene que aparecer con el cartel rojo "EN VIVO
-   AHORA".
-4. Cortá el directo → recargá la página → queda "CLASE GRABADA" con
-   lo que acabás de transmitir.
+FLUJO DE SIEMPRE (prueba rápida, 5 minutos)
+--------------------------------------------
+1. instructor.html → tus datos + nombre del alumno → "📲 Enviar el
+   enlace por WhatsApp al alumno"
+2. El alumno abre el enlace → responde el Día 1 a ciegas.
+3. Al terminar: decisión personal → "📤 Completar y enviar a mi
+   instructor" → se abre el MENÚ COMPARTIR con el PDF ya armado.
+4. El alumno elige WhatsApp → tu chat → ENVIAR. Te llega el PDF
+   como documento, lo abrís y corregís con tu palabra. 🙌
+5. Probalo vos mismo primero con TU celular.
 
 NOTAS
 -----
-- Tu canal todavía no tiene videos: hasta la primera clase, la
-  página muestra el reproductor vacío. Después de tu primer directo
-  todo queda automático (en vivo al aire, grabada al cortar).
-- El video de la clase necesita internet (es YouTube); el resto de
-  la app sigue funcionando igual, incluso offline.
-- Todo lo del estudio está INTACTO de la v7: PDF, decisión personal,
-  registro, quiz, modo oscuro.
-- No hay que editar nada para cada clase: la página sola muestra el
-  directo cuando estás al aire y la última grabación cuando no.
-- Para la próxima versión: window.fejVersion = "9" en data.js,
-  caché "fej-v11" en sw.js, y el pie de pantalla dice v9.
+- YouTube y Streamlabs quedan sin uso: no hay que borrar ni
+  desactivar nada ahí, simplemente no los uses más. Si querés,
+  desinstalá Streamlabs para liberar espacio en el celular.
+- Si algún hermano guardó el link de envivo.html, la página va a
+  dejar de responder: avisale que entre por el enlace de siempre
+  (fe-de-jesus.onrender.com/estudios/).
+- Para la próxima versión (cuando la haya): window.fejVersion = "9"
+  en data.js, caché "fej-v11" en sw.js, y el pie de pantalla dice v9.
