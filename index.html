@@ -93,11 +93,46 @@ footer{text-align:center;color:var(--texto2);font-size:12px;padding:24px}
   </div>
 
   <div class="sec">
-    <h2>Invitá a otros a estudiar</h2>
-    <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: sus respuestas te llegan a vos</small></a>
+    <h2>Poné a prueba lo aprendido</h2>
+    <a class="card" href="quiz.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#f7971e,#ffd200)">🎮</div>
+      <div class="tx">
+        <div class="d">QUIZ DE REPASO</div>
+        <h3>Poné a prueba tu fe</h3>
+        <div class="stx" id="quizStx">Preguntas de los 20 estudios, con puntaje, estrellas y revisión</div>
+      </div>
+      <div class="he">▶</div>
+    </a>
+    <a class="card" href="apo-quiz.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#f7971e,#ffd200)">🔥</div>
+      <div class="tx">
+        <div class="d">QUIZ DE REPASO · APOCALIPSIS</div>
+        <h3>Poné a prueba tu fe · Apocalipsis</h3>
+        <div class="stx" id="apoQuizStx">Preguntas de las 18 lecciones de Apocalipsis, con puntaje y estrellas</div>
+      </div>
+      <div class="he">▶</div>
+    </a>
   </div>
 
-  <footer>Fe de Jesús · v5 · "JESÚS VIENE PRONTO"</footer>
+  <div class="sec">
+    <h2>Nuevo estudio disponible</h2>
+    <a class="card" href="apocalipsis.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#6a1b9a,#b71c1c)">🔥</div>
+      <div class="tx">
+        <div class="d">ESTUDIO APOCALIPSIS</div>
+        <h3>Las profecías del fin en 18 lecciones</h3>
+        <div class="stx" id="apoStx">De las siete iglesias a la Tierra Nueva, con el mismo formato que conocés</div>
+      </div>
+      <div class="he">▶</div>
+    </a>
+  </div>
+
+  <div class="sec">
+    <h2>Invitá a otros a estudiar</h2>
+    <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: al terminar te envía el PDF con sus respuestas</small></a>
+  </div>
+
+  <footer>Fe de Jesús · v11 · "JESÚS VIENE PRONTO"</footer>
 </div>
 
 <script src="data.js"></script>
@@ -118,8 +153,7 @@ function escHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
   d.className = "conectado";
   let msg = "🎓 Estás estudiando con <b>" + escHtml(cfg.nombre) + "</b>";
   if(cfg.alumno) msg += ", " + escHtml(cfg.alumno);
-  msg += " — tus respuestas y consultas le llegan a su WhatsApp. ¡Bendecido camino!";
-  msg += '<br><span style="font-size:13px">📘 Modo acompañado: podés adelantar hasta 2 estudios sin revisión — después esperás la devolución de tu instructor.</span>';
+  msg += " — al completar cada estudio te envía un PDF con sus respuestas y su decisión. ¡Bendecido camino!";
   d.innerHTML = msg;
   const hero = document.querySelector(".hero");
   if(hero && hero.parentNode) hero.parentNode.insertBefore(d, hero);
@@ -144,7 +178,6 @@ function render(){
   const total = LECCIONES.length;
   const doneMap = done();
   const nDone = Object.keys(doneMap).length;
-  const limite = (typeof window.fejLimite === "function") ? window.fejLimite() : 20;
 
   document.getElementById("pill").textContent = nDone + "/20";
   document.getElementById("barra").style.width = (nDone / 20 * 100) + "%";
@@ -162,17 +195,46 @@ function render(){
 
   document.getElementById("lista").innerHTML = LECCIONES.map(l => {
     const hecho = doneMap[l.d];
-    const esperando = !hecho && l.d > limite;
     return `<a class="card" href="leccion.html?dia=${l.d}">
       <div class="thumb" style="background:${l.g}">${l.e}</div>
       <div class="tx">
         <div class="d">DÍA ${l.d}</div>
         <h3>${l.t}</h3>
-        <div class="stx ${hecho ? "ok" : ""}">${hecho ? "✓ Completado" : esperando ? "⏳ Esperá la revisión de tu instructor" : "Sin completar"}</div>
+        <div class="stx ${hecho ? "ok" : ""}">${hecho ? "✓ Completado" : "Sin completar"}</div>
       </div>
-      <div class="he">${hecho ? "❤️" : esperando ? "⏳" : "🤍"}</div>
+      <div class="he">${hecho ? "❤️" : "🤍"}</div>
     </a>`;
   }).join("");
+
+  /* Quiz de repaso: cuántos estudios tienen 1 o más estrellas */
+  try{
+    const qg = JSON.parse(localStorage.getItem("fej_qgame_v1") || "{}");
+    const ap = LECCIONES.filter(l => qg[l.d] && qg[l.d].stars >= 1).length;
+    const qx = document.getElementById("quizStx");
+    if(qx) qx.textContent = ap
+      ? "⭐ " + ap + " de 20 estudios aprobados — ¿sumás otro?"
+      : "Preguntas de los 20 estudios, con puntaje, estrellas y revisión";
+  }catch(e){}
+
+  /* Quiz de repaso Apocalipsis: cuántas lecciones tienen 1 o más estrellas */
+  try{
+    const aq = JSON.parse(localStorage.getItem("fejapo_qgame_v1") || "{}");
+    const aAp = Object.keys(aq).filter(k => k !== "repaso" && aq[k] && aq[k].stars >= 1).length;
+    const aqx = document.getElementById("apoQuizStx");
+    if(aqx) aqx.textContent = aAp
+      ? "⭐ " + aAp + " de 18 lecciones aprobadas — ¿sumás otra?"
+      : "Preguntas de las 18 lecciones de Apocalipsis, con puntaje y estrellas";
+  }catch(e){}
+
+  /* Estudio Apocalipsis: cuántas lecciones completadas */
+  try{
+    const ad = JSON.parse(localStorage.getItem("fejapo_done") || "{}");
+    const na = Object.keys(ad).length;
+    const ax = document.getElementById("apoStx");
+    if(ax) ax.textContent = na
+      ? "✓ " + na + " de 18 lecciones completadas — seguí el recorrido profético"
+      : "De las siete iglesias a la Tierra Nueva, con el mismo formato que conocés";
+  }catch(e){}
 }
 render();
 </script>

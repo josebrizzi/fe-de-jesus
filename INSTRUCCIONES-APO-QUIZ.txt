@@ -1,0 +1,119 @@
+==========================================================
+FE DE JESÚS — NUEVO COMPLEMENTO: QUIZ DE APOCALIPSIS (v11)
+==========================================================
+
+QUÉ ES ESTO
+-----------
+El mismo QUIZ DE REPASO "Poné a prueba tu fe" que ya tenías para los
+20 estudios de Fe de Jesús... ¡ahora también para el estudio de
+APOCALIPSIS! Las 18 lecciones del Apocalipsis tienen su juego.
+
+CARACTERÍSTICAS (igual que el quiz del curso)
+---------------------------------------------
+- 🎮 Pantalla propia (apo-quiz.html) con las 18 lecciones + un
+  "Repaso general" de 12 preguntas mezcladas de todo el estudio.
+- ✅ Se corrige al instante: la correcta queda en verde y la elegida
+  en rojo (con temblorcito). Cada respuesta trae su enseñanza breve
+  y las referencias se abren en el lector bíblico al tocarlas.
+- ⭐ Puntaje con estrellas: 90% o más = 3 estrellas, 70% = 2,
+  50% = 1. El MEJOR puntaje de cada lección queda guardado en el
+  celular (localStorage) y se ve en el inicio del quiz.
+- 📲 Botón "Compartir mi resultado": abre WhatsApp con el resumen
+  (lección, aciertos, porcentaje, estrellas) al instructor conectado
+  o al número principal, igual que el envío del PDF.
+- 🌙 Modo claro/oscuro, funciona sin conexión (está en el caché del
+  service worker) y respeta el enlace personalizado del instructor.
+- Sin candados: cualquier lección se puede jugar en cualquier
+  momento. Si el alumno todavía no hizo la lección, la tarjeta le
+  muestra un consejo suave ("💡 Hacé primero la Lección N").
+- 🔥 APROVECHA LAS PREGUNTAS QUE YA EXISTEN: el quiz arma sus 144
+  preguntas de opción múltiple directamente desde las lecciones de
+  apo-data-a.js a apo-data-f.js. Si algún día corregís o agregás
+  preguntas en esas lecciones, el quiz las toma solo.
+
+DÓNDE APARECE EL ACCESO (4 lugares)
+-----------------------------------
+1. En el inicio de Apocalipsis (apocalipsis.html): sección nueva
+   "Poné a prueba lo aprendido" con tarjeta naranja 🔥 que muestra
+   cuántas lecciones tienen aprobadas.
+2. En la grilla "Herramientas" de apocalipsis.html y adentro de cada
+   lección de Apocalipsis (apo-leccion.html): botón nuevo
+   "🎮 Quiz de Apocalipsis".
+3. En el inicio del app (index.html): tarjeta nueva
+   "🔥 Poné a prueba tu fe · Apocalipsis" junto a la del curso.
+4. En el quiz del curso (quiz.html): tarjeta "🔥 Quiz de Apocalipsis".
+   Y directo por enlace: fe-de-jesus.onrender.com/estudios/apo-quiz.html
+   (apo-quiz.html?l=5 abre directo el quiz de la Lección 5).
+
+ARCHIVOS NUEVOS (1)
+-------------------
+  apo-quiz.html      → el juego de quiz de Apocalipsis (página nueva)
+
+ARCHIVOS MODIFICADOS (9)
+------------------------
+  apocalipsis.html → sección "Poné a prueba lo aprendido" +
+                     contador de aprobados + pie v11
+  index.html       → tarjeta "Poné a prueba tu fe · Apocalipsis" +
+                     contador + pie v11
+  quiz.html        → tarjeta "Quiz de Apocalipsis" en su inicio +
+                     pie v11
+  acerca.js        → botón "🎮 Quiz de Apocalipsis" en la grilla de
+                     herramientas de las páginas de Apocalipsis
+  sw.js            → caché nueva "fej-v14" + precachea apo-quiz.html
+  data.js          → window.fejVersion = "11"
+  leccion.html     → solo el pie (v10 → v11)
+  instructor.html  → solo el pie (v10 → v11)
+  apo-leccion.html → solo el pie (v10 → v11)
+
+SUBIDA A GITHUB — PASO A PASO (5 minutos)
+-----------------------------------------
+1. Entrá a github.com → tu repositorio josebrizzi/fe-de-jesus
+2. Carpeta public → estudios
+3. "Add file" → "Upload files"
+4. ARRASTRÁ LOS 10 ARCHIVOS JUNTOS (apo-quiz.html y los 9
+   modificados). Los que ya existen se reemplazan solos;
+   apo-quiz.html se agrega.
+5. "Commit changes" (descripción: "v11 quiz de Apocalipsis")
+6. Esperá 2-3 minutos a que Render publique solo.
+
+IMPORTANTE: no hay que borrar ningún archivo para esta versión.
+Solo se sube y listo.
+
+CÓMO VERIFICAR QUE LLEGÓ LA v11
+-------------------------------
+1. Abrí la app: fe-de-jesus.onrender.com/estudios/apocalipsis.html
+2. En el inicio tiene que aparecer la sección
+   "PONÉ A PRUEBA LO APRENDIDO" con la tarjeta naranja 🔥.
+3. El pie de pantalla tiene que decir:
+      "Fe de Jesús · Apocalipsis · v11"
+   (si sigue diciendo v10, esperá 2 minutos, cerrá y volvé a abrir
+   la app: el service worker baja la versión nueva solo).
+4. Tocá la tarjeta 🔥 → tiene que abrir el quiz con las 18 lecciones
+   y el repaso general. Jugá la Lección 1 para probar.
+5. En la app del curso (index.html) también aparece la tarjeta
+   "🔥 Poné a prueba tu fe · Apocalipsis".
+
+QUÉ NO CAMBIÓ (tranquilo)
+-------------------------
+- El estudio del día (a ciegas), las respuestas escritas y el PDF al
+  instructor: EXACTAMENTE igual que antes.
+- El progreso de los alumnos (lecciones hechas, respuestas,
+  decisiones) no se toca: el quiz usa una clave nueva de memoria
+  ("fejapo_qgame_v1") que no pisa nada de lo anterior. El quiz del
+  curso sigue usando su propia clave ("fej_qgame_v1").
+- El quiz de los 20 estudios de Fe de Jesús sigue funcionando igual
+  que siempre en quiz.html.
+- Los alumnos que ya tienen la app guardada se actualizan solos al
+  abrir: el service worker borra la caché vieja y baja la fej-v14.
+
+DATOS TÉCNICOS (por si preguntás)
+---------------------------------
+- Son 144 preguntas de opción múltiple: todas las de las 18
+  lecciones de Apocalipsis (cada pregunta ya traía sus opciones
+  dentro de apo-data-*.js).
+- La correcta sigue siendo la PRIMERA opción de cada lista; se
+  mezclan al mostrarlas (Fisher-Yates, igual que hace el resto).
+- El visor bíblico del quiz usa la misma API del servidor que las
+  lecciones: RVR1960, con rango de versículos y modo sin conexión.
+- Estrellas: 90%+ = 3, 70%+ = 2, 50%+ = 1. Se guarda solo el MEJOR
+  puntaje de cada lección.

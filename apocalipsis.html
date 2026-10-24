@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apocalipsis — Fe de Jesús</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --fondo:#f0f2f5;--panel:#ffffff;--panel2:#f0f2f5;--borde:#e4e6eb;--inputb:#ccd0d5;
+  --texto:#050505;--texto2:#65676b;
+  --azul:#1877f2;--verde:#31a24c;
+  --hb1:#6a1b9a;--hb2:#b71c1c;
+  --hdrbg:rgba(255,255,255,.95);--hdrb:#e4e6eb
+}
+html.modo-oscuro{
+  --fondo:#18191a;--panel:#242526;--panel2:#3a3b3c;--borde:#3e4042;--inputb:#606366;
+  --texto:#e4e6eb;--texto2:#b0b3b8;
+  --azul:#2d88ff;--verde:#2fae54;
+  --hb1:#8e24aa;--hb2:#c62828;
+  --hdrbg:rgba(24,25,26,.95);--hdrb:#3e4042
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:40px;transition:background .25s,color .25s}
+.wrap{max-width:600px;margin:0 auto}
+header{position:sticky;top:0;background:var(--hdrbg);backdrop-filter:blur(12px);border-bottom:1px solid var(--hdrb);z-index:20}
+.hrow{display:flex;align-items:center;gap:10px;padding:12px 16px}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--hb1),var(--hb2));display:flex;align-items:center;justify-content:center;padding:2.5px}
+.avatar span{background:var(--panel);width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px}
+.logo{font-weight:800;font-size:20px;line-height:1.1}
+.logo small{display:block;font-weight:400;font-size:12px;color:var(--texto2)}
+.tema{background:var(--panel);border:1px solid var(--inputb);border-radius:50%;width:36px;height:36px;font-size:17px;cursor:pointer;margin-left:auto}
+.pill{background:var(--panel);border:1px solid var(--inputb);border-radius:20px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--texto)}
+.stories{display:flex;gap:14px;overflow-x:auto;padding:14px 16px;background:var(--panel);border-bottom:1px solid var(--borde);scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.st{flex:0 0 auto;text-align:center;cursor:pointer}
+.ring{width:58px;height:58px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--hb1),var(--hb2))}
+.ring.done{background:var(--verde)}
+.ring span{width:100%;height:100%;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 0 1px var(--inputb)}
+.st small{display:block;font-size:10px;color:var(--texto2);margin-top:4px}
+.hero{margin:16px;border-radius:18px;overflow:hidden;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.18);background:linear-gradient(135deg,var(--hb1),var(--hb2))}
+.hero .in{padding:26px 22px}
+.hero h1{font-size:27px;font-weight:800}
+.hero p{opacity:.92;margin-top:6px;font-size:14px;line-height:1.55}
+.bar{height:6px;background:rgba(255,255,255,.3);border-radius:4px;margin-top:16px;overflow:hidden}
+.bar i{display:block;height:100%;background:#fff;border-radius:4px;transition:width .4s}
+.btn{display:inline-block;margin-top:14px;background:#fff;color:#b71c1c;border:none;border-radius:10px;padding:12px 22px;font-size:15px;font-weight:700;cursor:pointer}
+.btn:active{transform:scale(.97)}
+.sec{padding:0 16px}
+.sec h2{font-size:13px;color:var(--texto2);margin:20px 4px 10px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+.card{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer;text-decoration:none;color:var(--texto)}
+.card:active{transform:scale(.98)}
+.thumb{width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;flex:0 0 auto}
+.tx{flex:1;min-width:0}
+.d{font-size:11px;color:var(--texto2);font-weight:700;letter-spacing:.5px}
+.card h3{font-size:15px;line-height:1.3;margin-top:2px}
+.stx{font-size:12px;margin-top:3px;color:var(--texto2)}
+.ok{color:var(--verde);font-weight:700}
+.he{font-size:18px}
+footer{text-align:center;color:var(--texto2);font-size:12px;padding:24px}
+.nota{background:#fff8e1;border:1px solid #f0e0a0;border-left:4px solid #b8860b;border-radius:12px;padding:12px 14px;margin:12px 16px 0;font-size:14px;line-height:1.55;color:#5c4a00}
+</style>
+<script>try{if(localStorage.getItem("fej_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="hrow">
+      <div class="avatar"><span>🔥</span></div>
+      <div class="logo">Apocalipsis<small>Estudio profético · 18 lecciones</small></div>
+      <button class="tema" id="btnTema" title="Modo claro / oscuro">🌙</button>
+      <div class="pill" id="pill">0/18</div>
+    </div>
+  </header>
+
+  <div class="stories" id="stories"></div>
+
+  <div class="hero">
+    <div class="in">
+      <h1>La revelación de Jesús</h1>
+      <p>Recorré los 22 capítulos del libro de Apocalipsis en 18 lecciones: de las siete iglesias a la Tierra Nueva. Tocá cualquier referencia y leé el versículo al instante.</p>
+      <div class="bar"><i id="barra" style="width:0%"></i></div>
+      <button class="btn" id="btnContinuar">▶ Comenzar</button>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>Índice del estudio</h2>
+    <div id="lista"></div>
+  </div>
+
+  <div class="sec">
+    <h2>Poné a prueba lo aprendido</h2>
+    <a class="card" href="apo-quiz.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#f7971e,#ffd200)">🎮</div>
+      <div class="tx">
+        <div class="d">QUIZ DE REPASO · APOCALIPSIS</div>
+        <h3>Poné a prueba tu fe</h3>
+        <div class="stx" id="apoQuizStx">Preguntas de las 18 lecciones, con puntaje, estrellas y revisión</div>
+      </div>
+      <div class="he">▶</div>
+    </a>
+  </div>
+
+  <div class="sec">
+    <h2>Otros cursos</h2>
+    <a class="card" href="index.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#1877f2,#0d4dad)">📖</div>
+      <div class="tx">
+        <div class="d">CURSO FE DE JESÚS</div>
+        <h3>Volver a los 20 estudios de la Fe de Jesús</h3>
+        <div class="stx" id="fejStx">De la Biblia al bautismo, un estudio por día</div>
+      </div>
+      <div class="he">▶</div>
+    </a>
+  </div>
+
+  <footer>Fe de Jesús · Apocalipsis · v11</footer>
+</div>
+
+<script src="data.js"></script>
+<script src="apo-data-a.js"></script>
+<script src="apo-data-b.js"></script>
+<script src="apo-data-c.js"></script>
+<script src="apo-data-d.js"></script>
+<script src="apo-data-e.js"></script>
+<script src="apo-data-f.js"></script>
+
+<script>
+const done = () => JSON.parse(localStorage.getItem("fejapo_done") || "{}");
+
+function escHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+/* ===== MODO CLARO / OSCURO ===== */
+function aplicarIconoTema(){
+  const b = document.getElementById("btnTema");
+  if(b) b.textContent = document.documentElement.classList.contains("modo-oscuro") ? "☀️" : "🌙";
+}
+function toggleTema(){
+  const oscuro = document.documentElement.classList.toggle("modo-oscuro");
+  try{ localStorage.setItem("fej_tema", oscuro ? "oscuro" : "claro"); }catch(e){}
+  aplicarIconoTema();
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", oscuro ? "#18191a" : "#6a1b9a");
+}
+document.getElementById("btnTema").onclick = toggleTema;
+aplicarIconoTema();
+
+function render(){
+  const total = LECCIONES_APO.length; /* 18 */
+  const doneMap = done();
+  const nDone = Object.keys(doneMap).length;
+
+  document.getElementById("pill").textContent = nDone + "/" + total;
+  document.getElementById("barra").style.width = (nDone / total * 100) + "%";
+  document.getElementById("btnContinuar").textContent = nDone ? "▶ Continuar" : "▶ Comenzar";
+  document.getElementById("btnContinuar").onclick = () => {
+    const prox = LECCIONES_APO.find(l => !doneMap[l.d]) || LECCIONES_APO[0];
+    location.href = "apo-leccion.html?l=" + prox.d;
+  };
+
+  document.getElementById("stories").innerHTML = LECCIONES_APO.map(l =>
+    `<div class="st" onclick="location.href='apo-leccion.html?l=${l.d}'">
+       <div class="ring ${doneMap[l.d] ? "done" : ""}"><span>${l.e}</span></div>
+       <small>L ${l.d}</small>
+     </div>`).join("");
+
+  document.getElementById("lista").innerHTML = LECCIONES_APO.map(l => {
+    const hecho = doneMap[l.d];
+    return `<a class="card" href="apo-leccion.html?l=${l.d}">
+      <div class="thumb" style="background:${l.g}">${l.e}</div>
+      <div class="tx">
+        <div class="d">LECCIÓN ${l.d}</div>
+        <h3>${escHtml(l.t)}</h3>
+        <div class="stx ${hecho ? "ok" : ""}">${hecho ? "✓ Completado" : "Sin completar"}</div>
+      </div>
+      <div class="he">${hecho ? "❤️" : "🤍"}</div>
+    </a>`;
+  }).join("");
+
+  /* Quiz de repaso de Apocalipsis: cuántas lecciones tienen 1 o más estrellas */
+  try{
+    const qg = JSON.parse(localStorage.getItem("fejapo_qgame_v1") || "{}");
+    const ap = LECCIONES_APO.filter(l => qg[l.d] && qg[l.d].stars >= 1).length;
+    const qx = document.getElementById("apoQuizStx");
+    if(qx) qx.textContent = ap
+      ? "⭐ " + ap + " de 18 lecciones aprobadas — ¿sumás otra?"
+      : "Preguntas de las 18 lecciones, con puntaje, estrellas y revisión";
+  }catch(e){}
+
+  /* Progreso del curso Fe de Jesús en la tarjeta de volver */
+  try{
+    const fd = JSON.parse(localStorage.getItem("fej_done") || "{}");
+    const n = Object.keys(fd).length;
+    const fx = document.getElementById("fejStx");
+    if(fx) fx.textContent = n ? "Llevás " + n + " de 20 estudios completados" : "De la Biblia al bautismo, un estudio por día";
+  }catch(e){}
+}
+render();
+</script>
+</body>
+</html>
