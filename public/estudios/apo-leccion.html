@@ -152,7 +152,7 @@ ul.lis li span{font-size:16px !important}
   <div class="bd" id="shBody"></div>
 </div>
 <div class="toast" id="toast"></div>
-<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · Apocalipsis · v12</footer>
+<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · Apocalipsis · v13</footer>
 
 <script src="data.js"></script>
 <script src="apo-data-a.js"></script>
@@ -819,50 +819,5 @@ render();
 discover();
 </script>
 
-<script>
-/* ORACIÓN SENCILLA — una por día, según el tema */
-(function(){
-  function colocar(){
-    var app = document.getElementById("app");
-    if(!app || !app.querySelector(".hero")) return false;
-
-    var temas = {
-      1:"entender cómo llegó hasta nosotros el libro del Apocalipsis",
-      2:"guardar el primer amor y aceptar el consejo a las siete iglesias",
-      3:"adorar al que está sentado en el trono y confiar en el Cordero",
-      4:"confiar en que Dios gobierna la historia a través de los sellos",
-      5:"prepararme para recibir el sello de Dios",
-      6:"atender las advertencias de las trompetas y estar listo",
-      7:"asimilar el mensaje profético y confiar aun en la decepción",
-      8:"amar la Biblia como los dos testigos fieles",
-      9:"pertenecer al remanente que guarda los mandamientos y la fe de Jesús",
-      10:"adorar solo a Dios y no a la bestia",
-      11:"mantenerme fiel a la Ley de Dios frente a la marca",
-      12:"responder a los tres mensajes angélicos con obediencia",
-      13:"morar al abrigo del Altísimo durante las plagas",
-      14:"salir de Babilonia antes de su caída",
-      15:"esperar con alegría el regreso visible de Jesús",
-      16:"vivir con Cristo durante el milenio",
-      17:"tener mi nombre inscrito en el libro de la vida",
-      18:"prepararme para vivir en la Tierra Nueva con Jesús"
-    };
-
-    var d = +(new URLSearchParams(location.search).get("dia")) || 1;
-    var tema = temas[d] || "entender las verdades de este estudio";
-
-    var card = document.createElement("section");
-    card.className = "card oracion";
-    card.innerHTML =
-      '<h2>🙏 Orá antes de comenzar:</h2>' +
-      '<div class="pedir">"Padre celestial, en el nombre de Jesús, te pido que tu Espíritu Santo me ayude a ' + tema + '. Amén."</div>';
-
-    var hero = app.querySelector(".hero");
-    if(hero && hero.nextSibling) app.insertBefore(card, hero.nextSibling);
-    else app.insertBefore(card, app.firstChild);
-    return true;
-  }
-  var timer = setInterval(function(){ if(colocar()) clearInterval(timer); }, 250);
-})();
-</script>
 </body>
 </html>
