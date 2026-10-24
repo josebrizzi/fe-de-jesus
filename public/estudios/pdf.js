@@ -142,8 +142,8 @@ function construirPdf(doc, medidorExt){
   }
 
   /* ================= ENCABEZADO ================= */
-  escribir([{ t: "FE DE JESÚS  ·  ESTUDIO PARA REVISIÓN", x1: MX, size: 8.5, bold: true, color: AZUL, lh: 12 }]);
-  escribir([{ t: "DÍA " + doc.dia + " DE 20", x1: MX, size: 10, bold: true, color: GRIS, lh: 14, gapAntes: 10 }]);
+  escribir([{ t: (doc.curso ? doc.curso.toUpperCase() : "FE DE JESÚS") + "  ·  ESTUDIO PARA REVISIÓN", x1: MX, size: 8.5, bold: true, color: AZUL, lh: 12 }]);
+  escribir([{ t: (doc.curso ? "LECCIÓN " : "DÍA ") + doc.dia + (doc.curso ? " DE 18" : " DE 20"), x1: MX, size: 10, bold: true, color: GRIS, lh: 14, gapAntes: 10 }]);
   escribir([{ t: doc.titulo || "", x1: MX, size: 17, bold: true, color: NEGRO, lh: 23 }]);
   escribir([{ regla: true, grosor: 1.8, color: AZUL, gapAntes: 4 }]);
 
@@ -215,7 +215,7 @@ function construirPdf(doc, medidorExt){
   /* ================= PIE DE PÁGINA (una vez conocido el total) ================= */
   var total = paginas.length;
   paginas.forEach(function(p, i){
-    var txt = latin1("Fe de Jesús  ·  Día " + doc.dia + "  ·  Página " + (i + 1) + " de " + total);
+    var txt = latin1((doc.curso || "Fe de Jesús") + "  ·  " + (doc.curso ? "Lección " : "Día ") + doc.dia + "  ·  Página " + (i + 1) + " de " + total);
     var w = med(txt, 8, false, false);
     var x = Math.max(MX, (A4_W - w) / 2);
     p.ops.push("BT /F1 8 Tf 0.55 0.57 0.60 rg 1 0 0 1 " + x.toFixed(2) + " 34 Tm (" + esc(txt) + ") Tj ET");
@@ -261,7 +261,7 @@ function nombreArchivo(doc){
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  /* María -> Maria */
       .replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   }
-  var partes = ["Fe-de-Jesus-Dia-" + num2(doc.dia || 0)];
+  var partes = [(doc.curso ? "Apocalipsis-Leccion-" : "Fe-de-Jesus-Dia-") + num2(doc.dia || 0)];
   if(doc.alumno && doc.alumno !== "Sin nombre"){
     var a = lim(doc.alumno);
     if(a) partes.push(a);

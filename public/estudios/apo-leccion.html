@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apocalipsis — Fe de Jesús</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --fondo:#f0f2f5;--panel:#ffffff;--panel2:#f0f2f5;--borde:#e4e6eb;--inputb:#ccd0d5;
+  --texto:#050505;--texto2:#65676b;
+  --azul:#1877f2;--azulh:#166fe5;--azulsoft:#e7f3ff;--azultx:#1877f2;
+  --verde:#31a24c;--verdesoft:#e7f6ec;
+  --rojo:#e41e3f;--rojosoft:#ffe7ec;
+  --btnoffbg:#e4e6eb;--btnofftx:#bcc0c4;
+  --hdrbg:rgba(255,255,255,.95);--hdrb:#e4e6eb;
+  --toastbg:#050505;--toasttx:#ffffff;
+  --orb1:#fff8e1;--orb2:#fff3cd;--orbord:#f0e0a0;--orah:#b8860b;--oratx:#5c4a00;
+  --sombra:0 8px 24px rgba(0,0,0,.18)
+}
+html.modo-oscuro{
+  --fondo:#18191a;--panel:#242526;--panel2:#3a3b3c;--borde:#3e4042;--inputb:#606366;
+  --texto:#e4e6eb;--texto2:#b0b3b8;
+  --azul:#2d88ff;--azulh:#3a93ff;--azulsoft:rgba(45,136,255,.16);--azultx:#7ab3ff;
+  --verde:#2fae54;--verdesoft:rgba(47,174,84,.18);
+  --rojo:#ff6673;--rojosoft:rgba(228,30,63,.16);
+  --btnoffbg:#3a3b3c;--btnofftx:#8a8d91;
+  --hdrbg:rgba(24,25,26,.95);--hdrb:#3e4042;
+  --toastbg:#4a4b4d;--toasttx:#ffffff;
+  --orb1:#332c15;--orb2:#3d3418;--orbord:#5c4d24;--orah:#e8c766;--oratx:#e8d48b;
+  --sombra:0 8px 24px rgba(0,0,0,.5)
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:90px;transition:background .25s,color .25s}
+header{position:sticky;top:0;background:var(--hdrbg);backdrop-filter:blur(12px);border-bottom:1px solid var(--hdrb);z-index:20;display:flex;align-items:center;gap:12px;padding:10px 14px}
+header button{background:none;border:none;font-size:22px;cursor:pointer;color:var(--texto)}
+header .t{flex:1;font-weight:700;font-size:20px}
+#btnTema{font-size:19px}
+#btnDone{font-size:24px}
+.wrap{max-width:620px;margin:0 auto;padding:0 14px}
+.hero{margin:16px 0;border-radius:18px;color:#fff;padding:30px 22px;box-shadow:var(--sombra)}
+.hero .dia{font-size:16px;font-weight:800;letter-spacing:2px;opacity:.9}
+.hero .em{font-size:52px;margin:6px 0}
+.hero h1{font-size:29px;font-weight:800;line-height:1.2}
+.card{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:18px 16px;margin:12px 0}
+.card h2{font-size:23px;margin-bottom:10px}
+.intro{font-size:20px;line-height:1.7;color:var(--texto2)}
+.preg{border-left:3px solid var(--azul);padding-left:12px;margin:20px 0}
+.preg.aparece{animation:aparece .5s ease}
+@keyframes aparece{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.lockrow{display:flex;align-items:center;gap:8px;background:var(--panel);border:1.5px dashed var(--borde);border-radius:12px;padding:12px 14px;margin:20px 0;color:var(--texto2);font-size:15px;font-weight:600}
+.pnum{display:inline-flex;width:27px;height:27px;border-radius:50%;background:var(--azul);color:#fff;font-size:14px;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:middle}
+.pq{font-size:20px;font-weight:700;display:inline;vertical-align:middle}
+.chips{margin:8px 0;display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--azulsoft);color:var(--azultx);border:none;border-radius:16px;padding:7px 15px;font-size:17px;font-weight:600;cursor:pointer}
+.chip:active{filter:brightness(.93)}
+.respTa{width:100%;box-sizing:border-box;min-height:70px;padding:12px;border:1.5px solid var(--inputb);border-radius:10px;font-size:17px;font-family:inherit;line-height:1.5;resize:vertical;background:var(--panel2);color:var(--texto)}
+.respTa:focus{outline:none;border-color:var(--azul);background:var(--panel)}
+.respLbl{font-size:16px;font-weight:700;color:var(--texto);margin-top:12px;display:block}
+.motiva{font-size:14px;color:var(--verde);font-weight:600;margin-top:5px;display:none}
+.motiva.on{display:block}
+.quiz{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.opt{width:100%;text-align:left;background:var(--panel);border:1.5px solid var(--inputb);border-radius:12px;padding:12px 14px;font-size:17px;font-family:inherit;line-height:1.45;cursor:pointer;color:var(--texto);display:flex;gap:10px;align-items:flex-start;transition:background .15s,border-color .15s}
+.opt .letra{flex:none;width:26px;height:26px;border-radius:50%;background:var(--panel2);color:var(--texto2);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt:active{background:var(--azulsoft)}
+.opt.ok{background:var(--verdesoft);border-color:var(--verde)}
+.opt.ok .letra{background:var(--verde);color:#fff}
+.opt.mal{animation:treme .45s;border-color:var(--rojo);background:var(--rojosoft)}
+.opt.sel{border-color:var(--azul);background:var(--azulsoft)}
+.opt.sel .letra{background:var(--azul);color:#fff}
+.opt.err{border-color:var(--rojo);background:var(--rojosoft)}
+.opt.err .letra{background:var(--rojo);color:#fff}
+.opt.nolsb .letra{background:var(--panel2);font-size:15px}
+.nolsb.sel{border-color:var(--azul);background:var(--azulsoft)}
+.corrn{font-size:14px;font-weight:700;color:var(--verde);margin-top:8px}
+.opt:disabled{cursor:default}
+@keyframes treme{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.hint{font-size:14px;color:var(--rojo);font-weight:600;margin-top:2px;display:none}
+.hint.on{display:block}
+.score{background:var(--azulsoft);border:1px solid var(--borde);border-radius:14px;padding:16px;margin:14px 0;font-weight:700;font-size:17px;text-align:center;display:none}
+.score.on{display:block}
+.ensenanza{display:none;margin-top:14px;border-top:1px dashed var(--borde);padding-top:14px}
+.ensenanza.on{display:block;animation:abre .6s ease}
+@keyframes abre{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.des{font-size:20px;line-height:1.72;color:var(--texto)}
+a.ref{color:var(--azultx);text-decoration:none;font-weight:600;cursor:pointer;border-bottom:1px dotted var(--azultx)}
+ul.lis{list-style:none;margin-top:6px}
+ul.lis li{padding:9px 0;border-bottom:1px solid var(--borde);font-size:20px;line-height:1.6}
+ul.lis li:last-child{border:none}
+ul.lis li span{font-size:16px !important}
+.colwrap{display:flex;gap:12px;flex-wrap:wrap}
+.colwrap>div{flex:1;min-width:140px}
+.colwrap h4{font-size:18px;margin-bottom:6px;color:var(--texto2)}
+.dec{background:var(--panel);border:2px solid var(--azul);border-radius:14px;padding:18px 16px;margin:12px 0}
+.dec.bloqueada{border-style:dashed;border-color:var(--borde)}
+.dec h2{font-size:21px}
+.dec p{font-size:20px;line-height:1.6;margin:10px 0;font-weight:600}
+.dec label{display:block;font-weight:700;font-size:15px;color:var(--texto2);margin:12px 0 4px}
+.dec input{width:100%;box-sizing:border-box;padding:12px;border:1.5px solid var(--inputb);border-radius:10px;font-size:17px;font-family:inherit;color:var(--texto);background:var(--panel)}
+.dec input:focus{outline:none;border-color:var(--azul)}
+.dbtns{display:flex;gap:10px;margin-top:14px}
+.dbtns button{flex:1;border:2px solid var(--inputb);background:var(--panel);border-radius:10px;padding:12px;font-size:20px;font-weight:800;cursor:pointer;color:var(--texto2)}
+.dbtns button.on-si{background:var(--verde);border-color:var(--verde);color:#fff}
+.dbtns button.on-no{background:#8a8d91;border-color:#8a8d91;color:#fff}
+.enviarBtn{width:100%;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;background:var(--verde);color:#fff;margin-top:14px;text-decoration:none;display:block;text-align:center}
+.certBtn{width:100%;border:none;border-radius:12px;padding:15px;font-size:17px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff;margin-top:12px;text-decoration:none;display:block;text-align:center}
+.cplt{width:100%;border:none;border-radius:12px;padding:15px;font-size:20px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff;margin:8px 0}
+.cplt.on{background:var(--verde)}
+.cplt:disabled{background:var(--btnoffbg);color:var(--btnofftx);cursor:not-allowed}
+.navg{display:flex;gap:10px;margin:20px 0}
+.navg button{flex:1;border:1px solid var(--inputb);background:var(--panel);border-radius:12px;padding:14px;font-size:18px;font-weight:700;cursor:pointer;color:var(--texto)}
+.navg button.prim{background:var(--azul);border-color:var(--azul);color:#fff}
+.navg button:disabled{opacity:.35;cursor:default}
+.fin20{background:linear-gradient(135deg,#0d4dad,#1877f2);color:#fff;border-radius:14px;padding:22px;text-align:center;margin:12px 0;font-size:18px;font-weight:700}
+.oracion{background:linear-gradient(135deg,var(--orb1),var(--orb2));border:1px solid var(--orbord);border-left:4px solid var(--orah)}
+.oracion h2{color:var(--orah);font-size:21px}
+.oracion .pedir{font-size:19px;line-height:1.7;color:var(--oratx);font-style:italic;margin:8px 0}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+#overlay.on{opacity:1;pointer-events:auto}
+#sheet{position:fixed;left:0;right:0;bottom:0;max-height:75vh;background:var(--panel);border-radius:20px 20px 0 0;transform:translateY(100%);transition:.3s;z-index:51;display:flex;flex-direction:column}
+#sheet.on{transform:translateY(0)}
+#sheet .hd{padding:10px 18px 6px;text-align:center}
+#sheet .hd i{display:block;width:40px;height:4px;border-radius:2px;background:var(--borde);margin:0 auto}
+#sheet h3{font-size:26px;text-align:center;margin:6px 0 2px;color:var(--texto)}
+#sheet .vv{font-size:16px;text-align:center;color:var(--texto2);margin-bottom:8px}
+#sheet .bd{overflow-y:auto;padding:4px 20px 26px;font-size:25px;line-height:1.8;color:var(--texto)}
+#sheet .bd p{margin-bottom:12px}
+#sheet sup{color:var(--azul);font-weight:700;font-size:18px;margin-right:4px}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--toastbg);color:var(--toasttx);border-radius:20px;padding:10px 20px;font-size:18px;opacity:0;transition:.3s;z-index:60;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.conectado{background:var(--azulsoft);border:1px solid var(--borde);border-left:4px solid var(--azul);border-radius:12px;padding:12px 14px;margin:0 0 12px;font-size:15px;line-height:1.55;color:var(--texto)}
+.invitar{display:block;text-align:center;margin:4px 0 22px;color:var(--azultx);font-weight:600;font-size:15px;text-decoration:none}
+.invitar:active{opacity:.7}
+</style>
+<script>try{if(localStorage.getItem("fej_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
+</head>
+<body>
+
+<header>
+  <button onclick="location.href='apocalipsis.html'">←</button>
+  <div class="t" id="hdTitle"></div>
+  <button id="btnTema" title="Modo claro / oscuro">🌙</button>
+  <button id="btnDone">🤍</button>
+</header>
+
+<div class="wrap" id="app"></div>
+
+<div id="overlay" onclick="cerrarSheet()"></div>
+<div id="sheet">
+  <div class="hd"><i></i></div>
+  <h3 id="shRef"></h3>
+  <div class="vv" id="shVer"></div>
+  <div class="bd" id="shBody"></div>
+</div>
+<div class="toast" id="toast"></div>
+<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · Apocalipsis · v10</footer>
+
+<script src="data.js"></script>
+<script src="apo-data-a.js"></script>
+<script src="apo-data-b.js"></script>
+<script src="apo-data-c.js"></script>
+<script src="apo-data-d.js"></script>
+<script src="apo-data-e.js"></script>
+<script src="apo-data-f.js"></script>
+<script src="pdf.js"></script>
+
+<script>
+let API_BASE = null, BIBLE_VERSION = "RVR1960", apiOK = false;
+var TELEFONO_INSTRUCTOR = "5491128945261"; /* número principal (José) */
+
+/* ===== ENLACE DE INSTRUCTOR =====
+   Si la app se abrió con un enlace personalizado (?i=tel&n=nombre&a=alumno),
+   toda consulta/respuesta va al WhatsApp del instructor conectado.
+   Si el alumno comparte su propio enlace (generado en instructor.html),
+   la nueva persona queda conectada al teléfono del que compartió. */
+function telDestino(){
+  if(typeof window.fejTelDestino === "function") return window.fejTelDestino();
+  return TELEFONO_INSTRUCTOR;
+}
+function nombreInstructor(){
+  const c = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+  return (c && c.nombre) ? c.nombre : "";
+}
+/* ===== ESTUDIO LIBRE (v7 — un solo modo para todos) =====
+   Las preguntas se responden SIN mostrar si son correctas, en cualquier orden
+   y sin candados (ni entre preguntas ni entre días). Si el alumno no sabe una,
+   marca "No lo sé — quiero que mi instructor me lo explique". Al completar el
+   estudio la app GENERA UN PDF con las respuestas y lo comparte por WhatsApp
+   con el instructor conectado (o con el número principal si no hay enlace);
+   sin respuestas sueltas en el chat: todo va dentro del PDF. Recién después
+   de enviar se abren la enseñanza y las respuestas correctas de ese día. */
+
+async function discover(){
+  if(API_BASE !== null) return;
+  const bases = ["", "/fe-de-jesus", "..", "/biblia"];
+  for(const b of bases){
+    try{
+      const r = await fetch(b + "/api/versions");
+      if(!r.ok) continue;
+      const vs = await r.json();
+      API_BASE = b;
+      BIBLE_VERSION = vs.find(v => /rvr.*196|1960/i.test(v)) || vs.find(v => /rvr/i.test(v)) || vs[0];
+      apiOK = true;
+      return;
+    }catch(e){}
+  }
+  API_BASE = "";
+}
+
+const LIBROS = [
+["Génesis","Gén","Gn","Gen",1],["Éxodo","Exodo","Éxo","Exo",2],["Levítico","Lev",3],["Números","Núm","Nm","Num",4],
+["Deuteronomio","Deut","Dt",5],["Josué","Jos",6],["Jueces","Jue",7],["Rut","Rt",8],
+["1 Samuel","1 Sam",9],["2 Samuel","2 Sam",10],["1 Reyes","1 Rey",11],["2 Reyes","2 Rey",12],
+["1 Crónicas","1 Crón","1 Cro",13],["2 Crónicas","2 Crón","2 Cro",14],["Esdras","Esd",15],["Nehemías","Neh",16],
+["Ester","Est",17],["Job",18],["Salmos","Salmo","Sal",19],["Proverbios","Prov",20],
+["Eclesiastés","Ecl",21],["Cantares","Cant",22],["Isaías","Isa","Is",23],["Jeremías","Jer",24],
+["Lamentaciones","Lam",25],["Ezequiel","Eze",26],["Daniel","Dan",27],["Oseas","Os",28],
+["Joel",29],["Amós","Am",30],["Obadías","Obad",31],["Jonás","Jon",32],["Miqueas","Miq",33],
+["Nahúm","Nah",34],["Habacuc","Hab",35],["Sofonías","Sof",36],["Hageo","Hag",37],
+["Zacarías","Zac",38],["Malaquías","Mal",39],["Mateo","Mt",40],["Marcos","Mr","Mar",41],
+["Lucas","Lc","Luc",42],["Juan","Jn",43],["Hechos","Hch","Hech",44],["Romanos","Rom","Ro",45],
+["1 Corintios","1 Cor",46],["2 Corintios","2 Cor",47],["Gálatas","Gál","Gal",48],["Efesios","Efes","Ef",49],
+["Filipenses","Filip","Fil",50],["Colosenses","Colos","Col",51],["1 Tesalonicenses","1 Tes",52],
+["2 Tesalonicenses","2 Tes",53],["1 Timoteo","1 Tim",54],["2 Timoteo","2 Tim",55],["Tito","Tit",56],
+["Filemón","Filem",57],["Hebreos","Heb",58],["Santiago","Stg","Sant",59],["1 Pedro","1 Ped",60],
+["2 Pedro","2 Ped",61],["1 Juan","1 Jn",62],["2 Juan","2 Jn",63],["3 Juan","3 Jn",64],
+["Judas","Jud",65],["Apocalipsis","Apoc","Ap",66]
+];
+
+function norm(s){ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim(); }
+const reLibros = LIBROS.flatMap(g => g.slice(0,-1)).sort((a,b) => b.length - a.length).map(x => x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|");
+const V = "(\\d{1,3}(?:\\s?[-–—]\\s?\\d{1,3}(?::\\d{1,3})?)?(?:\\s?,\\s?\\d{1,3}(?:\\s?[-–—]\\s?\\d{1,3})?)*)";
+const REF_RE = new RegExp("(?<![\\p{L}\\p{N}])((?:" + reLibros + ")\\.?\\s?\\d{1,3}(?::\\s?" + V + ")?)", "gu");
+const REF_ONE = new RegExp("^(" + reLibros + ")\\.?\\s?(\\d{1,3})(?::\\s?" + V + ")?$","u");
+
+function numeroLibro(nombre){
+  const n = norm(nombre.replace(/\.$/,""));
+  const g = LIBROS.find(g => g.slice(0,-1).some(a => norm(a) === n));
+  return g ? g[g.length-1] : null;
+}
+function escapeHtml(t){ return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function linkRefs(texto){ return escapeHtml(texto).replace(REF_RE, (m, ref) => '<a class="ref" data-r="' + ref + '">' + ref + '</a>'); }
+function chips(refs){
+  const partes = refs.split(";").map(s => s.trim()).filter(Boolean);
+  let libroPrev = "";
+  return partes.map(p => {
+    const m = p.match(/^([A-Za-zÁÉÍÓÚÜÑáéíóúüñ][^\d]*?)\.?\s?\d/);
+    if(m && numeroLibro(m[1])) libroPrev = m[1].replace(/\.$/,"");
+    else if(libroPrev) p = libroPrev + " " + p;
+    return p;
+  });
+}
+
+function parseOne(ref){
+  const m = ref.replace(/\s+/g," ").match(REF_ONE);
+  if(!m) return null;
+  const b = numeroLibro(m[1]);
+  if(!b) return null;
+  return { b, c: +m[2], versos: m[3] || null };
+}
+
+async function fetchCap(b, c){
+  const r = await fetch(API_BASE + "/api/verses?version=" + encodeURIComponent(BIBLE_VERSION) + "&book=" + b + "&chapter=" + c);
+  if(!r.ok) throw 0;
+  return r.json();
+}
+
+async function openRef(ref){
+  const p = parseOne(ref);
+  if(!p){ return; }
+  document.getElementById("shRef").textContent = ref;
+  document.getElementById("shVer").textContent = "Cargando…";
+  document.getElementById("shBody").innerHTML = "";
+  abrirSheet();
+  try{
+    await discover();
+    let caps = [p.c];
+    let rango = null;
+    if(p.versos){
+      const rm = p.versos.match(/^(\d+)\s?[-–—]\s?(\d{1,3})(?::(\d{1,3}))?$/);
+      if(rm && rm[2]){
+        if(rm[3] !== undefined){ caps = [+p.c, +rm[2]]; rango = { de:+rm[1], hasta:+rm[3], capFin:+rm[2] }; }
+        else rango = { de:+p.versos.match(/^\d+/)[0], hasta:+rm[2], capFin:+p.c };
+      } else if(p.versos.includes(",")){
+        rango = { lista: p.versos.split(",").map(s=>+s.trim()) };
+      } else if(/^\d+$/.test(p.versos.trim())){
+        rango = { lista: [ +p.versos.trim() ] };
+      }
+    }
+    const datos = await Promise.all(caps.map(c => fetchCap(p.b, c)));
+    let html = "";
+    const pintar = (versos, capN) => {
+      let sel = versos;
+      if(rango){
+        if(rango.lista) sel = versos.filter(v => rango.lista.includes(+v.verse));
+        else sel = versos.filter(v => +v.verse >= rango.de && +v.verse <= (capN === rango.capFin ? rango.hasta : 999));
+      }
+      sel.forEach(v => { html += '<p><sup>' + v.verse + '</sup>' + escapeHtml(v.text) + '</p>'; });
+    };
+    caps.forEach((c,i) => pintar(datos[i], c));
+    document.getElementById("shVer").textContent = BIBLE_VERSION + (apiOK ? "" : " · modo sin conexión");
+    document.getElementById("shBody").innerHTML = html || "<p>No se encontraron los versículos.</p>";
+  }catch(e){
+    document.getElementById("shVer").textContent = "";
+    document.getElementById("shBody").innerHTML = '<p style="color:var(--texto2)">No se pudo cargar el texto bíblico. Verificá la conexión con la API de la Biblia.</p><p><a class="ref" style="pointer-events:none">' + ref + '</a></p>';
+  }
+}
+
+function abrirSheet(){
+  document.getElementById("sheet").classList.add("on");
+  document.getElementById("overlay").classList.add("on");
+}
+function cerrarSheet(){
+  document.getElementById("sheet").classList.remove("on");
+  document.getElementById("overlay").classList.remove("on");
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest("a.ref");
+  if(a) openRef(a.dataset.r);
+});
+
+const getDone = () => JSON.parse(localStorage.getItem("fejapo_done") || "{}");
+const setDone = o => localStorage.setItem("fejapo_done", JSON.stringify(o));
+const getDecs = () => JSON.parse(localStorage.getItem("fejapo_dec") || "{}");
+const setDecs = o => localStorage.setItem("fejapo_dec", JSON.stringify(o));
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  setTimeout(() => t.classList.remove("on"), 2600);
+}
+
+/* ===== MODO CLARO / OSCURO ===== */
+function aplicarIconoTema(){
+  const b = document.getElementById("btnTema");
+  if(b) b.textContent = document.documentElement.classList.contains("modo-oscuro") ? "☀️" : "🌙";
+}
+function toggleTema(){
+  const oscuro = document.documentElement.classList.toggle("modo-oscuro");
+  try{ localStorage.setItem("fej_tema", oscuro ? "oscuro" : "claro"); }catch(e){}
+  aplicarIconoTema();
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", oscuro ? "#18191a" : "#1877f2");
+}
+document.getElementById("btnTema").onclick = toggleTema;
+aplicarIconoTema();
+
+const params = new URLSearchParams(location.search);
+const dia = +params.get("l") || 1;
+const L = LECCIONES_APO.find(x => x.d === dia) || LECCIONES_APO[0];
+
+/* Apocalipsis: las opciones de cada pregunta vienen en el propio dato (p.ops);
+   si no hubiera, se usa el banco global (window.QUIZ) por compatibilidad. */
+function opsDe(p){
+  if(!p) return null;
+  const clave = L.d + ":" + p.n;
+  return p.ops || (window.QUIZ && window.QUIZ[clave]) || null;
+}
+
+/* Estudio libre: sin candados entre días ni entre preguntas. */
+localStorage.setItem("fejapo_ultimo", L.d);
+document.getElementById("hdTitle").textContent = "Lección " + L.d + " de 18";
+document.title = "Lección " + L.d + " — " + L.t + " (Apocalipsis)";
+document.getElementById("btnDone").onclick = function(){
+  if(!getDone()[L.d]){
+    const e = estadoRespuestas();
+    if(e.hechas < e.total){ toast("📖 Respondé todas las preguntas para completar el estudio"); return; }
+  }
+  toggleDone();
+};
+
+const getResp = () => JSON.parse(localStorage.getItem("fejapo_resp_" + L.d) || "{}");
+const saveResp = o => localStorage.setItem("fejapo_resp_" + L.d, JSON.stringify(o));
+
+/* ESTADO DEL QUIZ (multiple choice) del día: { "3": {sel:"texto", ok:true, first:true, tries:1} } */
+const getQuiz = () => JSON.parse(localStorage.getItem("fejapo_quiz_" + L.d) || "{}");
+const saveQuiz = o => localStorage.setItem("fejapo_quiz_" + L.d, JSON.stringify(o));
+let quizEstado = getQuiz();
+function guardarQuiz(){ saveQuiz(quizEstado); }
+
+function renderDone(){
+  const hecho = !!getDone()[L.d];
+  document.getElementById("btnDone").textContent = hecho ? "❤️" : "🤍";
+  const b = document.getElementById("btnCplt");
+  if(b){ b.classList.toggle("on", hecho); b.textContent = hecho ? "✓ Completado — tocá para reenviarlo" : "✅ Completar y enviar a mi instructor"; }
+}
+function toggleDone(){
+  const o = getDone();
+  const yaEstaba = !!o[L.d];
+  if(yaEstaba){ delete o[L.d]; toast("Estudio desmarcado"); }
+  else {
+    o[L.d] = 1;
+    calcularCorreccion();
+    toast("❤️ ¡Estudio " + L.d + " completado!");
+    if(typeof window.fejRespaldo === "function") window.fejRespaldo();
+    if(L.d === 18) setTimeout(function(){ location.href = "apocalipsis.html"; }, 1400);
+  }
+  setDone(o);
+  const y = window.scrollY;
+  render();
+  window.scrollTo(0, y);
+}
+
+function card(innerHTML, extraClass){ return '<section class="card ' + (extraClass||"") + '">' + innerHTML + '</section>'; }
+function listaHTML(items){
+  return '<ul class="lis">' + items.map(it => '<li>' + linkRefs(it.x) + (it.r ? ' <span style="color:var(--texto2);font-size:12px">(' + it.r + ')</span>' : "") + '</li>').join("") + '</ul>';
+}
+function extrasHTML(efs){
+  if(!efs) return "";
+  return efs.map(e => card(
+    '<h2>' + e.tt + '</h2>' +
+    (e.parrafo ? '<div class="des">' + linkRefs(e.parrafo) + '</div>' : "") +
+    (e.columnas ? '<div class="colwrap">' + e.columnas.map(col => '<div><h4>' + col.ct + '</h4>' + listaHTML(col.items) + '</div>').join("") + '</div>' : "") +
+    (e.lista ? listaHTML(e.lista) : "") +
+    (e.nota ? '<div class="des" style="margin-top:10px;font-size:16px;color:var(--texto2)">' + linkRefs(e.nota) + '</div>' : "")
+  )).join("");
+}
+
+/* Mezcla las opciones al azar (Fisher-Yates). La correcta (posición 0 en quiz-*.js) viaja por su texto. */
+function mezclar(arr){
+  const a = arr.map(x => x);
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+/* ===== ESTADO DE RESPUESTAS Y SECUENCIA ===== */
+function ordenPreguntas(){
+  const out = [];
+  (L.temas || []).forEach(t => t.ps.forEach(p => out.push(p)));
+  return out;
+}
+function respondida(p, misResp){
+  const clave = L.d + ":" + p.n;
+  if(opsDe(p)){
+    const st = quizEstado[p.n];
+    return !!(st && st.sel);
+  }
+  return !!(misResp[p.n] && misResp[p.n].trim());
+}
+function estadoRespuestas(){
+  const misResp = getResp();
+  let total = 0, hechas = 0;
+  ordenPreguntas().forEach(p => {
+    total++;
+    if(respondida(p, misResp)) hechas++;
+  });
+  return { total: total, hechas: hechas };
+}
+
+/* ===== CONSTRUCTORES DE BLOQUES ===== */
+function htmlPregunta(p, misResp){
+  const clave = L.d + ":" + p.n;
+  const ops = p.ops || (window.QUIZ && window.QUIZ[clave]) || null;
+  const st = quizEstado[p.n];
+  const hecho = !!getDone()[L.d];   /* día completado: vista de revisión */
+  const yaEscribio = !!(misResp[p.n] && misResp[p.n].trim());
+
+  let cuerpo = "";
+  if(ops){
+    const lista = mezclar(ops);
+    const LETRAS = ["A","B","C","D"];
+    const correcta = ops[0];
+    const botones = lista.map((o,i) => {
+      let cls = "opt";
+      if(hecho){
+        if(o === correcta) cls += " ok";
+        else if(st && !st.nols && st.sel === o) cls += " err";
+      } else if(st && st.sel === o) cls += " sel";
+      const dis = hecho ? " disabled" : "";
+      return '<button type="button" class="' + cls + '"' + dis + ' data-t="' + escapeHtml(o) + '"><span class="letra">' + LETRAS[i] + '</span><span>' + escapeHtml(o) + '</span></button>';
+    }).join("");
+    const nols = hecho
+      ? ""
+      : '<button type="button" class="opt nolsb' + (st && st.nols ? " sel" : "") + '" data-nols="1"><span class="letra">🤔</span><span>No lo sé — quiero que mi instructor me lo explique</span></button>';
+    const etiqueta = hecho ? "👆 La respuesta correcta está en verde:" : "👆 Marcá la respuesta que creés correcta:";
+    cuerpo =
+      '<label class="respLbl">' + etiqueta + '</label>' +
+      '<div class="quiz" data-q="' + p.n + '">' + botones + nols + '</div>' +
+      (hecho ? '<div class="corrn">✅ Revisión abierta — tu instructor te acompaña con la enseñanza</div>' : "");
+  } else {
+    cuerpo =
+      '<label class="respLbl">✍️ Tu respuesta:</label>' +
+      '<div class="motiva" id="mo_' + p.n + '"></div>' +
+      '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>';
+  }
+
+  /* Enseñanza: en multiple choice se abre al completar el estudio; en las escritas, al escribir */
+  const ensOn = ops ? hecho : yaEscribio;
+
+  return '<div class="preg" id="preg_' + p.n + '">' +
+     '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
+     '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
+     cuerpo +
+     '<div class="ensenanza ' + (ensOn ? "on" : "") + '" id="ens_' + p.n + '">' +
+       '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des) + '</div>' +
+     '</div>' +
+   '</div>';
+}
+
+function htmlDecision(completa){
+  if(!completa){
+    return '<section class="dec bloqueada" id="decLock">' +
+      '<h2>✍️ Decisión personal</h2>' +
+      '<div class="des" style="margin-top:8px;font-size:17px;color:var(--texto2)">🔒 Respondé todas las preguntas y acá va a aparecer tu decisión personal y el envío al instructor.</div>' +
+    '</section>';
+  }
+  const deces = getDecs();
+  const perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
+  const hoy = new Date().toLocaleDateString("en-CA");
+  const decFull = JSON.parse(localStorage.getItem("fejapo_decfull_" + L.d) || "null");
+  return '<section class="dec" id="decCard">' +
+    '<h2>✍️ Decisión personal</h2>' +
+    '<div class="des" style="margin-top:8px;font-size:18px">Después de haber leído y entendido, mi decisión personal es:</div>' +
+    '<p>“' + escapeHtml(L.dec) + '”</p>' +
+    '<label>Tu nombre</label>' +
+    '<input id="decNombre" placeholder="Escribí tu nombre" value="' + escapeHtml(decFull && decFull.nombre ? decFull.nombre : (perfil && perfil.nombre ? perfil.nombre : "")) + '">' +
+    '<label>Fecha</label>' +
+    '<input type="date" id="decFecha" value="' + (decFull && decFull.fecha ? decFull.fecha : hoy) + '">' +
+    '<div class="dbtns">' +
+      '<button id="btnSi" class="' + (deces[L.d] === "si" ? "on-si" : "") + '" onclick="decidir(\'si\')">SÍ</button>' +
+      '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
+    '</div>' +
+    '<a class="enviarBtn" id="btnEnviar" onclick="completarYEnviar(event)">' + (getDone()[L.d] ? '📤 Reenviar a mi instructor' : '📤 Completar y enviar a mi instructor') + '</a>' +
+    '<div class="corrn" style="color:var(--azultx)">📄 Al tocar acá el estudio se marca como completado, se arma tu PDF con las respuestas y lo compartís por WhatsApp' + (nombreInstructor() ? " con " + escapeHtml(nombreInstructor()) : " con tu instructor") + '. Recién entonces se abren la enseñanza y las respuestas correctas.</div>' +
+  '</section>';
+}
+
+function render(){
+  const misResp = getResp();
+  const todoAbierto = !!getDone()[L.d]; /* días ya completados se muestran sin candados */
+
+  let h = '<div class="hero" style="background:' + L.g + '"><div class="dia">LECCIÓN ' + L.d + ' DE 18</div><div class="em">' + L.e + '</div><h1>' + escapeHtml(L.t) + '</h1></div>';
+
+  const insNombre = nombreInstructor();
+  if(insNombre) h += '<div class="conectado">🎓 Estás estudiando con <b>' + escapeHtml(insNombre) + '</b> — al completar el estudio le enviás un <b>PDF con tus respuestas</b> por WhatsApp.<br><span style="font-size:13px">📘 Respondé sin ver las respuestas, en el orden que quieras. Si no sabés una, marcá “🤔 No lo sé”.</span></div>';
+
+  if(L.i) h += card('<h2>📖 Introducción</h2><div class="intro">' + linkRefs(L.i) + '</div>');
+
+  if(L.temas){
+    h += L.temas.map(t =>
+      card('<h2>✨ ' + escapeHtml(t.tt) + '</h2>' +
+        t.ps.map(p => htmlPregunta(p, misResp)).join("")
+      )).join("");
+  }
+
+  if(L.extras){
+    h += extrasHTML(L.extras);
+  }
+
+  const e = estadoRespuestas();
+  if(L.dec) h += htmlDecision(todoAbierto || e.hechas === e.total);
+
+  if(L.d === 18) h += '<div class="fin20" style="background:linear-gradient(135deg,#6a1b9a,#b71c1c)">JESÚS VIENE PRONTO 🎉<br><span style="font-weight:400;font-size:16px">¡Completaste las 18 lecciones del estudio de Apocalipsis!</span></div>' +
+    '<a class="certBtn" href="apocalipsis.html">🏠 Volver al estudio de Apocalipsis</a>';
+
+  h += '<button class="cplt" id="btnCplt" onclick="completarYEnviar()"></button>';
+
+  const ant = LECCIONES_APO.find(x => x.d === L.d - 1);
+  const sig = LECCIONES_APO.find(x => x.d === L.d + 1);
+  h += '<div class="navg">' +
+    '<button ' + (ant ? "" : "disabled") + ' onclick="location.href=\'apo-leccion.html?l=' + (L.d-1) + '\">← Anterior</button>' +
+    '<button class="prim" ' + (sig ? "" : "disabled") + ' onclick="location.href=\'apo-leccion.html?l=' + (L.d+1) + '\">Siguiente →</button>' +
+  '</div>';
+
+  h += '<a class="invitar" href="instructor.html">🎓 ¿Querés acompañar a alguien más? Invitalo a estudiar</a>';
+
+  document.getElementById("app").innerHTML = h;
+  renderDone();
+  actualizarBotonCompleto();
+}
+
+/* Cuando se responden TODAS, aparece disponible la decisión personal */
+function revelarDecision(conScroll){
+  const lockEl = document.getElementById("decLock");
+  if(!lockEl) return;
+  const frag = document.createElement("div");
+  frag.innerHTML = htmlDecision(true);
+  const nuevo = frag.firstChild;
+  nuevo.classList.add("aparece");
+  lockEl.replaceWith(nuevo);
+  toast("🎉 ¡Respondiste todo! Ya podés marcar tu decisión y completar el estudio");
+  if(conScroll) setTimeout(() => { nuevo.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 450);
+}
+
+/* El botón de completar se habilita solo cuando TODAS las preguntas están respondidas */
+function actualizarBotonCompleto(){
+  const b = document.getElementById("btnCplt");
+  if(!b) return;
+  if(getDone()[L.d]) return; /* ya completado: renderDone puso el texto correcto */
+  const e = estadoRespuestas();
+  if(e.hechas < e.total){
+    b.disabled = true;
+    b.textContent = "🔒 Respondé todas las preguntas (" + e.hechas + " de " + e.total + ")";
+  } else {
+    b.disabled = false;
+    b.textContent = "✅ Completar y enviar a mi instructor";
+  }
+}
+
+/* Clic en una opción: se marca la elegida sin decir si es correcta */
+document.getElementById("app").addEventListener("click", function(e){
+  const b = e.target.closest(".opt");
+  if(!b || b.disabled) return;
+  const qDiv = b.closest(".quiz");
+  if(!qDiv) return;
+  const n = +qDiv.getAttribute("data-q");
+  const pQ = ordenPreguntas().find(pp => pp.n === n);
+  if(!pQ || !opsDe(pQ)) return;
+  if(getDone()[L.d]) return; /* día completado: vista de revisión fija */
+
+  const esNols = b.getAttribute("data-nols") === "1";
+  quizEstado[n] = { sel: esNols ? "🤔 No lo sé — quiero que el instructor me lo explique" : b.getAttribute("data-t"), nols: esNols };
+  guardarQuiz();
+  qDiv.querySelectorAll(".opt").forEach(o => o.classList.toggle("sel", o === b));
+  actualizarBotonCompleto();
+  const e2 = estadoRespuestas();
+  if(e2.hechas === e2.total) revelarDecision(true);
+});
+
+function guardarResp(n, texto){
+  const r = getResp();
+  r[n] = texto;
+  saveResp(r);
+  const ens = document.getElementById("ens_" + n);
+  if(ens){
+    if(texto.trim()){ if(!ens.classList.contains("on")) ens.classList.add("on"); }
+    else ens.classList.remove("on");
+  }
+  const motiva = document.getElementById("mo_" + n);
+  if(motiva){
+    const palabras = texto.trim().split(/\s+/).filter(Boolean).length;
+    let msg = "";
+    if(palabras >= 60) msg = "🌟 ¡WOW! " + palabras + " palabras — se nota que el Espíritu te está hablando. Tu reflexión va a bendecir a otros.";
+    else if(palabras >= 35) msg = "🔥 ¡Excelente! " + palabras + " palabras. Tu respuesta es profunda — seguí así.";
+    else if(palabras >= 15) msg = "💪 ¡Muy bien! " + palabras + " palabras. Agregá un ejemplo de tu vida y va a quedar aún mejor.";
+    else if(palabras >= 5) msg = "👏 Buen comienzo. ¿Qué significa esto para vos personalmente?";
+    else if(palabras >= 1) msg = "🌱 ¡Empezaste! Contá un poco más de qué se trata.";
+    if(msg){
+      motiva.textContent = msg;
+      motiva.classList.add("on");
+    }
+  }
+  actualizarBotonCompleto();
+  const e2 = estadoRespuestas();
+  if(e2.hechas === e2.total) revelarDecision(false);
+}
+
+function decidir(v){
+  const o = getDecs();
+  o[L.d] = v;
+  setDecs(o);
+  const nombre = (document.getElementById("decNombre").value || "").trim();
+  const fecha = document.getElementById("decFecha").value || "";
+  localStorage.setItem("fejapo_decfull_" + L.d, JSON.stringify({ nombre: nombre, fecha: fecha, dec: v }));
+  document.getElementById("btnSi").className = v === "si" ? "on-si" : "";
+  document.getElementById("btnNo").className = v === "no" ? "on-no" : "";
+  toast(v === "si" ? "✅ ¡Bendecida decisión!" : "Decisión guardada");
+}
+
+/* ===== COMPLETAR Y ENVIAR (v7): marca el estudio, arma el PDF con las
+   respuestas y lo comparte por WhatsApp con el instructor conectado
+   (o con el número principal). Sin respuestas en el chat: todo va dentro
+   del PDF. ===== */
+function completarYEnviar(ev){
+  if(ev) ev.preventDefault();
+  const o = getDone();
+  if(!o[L.d]){
+    const e = estadoRespuestas();
+    if(e.hechas < e.total){ toast("📖 Respondé todas las preguntas primero (" + e.hechas + " de " + e.total + ")"); return; }
+    o[L.d] = 1;
+    setDone(o);
+    calcularCorreccion();
+    toast("❤️ ¡Estudio " + L.d + " completado! Preparando tu PDF…");
+  }
+  const datos = capturarDatos();   /* leo nombre y fecha ANTES de re-renderizar */
+  render();
+  if(typeof window.fejRespaldo === "function") window.fejRespaldo();
+  enviarEstudioPdf(datos);
+}
+
+/* Nombre y fecha del alumno: primero el campo de la decisión personal,
+   si no el perfil registrado, si no el nombre que vino en el enlace. */
+function capturarDatos(){
+  const perfil = JSON.parse(localStorage.getItem("fej_alumno") || "null");
+  const cfg = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+  const inNombre = document.getElementById("decNombre");
+  const inFecha = document.getElementById("decFecha");
+  const nombre = (inNombre && inNombre.value.trim()) || (perfil && perfil.nombre) || (cfg && cfg.alumno) || "Sin nombre";
+  const fecha = (inFecha && inFecha.value) || new Date().toLocaleDateString("es-AR");
+  return { nombre: nombre, fecha: fecha };
+}
+
+/* Junta todo lo necesario para el PDF: preguntas, referencias, opciones,
+   lo que eligió el alumno y sus respuestas escritas. */
+function armarDocPdf(datos){
+  const deces = getDecs();
+  const misResp = getResp();
+  const items = [];
+  (L.temas || []).forEach(function(t){
+    t.ps.forEach(function(p){
+      const clave = L.d + ":" + p.n;
+      const ops = p.ops || (window.QUIZ && window.QUIZ[clave]) || null;
+      if(ops){
+        const st = quizEstado[p.n];
+        items.push({
+          n: p.n,
+          pregunta: p.p,
+          referencia: p.r || "",
+          opciones: ops.slice().sort(function(a, b){ return a.localeCompare(b, "es"); }),
+          elegida: (st && st.sel && !st.nols) ? st.sel : null,
+          nols: !!(st && st.nols)
+        });
+      } else {
+        items.push({ n: p.n, pregunta: p.p, referencia: p.r || "", escrita: (misResp[p.n] || "").trim() });
+      }
+    });
+  });
+  return {
+    curso: "Apocalipsis",
+    dia: L.d,
+    titulo: "Lección " + L.d + " — " + L.t,
+    alumno: datos.nombre,
+    fecha: datos.fecha,
+    instructor: nombreInstructor(),
+    decision: L.dec ? { texto: L.dec, valor: deces[L.d] || "", nombre: datos.nombre, fecha: datos.fecha } : null,
+    items: items
+  };
+}
+
+/* Genera el PDF y lo envía:
+   1º intenta COMPARTIR el archivo (menú "Compartir" del celular: ahí elige
+      WhatsApp y el chat del instructor);
+   2º si el navegador no puede compartir archivos, DESCARGA el PDF y abre el
+      chat de WhatsApp con un aviso corto para adjuntarlo. */
+async function enviarEstudioPdf(datos){
+  const insN = nombreInstructor();
+  if(!window.fejPdf){ /* pdf.js no llegó a cargar (red vieja): plan C */
+    abrirChat("✅ ¡Terminé el estudio de la Lección " + L.d + "! Escribime acá y te paso mis respuestas.");
+    return;
+  }
+  try{
+    const doc = armarDocPdf(datos);
+    const pdfStr = window.fejPdf.construirPdf(doc);
+    const nombre = window.fejPdf.nombreArchivo(doc);
+    const blob = window.fejPdf.blobDe(pdfStr);
+    let archivo = null;
+    try{ archivo = new File([blob], nombre, { type: "application/pdf" }); }catch(e){}
+    if(archivo && navigator.canShare && navigator.canShare({ files: [archivo] })){
+      try{
+        await navigator.share({
+          files: [archivo],
+          title: "Apocalipsis — Lección " + L.d,
+          text: "✅ ¡Terminé el estudio! Te adjunto el PDF con mis respuestas para tu revisión." + (insN ? " — para " + insN : "")
+        });
+        if(typeof window.fejRegistrar === "function") window.fejRegistrar("Envió el estudio en PDF", "Lección " + L.d);
+        toast("📤 Estudio enviado" + (insN ? " a " + insN : "") + " ✅");
+        return;
+      }catch(err){
+        if(err && err.name === "AbortError"){ toast("Envío cancelado — tocá “Reenviar” cuando quieras"); return; }
+        /* el navegador anunció soporte pero falló: sigo al plan B */
+      }
+    }
+    /* Plan B: descarga el PDF + abre el chat listo para adjuntarlo */
+    descargarPdf(blob, nombre);
+    if(typeof window.fejRegistrar === "function") window.fejRegistrar("Descargó el estudio en PDF", "Lección " + L.d);
+    abrirChat("✅ ¡Terminé el estudio! *Apocalipsis — Lección " + L.d + "*\nEl PDF con mis respuestas quedó descargado en mi celular: te lo adjunto en este chat. 📎");
+  }catch(e){
+    toast("No se pudo generar el PDF — abriendo el chat…");
+    abrirChat("✅ ¡Terminé el estudio de la Lección " + L.d + "! Escribime acá y te paso mis respuestas.");
+  }
+}
+
+function abrirChat(mensaje){
+  window.open("https://wa.me/" + telDestino() + "?text=" + encodeURIComponent(mensaje), "_blank");
+}
+
+function descargarPdf(blob, nombre){
+  try{
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nombre;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 6000);
+  }catch(e){}
+}
+
+/* ===== AL COMPLETAR: se calcula una sola vez qué respuestas fueron correctas
+   (para la vista de revisión en verde/rojo y el respaldo del instructor). ===== */
+function calcularCorreccion(){
+  let cambio = false;
+  ordenPreguntas().forEach(p => {
+    const st = quizEstado[p.n];
+    const ops = opsDe(p);
+    if(st && !st.corr){
+      if(ops && !st.nols && st.sel){
+        st.ok = (st.sel === ops[0]);
+      }
+      st.corr = true;
+      cambio = true;
+    }
+  });
+  if(cambio) guardarQuiz();
+}
+
+render();
+discover();
+</script>
+
+<script>
+/* ORACIÓN SENCILLA — una por día, según el tema */
+(function(){
+  function colocar(){
+    var app = document.getElementById("app");
+    if(!app || !app.querySelector(".hero")) return false;
+
+    var temas = {
+      1:"entender cómo llegó hasta nosotros el libro del Apocalipsis",
+      2:"guardar el primer amor y aceptar el consejo a las siete iglesias",
+      3:"adorar al que está sentado en el trono y confiar en el Cordero",
+      4:"confiar en que Dios gobierna la historia a través de los sellos",
+      5:"prepararme para recibir el sello de Dios",
+      6:"atender las advertencias de las trompetas y estar listo",
+      7:"asimilar el mensaje profético y confiar aun en la decepción",
+      8:"amar la Biblia como los dos testigos fieles",
+      9:"pertenecer al remanente que guarda los mandamientos y la fe de Jesús",
+      10:"adorar solo a Dios y no a la bestia",
+      11:"mantenerme fiel a la Ley de Dios frente a la marca",
+      12:"responder a los tres mensajes angélicos con obediencia",
+      13:"morar al abrigo del Altísimo durante las plagas",
+      14:"salir de Babilonia antes de su caída",
+      15:"esperar con alegría el regreso visible de Jesús",
+      16:"vivir con Cristo durante el milenio",
+      17:"tener mi nombre inscrito en el libro de la vida",
+      18:"prepararme para vivir en la Tierra Nueva con Jesús"
+    };
+
+    var d = +(new URLSearchParams(location.search).get("dia")) || 1;
+    var tema = temas[d] || "entender las verdades de este estudio";
+
+    var card = document.createElement("section");
+    card.className = "card oracion";
+    card.innerHTML =
+      '<h2>🙏 Orá antes de comenzar:</h2>' +
+      '<div class="pedir">"Padre celestial, en el nombre de Jesús, te pido que tu Espíritu Santo me ayude a ' + tema + '. Amén."</div>';
+
+    var hero = app.querySelector(".hero");
+    if(hero && hero.nextSibling) app.insertBefore(card, hero.nextSibling);
+    else app.insertBefore(card, app.firstChild);
+    return true;
+  }
+  var timer = setInterval(function(){ if(colocar()) clearInterval(timer); }, 250);
+})();
+</script>
+</body>
+</html>
