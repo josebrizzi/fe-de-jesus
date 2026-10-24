@@ -1,7 +1,7 @@
 /* Service Worker — Fe de Jesús (estudios) */
-const CACHE = "fej-v12";
+const CACHE = "fej-v14";
 const PRECACHE = [
-  "./", "./index.html", "./leccion.html", "./instructor.html", "./quiz.html",
+  "./", "./index.html", "./leccion.html", "./instructor.html", "./quiz.html", "./apo-quiz.html",
   "./data.js", "./data-a.js", "./data-b.js", "./data-c.js", "./data-d.js",
   "./quiz-a.js", "./quiz-b.js", "./pdf.js",
   "./apocalipsis.html", "./apo-leccion.html",

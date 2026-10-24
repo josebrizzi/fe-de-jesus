@@ -37,11 +37,17 @@
     var esLeccion = !!document.getElementById("app");
     if(!esPortada && !esLeccion) return;
 
+    var esApo = /apocalipsis|apo-leccion|apo-quiz/.test(location.pathname);
     var wrap = document.createElement("div");
     wrap.className = "acc-wrap";
     wrap.innerHTML = '<h2>' + (esPortada ? "Herramientas" : "¿Querés saber más?") + '</h2>' +
       '<div class="acc-grid">' +
-      (/apocalipsis|apo-leccion/.test(location.pathname) ? '<a class="acc-btn" href="index.html"><span>📖</span>Fe de Jesús</a>' : '<a class="acc-btn gr" href="certificado.html"><span>🎓</span>Mi certificado</a>' + '<a class="acc-btn" href="quiz.html"><span>🎮</span>Quiz de repaso</a>') +
+      (esApo
+        ? '<a class="acc-btn" href="index.html"><span>📖</span>Fe de Jesús</a>' +
+          '<a class="acc-btn" href="apo-quiz.html"><span>🎮</span>Quiz de Apocalipsis</a>'
+        : '<a class="acc-btn gr" href="certificado.html"><span>🎓</span>Mi certificado</a>' +
+          '<a class="acc-btn" href="quiz.html"><span>🎮</span>Quiz de repaso</a>' +
+          '<a class="acc-btn" href="apo-quiz.html"><span>🔥</span>Quiz Apocalipsis</a>') +
       '<button class="acc-btn" id="accRespaldo" onclick="hacerRespaldo(this)"><span>💾</span>Respaldar mi progreso</button>' +
       '<a class="acc-btn bl" href="' + WHATSAPP + '" target="_blank" rel="noopener"><span>💬</span>Escribir por WhatsApp</a>' +
       '<button class="acc-btn" onclick="encontrarIglesia()"><span>📍</span>Encontrá una iglesia</button>' +

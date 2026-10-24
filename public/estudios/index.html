@@ -103,6 +103,15 @@ footer{text-align:center;color:var(--texto2);font-size:12px;padding:24px}
       </div>
       <div class="he">▶</div>
     </a>
+    <a class="card" href="apo-quiz.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#f7971e,#ffd200)">🔥</div>
+      <div class="tx">
+        <div class="d">QUIZ DE REPASO · APOCALIPSIS</div>
+        <h3>Poné a prueba tu fe · Apocalipsis</h3>
+        <div class="stx" id="apoQuizStx">Preguntas de las 18 lecciones de Apocalipsis, con puntaje y estrellas</div>
+      </div>
+      <div class="he">▶</div>
+    </a>
   </div>
 
   <div class="sec">
@@ -123,7 +132,7 @@ footer{text-align:center;color:var(--texto2);font-size:12px;padding:24px}
     <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: al terminar te envía el PDF con sus respuestas</small></a>
   </div>
 
-  <footer>Fe de Jesús · v10 · "JESÚS VIENE PRONTO"</footer>
+  <footer>Fe de Jesús · v11 · "JESÚS VIENE PRONTO"</footer>
 </div>
 
 <script src="data.js"></script>
@@ -205,6 +214,16 @@ function render(){
     if(qx) qx.textContent = ap
       ? "⭐ " + ap + " de 20 estudios aprobados — ¿sumás otro?"
       : "Preguntas de los 20 estudios, con puntaje, estrellas y revisión";
+  }catch(e){}
+
+  /* Quiz de repaso Apocalipsis: cuántas lecciones tienen 1 o más estrellas */
+  try{
+    const aq = JSON.parse(localStorage.getItem("fejapo_qgame_v1") || "{}");
+    const aAp = Object.keys(aq).filter(k => k !== "repaso" && aq[k] && aq[k].stars >= 1).length;
+    const aqx = document.getElementById("apoQuizStx");
+    if(aqx) aqx.textContent = aAp
+      ? "⭐ " + aAp + " de 18 lecciones aprobadas — ¿sumás otra?"
+      : "Preguntas de las 18 lecciones de Apocalipsis, con puntaje y estrellas";
   }catch(e){}
 
   /* Estudio Apocalipsis: cuántas lecciones completadas */
