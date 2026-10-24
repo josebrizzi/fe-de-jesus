@@ -137,7 +137,7 @@ footer{text-align:center;color:var(--texto2);font-size:12px;padding:24px}
   <div class="bd" id="shBody"></div>
 </div>
 <div class="toast" id="toast"></div>
-<footer>Fe de Jesús · Apocalipsis · Quiz · v11</footer>
+<footer>Fe de Jesús · Apocalipsis · Quiz · v12</footer>
 
 <script src="data.js"></script>
 <script src="apo-data-a.js"></script>
@@ -148,7 +148,7 @@ footer{text-align:center;color:var(--texto2);font-size:12px;padding:24px}
 <script src="apo-data-f.js"></script>
 
 <script>
-/* ===== QUIZ DE APÓCALIPSIS — Fe de Jesús (v11) =====
+/* ===== QUIZ DE APÓCALIPSIS — Fe de Jesús (v12) =====
    El mismo juego de "Poné a prueba tu fe" del curso de 20 días,
    ahora para las 18 lecciones del estudio de Apocalipsis.
    Aquí SÍ hay corrección inmediata (a diferencia del estudio, que se
@@ -316,6 +316,14 @@ function mezclar(arr){
   }
   return a;
 }
+/* "Ninguna de las anteriores es correcta" NO se mezcla: queda siempre al final,
+   después de las opciones reales (igual que en la lección, antes del instructor) */
+const RX_NINGUNA = /ninguna de las anteriores/i;
+function mezclarOps(ops){
+  const ult = ops.filter(o => RX_NINGUNA.test(o));
+  const resto = ops.filter(o => !RX_NINGUNA.test(o));
+  return mezclar(resto).concat(ult);
+}
 
 /* ===== PERSISTENCIA ===== */
 const QGKEY = "fejapo_qgame_v1";
@@ -375,7 +383,7 @@ function nuevoJuego(modo, dia){
   }
   juego = {
     modo: modo, dia: dia,
-    lista: lista.map(it => Object.assign({}, it, { mezcladas: mezclar(it.ops) })),
+    lista: lista.map(it => Object.assign({}, it, { mezcladas: mezclarOps(it.ops) })),
     idx: 0, aciertos: 0, resps: []
   };
   render();
