@@ -152,7 +152,7 @@ ul.lis li span{font-size:16px !important}
   <div class="bd" id="shBody"></div>
 </div>
 <div class="toast" id="toast"></div>
-<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · Apocalipsis · v11</footer>
+<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · Apocalipsis · v12</footer>
 
 <script src="data.js"></script>
 <script src="apo-data-a.js"></script>
@@ -425,6 +425,14 @@ function mezclar(arr){
   }
   return a;
 }
+/* "Ninguna de las anteriores es correcta" NO se mezcla: queda siempre al final,
+   después de las opciones reales y antes del botón de preguntar al instructor */
+const RX_NINGUNA = /ninguna de las anteriores/i;
+function mezclarOps(ops){
+  const ult = ops.filter(o => RX_NINGUNA.test(o));
+  const resto = ops.filter(o => !RX_NINGUNA.test(o));
+  return mezclar(resto).concat(ult);
+}
 
 /* ===== ESTADO DE RESPUESTAS Y SECUENCIA ===== */
 function ordenPreguntas(){
@@ -460,7 +468,7 @@ function htmlPregunta(p, misResp){
 
   let cuerpo = "";
   if(ops){
-    const lista = mezclar(ops);
+    const lista = mezclarOps(ops);
     const LETRAS = ["A","B","C","D"];
     const correcta = ops[0];
     const botones = lista.map((o,i) => {
