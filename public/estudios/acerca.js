@@ -1,4 +1,4 @@
-// HERRAMIENTAS DE APOYO - Fe de Jesús (certificado, respaldo, WhatsApp) · v14
+// HERRAMIENTAS DE APOYO - Fe de Jesús (certificado, respaldo, WhatsApp) · v16
 (function(){
   var TELEFONO = "5491128945261";
 
@@ -46,4 +46,4 @@
   } else { botones(); }
 })();
 
-console.log("Fe de Jesús v14: acerca.js cargado ✓");
+console.log("Fe de Jesús v16: acerca.js cargado ✓");

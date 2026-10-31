@@ -69,10 +69,56 @@ footer{text-align:center;color:var(--texto2);font-size:11.5px;padding:24px}
 .conectado{background:var(--celesoft);border:none;border-left:4px solid var(--celeste);border-radius:12px;padding:10px 13px;margin:12px 14px 0;font-size:14.5px;line-height:1.5;color:var(--texto)}
 .btnInvitar{display:block;background:var(--azul);color:var(--btnfg);border:none;border-radius:14px;padding:13px 16px;margin:0 0 4px;text-align:center;font-weight:700;font-size:14.5px;text-decoration:none;line-height:1.45;box-shadow:0 3px 10px rgba(31,36,41,.18)}
 .btnInvitar:active{transform:scale(.98)}
-.btnInvitar small{display:block;font-weight:400;color:var(--btnfg);opacity:.78;font-size:12px;margin-top:3px}</style>
+.btnInvitar small{display:block;font-weight:400;color:var(--btnfg);opacity:.78;font-size:12px;margin-top:3px}
+/* ===== PANTALLA DE CARGA ===== */
+#splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--celeste) 0%,var(--celesoft) 45%,var(--fondo) 100%);opacity:1;transition:opacity .5s ease}
+html.modo-oscuro #splash{background:linear-gradient(180deg,#16324a 0%,var(--fondo) 75%)}
+#splash.fuera{opacity:0;pointer-events:none}
+.sp-box{text-align:center;padding:0 30px;max-width:340px;width:100%}
+.sp-logo{width:86px;height:86px;margin:0 auto 18px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 12px 32px rgba(31,36,41,.2);animation:spPulso 1.7s ease-in-out infinite}
+@keyframes spPulso{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.sp-titulo{font-size:27px;font-weight:700;letter-spacing:.3px;color:var(--texto)}
+.sp-sub{font-size:13px;color:var(--texto2);margin-top:6px}
+.sp-barra{height:6px;background:rgba(255,255,255,.6);border-radius:4px;margin:24px auto 0;max-width:210px;overflow:hidden}
+html.modo-oscuro .sp-barra{background:var(--panel2)}
+.sp-barra i{display:block;width:45%;height:100%;border-radius:4px;background:#ffd76e;animation:spCorre 1.15s ease-in-out infinite}
+@keyframes spCorre{0%{transform:translateX(-105%)}100%{transform:translateX(240%)}}
+.sp-estado{font-size:12.5px;color:var(--texto2);margin-top:13px;min-height:17px}
+@media (prefers-reduced-motion:reduce){.sp-logo,.sp-barra i{animation:none}}</style>
 <script>try{if(localStorage.getItem("fej_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
 </head>
 <body>
+
+<div id="splash" role="status" aria-live="polite">
+  <div class="sp-box">
+    <div class="sp-logo">📖</div>
+    <div class="sp-titulo">Fe de Jesús</div>
+    <div class="sp-sub">20 estudios bíblicos · Apocalipsis</div>
+    <div class="sp-barra"><i></i></div>
+    <div class="sp-estado" id="spEstado">Abriendo los estudios…</div>
+  </div>
+</div>
+<script>
+(function(){
+  var s=document.getElementById("splash"),st=document.getElementById("spEstado");
+  if(!s) return;
+  var HOLD=/hold/.test(location.search); /* debug: index.html?hold mantiene la pantalla */
+  var t0=Date.now(),listo=false;
+  function fuera(){
+    if(listo||HOLD) return; listo=true;
+    s.classList.add("fuera");
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); },600);
+  }
+  setTimeout(function(){ if(!listo && st) st.textContent="Descargando los estudios…"; },2600);
+  var t=setInterval(function(){
+    var l=document.getElementById("lista");
+    if(l && l.children.length && Date.now()-t0>350){ clearInterval(t); setTimeout(fuera,250); }
+  },180);
+  window.addEventListener("load",function(){ setTimeout(fuera,400); });
+  setTimeout(fuera,10000);
+})();
+</script>
+
 <div class="wrap">
 
   <header>
@@ -121,7 +167,7 @@ footer{text-align:center;color:var(--texto2);font-size:11.5px;padding:24px}
     <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: al terminar te envía el PDF con sus respuestas</small></a>
   </div>
 
-  <footer>Fe de Jesús · v14 · "JESÚS VIENE PRONTO"</footer>
+  <footer>Fe de Jesús · v16 · "JESÚS VIENE PRONTO"</footer>
 </div>
 
 <script src="data.js"></script>
