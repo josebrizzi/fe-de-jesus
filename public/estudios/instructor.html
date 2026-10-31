@@ -3,66 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#2d7fc1">
+<meta name="theme-color" content="#b4d5e6">
 <title>Enlace de instructor — Fe de Jesús</title>
 <style>*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --fondo:#eef1f6;--panel:#ffffff;--panel2:#f4f6fa;--borde:#e4e9f1;--inputb:#c9d4e2;
-  --texto:#1c2733;--texto2:#64748b;
-  --azul:#2d7fc1;--azulh:#256aa6;--azulsoft:#e4eff9;--azultx:#23689f;
+  --fondo:#e7e9ec;--panel:#ffffff;--panel2:#f1f3f6;--borde:#e1e5ea;--inputb:#bfc6cf;
+  --texto:#1f2429;--texto2:#6b7480;
+  --azul:#414141;--azulh:#2c2c2c;--azulsoft:#eceef1;--azultx:#1f2429;
+  --celeste:#b4d5e6;--celesoft:#dcebf4;--celetx:#2e5871;--ref:#2f6f9e;
   --verde:#279a58;--verdesoft:#e3f4ea;
   --rojo:#d85058;
-  --hdrbg:rgba(255,255,255,.93);--hdrb:rgba(28,39,51,.06);
-  --toastbg:#1c2733;--toasttx:#ffffff
+  --btnfg:#ffffff;
+  --hdrbg:#b4d5e6;--hdrb:rgba(31,36,41,.10);
+  --toastbg:#414141;--toasttx:#ffffff
 }
 html.modo-oscuro{
-  --fondo:#121417;--panel:#1c2026;--panel2:#262b33;--borde:#2d333d;--inputb:#4a5464;
-  --texto:#e8ecf2;--texto2:#97a3b4;
-  --azul:#4b9be0;--azulh:#61aae8;--azulsoft:rgba(75,155,224,.17);--azultx:#8cc1ee;
+  --fondo:#101214;--panel:#1a1e23;--panel2:#232830;--borde:#2b313a;--inputb:#4b535e;
+  --texto:#e9ecef;--texto2:#9aa3ae;
+  --azul:#b4d5e6;--azulh:#cfe3ee;--azulsoft:rgba(180,213,230,.14);--azultx:#cfe3ee;
+  --celeste:#b4d5e6;--celesoft:rgba(180,213,230,.13);--celetx:#bcd9ec;--ref:#8fc3e8;
   --verde:#34b468;--verdesoft:rgba(52,180,104,.17);
   --rojo:#e88087;
-  --hdrbg:rgba(18,20,23,.93);--hdrb:rgba(255,255,255,.07);
-  --toastbg:#3a4250;--toasttx:#ffffff
+  --btnfg:#16324a;
+  --hdrbg:#16191d;--hdrb:rgba(255,255,255,.06);
+  --toastbg:#3a4149;--toasttx:#ffffff
 }
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:40px;transition:background .25s,color .25s}
-header{position:sticky;top:0;background:var(--hdrbg);backdrop-filter:blur(14px);box-shadow:0 2px 16px var(--hdrb);z-index:20;display:flex;align-items:center;gap:12px;padding:10px 14px}
-header button{background:none;border:none;font-size:22px;cursor:pointer;color:var(--texto)}
-header .t{flex:1;font-weight:800;font-size:20px}
-.wrap{max-width:620px;margin:0 auto;padding:0 14px}
-.card{background:var(--panel);border:1px solid var(--borde);border-radius:18px;padding:18px 16px;margin:14px 0;box-shadow:0 1px 2px rgba(28,39,51,.04),0 6px 18px rgba(28,39,51,.05)}
-.card h2{font-size:22px;margin-bottom:10px}
+body{font-family:Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:40px;transition:background .25s,color .25s}
+header{position:sticky;top:0;background:var(--hdrbg);box-shadow:0 1px 0 var(--hdrb);z-index:20;display:flex;align-items:center;gap:10px;padding:9px 12px}
+header button{background:none;border:none;font-size:21px;cursor:pointer;color:var(--texto)}
+header .t{flex:1;font-weight:700;font-size:17px}
+.wrap{max-width:620px;margin:0 auto;padding:0 12px}
+.card{background:var(--panel);border:none;border-radius:16px;padding:16px 14px;margin:11px 0;box-shadow:0 1px 2px rgba(31,36,41,.05),0 3px 12px rgba(31,36,41,.06)}
+.card h2{font-size:20px;margin-bottom:9px}
 .card p{font-size:16px;line-height:1.6;color:var(--texto2);margin:8px 0}
 .des{font-size:16px;line-height:1.65;color:var(--texto2)}
 .des b{color:var(--texto)}
-label{display:block;font-weight:700;font-size:15px;margin:14px 0 5px}
+label{display:block;font-weight:700;font-size:15px;margin:13px 0 5px}
 label small{font-weight:400;color:var(--texto2)}
-input{width:100%;padding:13px;border:1.5px solid var(--inputb);border-radius:12px;font-size:17px;font-family:inherit;color:var(--texto);background:var(--panel2)}
-input:focus{outline:none;border-color:var(--azul);background:var(--panel)}
-.linkbox{width:100%;padding:12px;border:1.5px dashed var(--azul);border-radius:12px;font-size:14px;font-family:monospace;color:var(--azultx);background:var(--azulsoft);word-break:break-all;margin-top:8px}
-.btns{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.wa{width:100%;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;background:var(--verde);color:#fff;text-decoration:none;text-align:center;display:block}
+input{width:100%;padding:12px 16px;border:1.5px solid var(--inputb);border-radius:999px;font-size:17px;font-family:inherit;color:var(--texto);background:var(--panel2)}
+input:focus{outline:none;border-color:var(--ref);background:var(--panel)}
+.linkbox{width:100%;padding:12px 15px;border:1.5px dashed var(--celeste);border-radius:14px;font-size:14px;font-family:monospace;color:var(--ref);background:var(--celesoft);word-break:break-all;margin-top:8px}
+.btns{display:flex;flex-direction:column;gap:9px;margin-top:15px}
+.wa{width:100%;border:none;border-radius:999px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;background:var(--verde);color:#fff;text-decoration:none;text-align:center;display:block}
 .wa.off{opacity:.45;cursor:not-allowed}
-.azul{width:100%;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;background:var(--azul);color:#fff}
+.azul{width:100%;border:none;border-radius:999px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;background:var(--azul);color:var(--btnfg)}
 .azul:active{filter:brightness(.95)}
-.plain{width:100%;border:2px solid var(--inputb);border-radius:14px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;background:var(--panel);color:var(--texto)}
-#qrWrap{text-align:center;margin-top:18px;display:none}
+.plain{width:100%;border:2px solid var(--inputb);border-radius:999px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;background:var(--panel);color:var(--texto)}
+#qrWrap{text-align:center;margin-top:17px;display:none}
 #qrWrap img{border-radius:12px;border:1px solid var(--borde);background:#fff;padding:8px;max-width:220px}
 #qrWrap p{font-size:13px;margin-top:8px}
-.aviso{background:var(--azulsoft);border-left:4px solid var(--azul);border-radius:14px;padding:14px;font-size:15px;line-height:1.65;color:var(--texto);margin:12px 0}
-.checkrow{display:flex;align-items:flex-start;gap:10px;margin-top:16px}
-.checkrow input{width:auto;margin-top:3px;accent-color:var(--azul)}
+.aviso{background:var(--celesoft);border-left:4px solid var(--celeste);border-radius:12px;padding:13px;font-size:15px;line-height:1.6;color:var(--texto);margin:12px 0}
+.checkrow{display:flex;align-items:flex-start;gap:10px;margin-top:15px}
+.checkrow input{width:auto;margin-top:3px;accent-color:var(--ref)}
 .checkrow label{margin:0;font-size:14.5px;line-height:1.5;font-weight:600;color:var(--texto)}
 .checkrow small{display:block;font-weight:400;color:var(--texto2);margin-top:2px}
-.paso{display:flex;gap:10px;margin:12px 0;align-items:flex-start}
-.paso .n{flex:none;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--azulh),var(--azul));color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.paso{display:flex;gap:10px;margin:11px 0;align-items:flex-start}
+.paso .n{flex:none;width:25px;height:25px;border-radius:50%;background:var(--celeste);color:#16324a;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+html.modo-oscuro .paso .n{color:#16324a}
 .paso div{font-size:15.5px;line-height:1.6;color:var(--texto2)}
 .paso b{color:var(--texto)}
-.estado{display:flex;align-items:center;gap:10px;background:var(--panel2);border-radius:14px;padding:13px 14px;font-size:14.5px;line-height:1.5;color:var(--texto2)}
+.estado{display:flex;align-items:center;gap:10px;background:var(--panel2);border-radius:12px;padding:12px 13px;font-size:14.5px;line-height:1.5;color:var(--texto2)}
 .estado b{color:var(--texto)}
 .reset{background:none;border:none;color:var(--rojo);font-size:14px;font-weight:700;cursor:pointer;margin-top:10px;text-decoration:underline}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--toastbg);color:var(--toasttx);border-radius:999px;padding:10px 20px;font-size:16px;opacity:0;transition:.3s;z-index:60;pointer-events:none}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-.pie{text-align:center;color:var(--texto2);font-size:12px;padding:20px}</style>
+.pie{text-align:center;color:var(--texto2);font-size:11.5px;padding:20px}</style>
 <script>try{if(localStorage.getItem("fej_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
 </head>
 <body>
@@ -120,7 +125,7 @@ input:focus{outline:none;border-color:var(--azul);background:var(--panel)}
     <button class="reset" id="btnReset">Quitar la conexión de este dispositivo (volver al número principal)</button>
   </section>
 
-  <div class="pie">Fe de Jesús · v13 · "JESÚS VIENE PRONTO"</div>
+  <div class="pie">Fe de Jesús · v14 · "JESÚS VIENE PRONTO"</div>
 </div>
 
 <div class="toast" id="toast"></div>

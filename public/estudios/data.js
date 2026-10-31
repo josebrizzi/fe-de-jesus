@@ -11,7 +11,7 @@ const LECCIONES = [];
 // ============ VERSIÓN DE LA APP ============
 /* Se muestra en el pie de pantalla ("Fe de Jesús · v9") para poder verificar
    en el celular que la última versión subida a GitHub llegó al teléfono. */
-window.fejVersion = "13";
+window.fejVersion = "14";
 
 // ============ ENLACE PERSONALIZADO DE INSTRUCTOR ============
 /* Un instructor comparte: ...estudios/?i=SU_TELEFONO&n=SU_NOMBRE&a=NOMBRE_ALUMNO
@@ -49,7 +49,6 @@ window.fejTelDestino = function(){
 (function(){
   document.head.insertAdjacentHTML("beforeend",
     '<link rel="manifest" href="manifest.json">' +
-    '<meta name="theme-color" content="#1877f2">' +
     '<link rel="icon" type="image/svg+xml" href="icon.svg">'
   );
   if ("serviceWorker" in navigator) {
@@ -73,45 +72,44 @@ window.fejTelDestino = function(){
   }
 })();
 
-// ============ TAMAÑO DE FUENTE AGRANDADO ============
+// ============ JERARQUÍA DE TAMAÑOS v14 (chrome compacto, lectura grande) ============
 (function(){
   var s = document.createElement("style");
-  s.textContent = `
-header .t{font-size:20px}
-.logo{font-size:22px}
-.logo small{font-size:13px;white-space:nowrap}
-.pill{font-size:17px}
-.st small{font-size:14px}
-.hero .dia{font-size:16px}
-.hero h1{font-size:31px}
-.hero p{font-size:18px}
-.btn{font-size:19px}
-.sec h2{font-size:16px}
-.d{font-size:16px}
-.card h3{font-size:20px;line-height:1.35}
-.stx{font-size:16px}
-.he{font-size:22px}
-.card h2{font-size:23px}
+  s.textContent = `header .t{font-size:17px}
+.logo{font-size:18px}
+.logo small{font-size:11.5px;white-space:nowrap}
+.pill{font-size:13px}
+.st small{font-size:11px}
+.hero .dia{font-size:11px}
+.hero h1{font-size:24px}
+.hero p{font-size:14px}
+.btn{font-size:15px}
+.sec h2{font-size:12px}
+.d{font-size:10.5px}
+.card h3{font-size:15px;line-height:1.35}
+.stx{font-size:12.5px}
+.he{font-size:18px}
+.card h2{font-size:20px}
 .intro{font-size:20px;line-height:1.7}
 .pq{font-size:20px}
-.pnum{width:27px;height:27px;font-size:14px}
-.chip{font-size:17px;padding:7px 15px}
+.pnum{width:26px;height:26px;font-size:13px}
+.chip{font-size:16px;padding:6px 13px}
 .resp{font-size:17px}
 .des{font-size:20px;line-height:1.72}
 ul.lis li{font-size:20px;line-height:1.6}
 ul.lis li span{font-size:16px !important}
-.colwrap h4{font-size:18px}
-.dec h2{font-size:21px}
-.dec p{font-size:20px}
-.dbtns button{font-size:20px}
-.navg button{font-size:18px}
-.cplt{font-size:20px}
+.colwrap h4{font-size:17px}
+.dec h2{font-size:20px}
+.dec p{font-size:19px}
+.dbtns button{font-size:19px}
+.navg button{font-size:17px}
+.cplt{font-size:19px}
 #sheet h3{font-size:26px}
 #sheet .vv{font-size:16px}
 #sheet .bd{font-size:25px;line-height:1.8}
 #sheet sup{font-size:18px}
-.toast{font-size:18px}
-footer{font-size:16px}
+.toast{font-size:17px}
+footer{font-size:13px}
 `;
   document.head.appendChild(s);
 })();
