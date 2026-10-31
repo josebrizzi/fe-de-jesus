@@ -1,0 +1,16 @@
+{
+  "name": "Fe de Jesús — Estudios Bíblicos",
+  "short_name": "Fe de Jesús",
+  "description": "Curso de estudio bíblico en 20 lecciones: de la Biblia al bautismo, un estudio por día.",
+  "lang": "es",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#e7e9ec",
+  "theme_color": "#b4d5e6",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

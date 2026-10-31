@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b4d5e6">
+<title>Fe de Jesús</title>
+<style>*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --fondo:#e7e9ec;--panel:#ffffff;--panel2:#f1f3f6;--borde:#e1e5ea;--inputb:#bfc6cf;
+  --texto:#1f2429;--texto2:#6b7480;
+  --azul:#414141;--azulsoft:#eceef1;--azultx:#1f2429;
+  --celeste:#b4d5e6;--celesoft:#dcebf4;--celetx:#2e5871;
+  --verde:#279a58;
+  --btnfg:#ffffff;
+  --hdrbg:#b4d5e6;--hdrb:rgba(31,36,41,.10)
+}
+html.modo-oscuro{
+  --fondo:#101214;--panel:#1a1e23;--panel2:#232830;--borde:#2b313a;--inputb:#4b535e;
+  --texto:#e9ecef;--texto2:#9aa3ae;
+  --azul:#b4d5e6;--azulsoft:rgba(180,213,230,.14);--azultx:#cfe3ee;
+  --celeste:#b4d5e6;--celesoft:rgba(180,213,230,.13);--celetx:#bcd9ec;
+  --verde:#34b468;
+  --btnfg:#16324a;
+  --hdrbg:#16191d;--hdrb:rgba(255,255,255,.06)
+}
+body{font-family:Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:40px;transition:background .25s,color .25s}
+.wrap{max-width:600px;margin:0 auto}
+header{position:sticky;top:0;background:var(--hdrbg);box-shadow:0 1px 0 var(--hdrb);z-index:20}
+.hrow{display:flex;align-items:center;gap:9px;padding:9px 14px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--celeste);display:flex;align-items:center;justify-content:center;padding:3px}
+.avatar span{background:var(--panel);width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px}
+.logo{font-weight:700;font-size:18px;line-height:1.15}
+.logo small{display:block;font-weight:400;font-size:11.5px;color:var(--texto)}
+.tema{background:rgba(255,255,255,.75);border:none;border-radius:50%;width:32px;height:32px;font-size:15px;cursor:pointer;margin-left:auto}
+html.modo-oscuro .tema{background:var(--panel2)}
+.pill{background:var(--panel);border:none;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;color:var(--texto);box-shadow:0 1px 3px rgba(31,36,41,.15)}
+.stories{display:flex;gap:11px;overflow-x:auto;padding:12px 14px 2px;scrollbar-width:none}
+.stories::-webkit-scrollbar{display:none}
+.st{flex:0 0 auto;text-align:center;cursor:pointer}
+.ring{width:52px;height:52px;border-radius:50%;padding:3px;background:var(--celeste)}
+.ring.done{background:var(--verde)}
+.ring span{width:100%;height:100%;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:22px}
+.st small{display:block;font-size:10.5px;color:var(--texto2);margin-top:4px}
+.hero{position:relative;margin:12px 14px 6px;border-radius:18px;overflow:hidden;box-shadow:0 8px 24px rgba(31,36,41,.18);display:flex;align-items:flex-end;min-height:200px}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .velo{position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,28,40,.05) 0%,rgba(16,28,40,.16) 40%,rgba(16,28,40,.82) 100%)}
+.hero .in{position:relative;padding:15px 17px;color:#fff;width:100%}
+.hero .kicker{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.6px;background:rgba(65,65,65,.55);border-radius:999px;padding:4px 11px;margin-bottom:7px}
+.hero h1{font-size:21px;font-weight:700;line-height:1.25;text-shadow:0 1px 10px rgba(0,0,0,.4)}
+.hero p{opacity:.95;margin-top:4px;font-size:12.5px;line-height:1.45;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.bar{height:5px;background:rgba(255,255,255,.32);border-radius:4px;margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;background:#ffd76e;border-radius:4px;transition:width .4s}
+.btn{display:inline-block;margin-top:10px;background:#414141;color:#fff;border:none;border-radius:999px;padding:10px 22px;font-size:14.5px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(16,28,40,.35)}
+.btn:active{transform:scale(.97)}
+.sec{padding:0 14px}
+.sec h2{font-size:11.5px;color:var(--texto2);margin:17px 4px 8px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.card{display:flex;gap:10px;align-items:center;background:var(--panel);border:none;border-radius:14px;padding:10px 12px;margin-bottom:8px;cursor:pointer;text-decoration:none;color:var(--texto);box-shadow:0 1px 2px rgba(31,36,41,.05),0 3px 12px rgba(31,36,41,.06)}
+.card:active{transform:scale(.98)}
+.thumb{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:23px;flex:0 0 auto}
+.tx{flex:1;min-width:0}
+.d{display:inline-block;background:#414141;color:#fff;border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:700;letter-spacing:.6px}
+html.modo-oscuro .d{background:var(--celeste);color:#16324a}
+.card h3{font-size:14.5px;line-height:1.3;margin-top:3px;font-weight:700}
+.stx{font-size:12px;margin-top:2px;color:var(--texto2)}
+.ok{color:var(--verde);font-weight:700}
+.he{font-size:17px}
+footer{text-align:center;color:var(--texto2);font-size:11.5px;padding:24px}
+.conectado{background:var(--celesoft);border:none;border-left:4px solid var(--celeste);border-radius:12px;padding:10px 13px;margin:12px 14px 0;font-size:14.5px;line-height:1.5;color:var(--texto)}
+.btnInvitar{display:block;background:var(--azul);color:var(--btnfg);border:none;border-radius:14px;padding:13px 16px;margin:0 0 4px;text-align:center;font-weight:700;font-size:14.5px;text-decoration:none;line-height:1.45;box-shadow:0 3px 10px rgba(31,36,41,.18)}
+.btnInvitar:active{transform:scale(.98)}
+.btnInvitar small{display:block;font-weight:400;color:var(--btnfg);opacity:.78;font-size:12px;margin-top:3px}</style>
+<script>try{if(localStorage.getItem("fej_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="hrow">
+      <div class="avatar"><span>📖</span></div>
+      <div class="logo">Fe de Jesús<small>20 estudios bíblicos · 20 días</small></div>
+      <button class="tema" id="btnTema" title="Modo claro / oscuro">🌙</button>
+      <div class="pill" id="pill">0/20</div>
+    </div>
+  </header>
+
+  <div class="stories" id="stories"></div>
+
+  <div class="hero">
+    <img src="hero.jpg" alt="Biblia abierta con la luz de la mañana">
+    <div class="velo"></div>
+    <div class="in">
+      <div class="kicker">CAMINO DE FE · 20 DÍAS</div>
+      <h1>Un estudio por día,<br>de la Biblia al bautismo</h1>
+      <p>Tocá cualquier referencia y leé el versículo al instante.</p>
+      <div class="bar"><i id="barra" style="width:0%"></i></div>
+      <button class="btn" id="btnContinuar">▶ Comenzar</button>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>Índice del curso</h2>
+    <div id="lista"></div>
+  </div>
+
+  <div class="sec">
+    <h2>Nuevo estudio disponible</h2>
+    <a class="card" href="apocalipsis.html">
+      <div class="thumb" style="background:linear-gradient(135deg,#6a1b9a,#b71c1c)">🔥</div>
+      <div class="tx">
+        <div class="d">ESTUDIO APOCALIPSIS</div>
+        <h3>Las profecías del fin en 18 lecciones</h3>
+        <div class="stx" id="apoStx">De las siete iglesias a la Tierra Nueva, con el mismo formato que conocés</div>
+      </div>
+      <div class="he">▶</div>
+    </a>
+  </div>
+
+  <div class="sec">
+    <h2>Invitá a otros a estudiar</h2>
+    <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: al terminar te envía el PDF con sus respuestas</small></a>
+  </div>
+
+  <footer>Fe de Jesús · v14 · "JESÚS VIENE PRONTO"</footer>
+</div>
+
+<script src="data.js"></script>
+<script src="data-a.js"></script>
+<script src="data-b.js"></script>
+<script src="data-c.js"></script>
+<script src="data-d.js"></script>
+
+<script>
+const done = () => JSON.parse(localStorage.getItem("fej_done") || "{}");
+
+/* ===== BANNER DE CONEXIÓN (enlace de instructor) ===== */
+function escHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+(function(){
+  const cfg = (typeof window.fejCfg === "function") ? window.fejCfg() : null;
+  if(!cfg || !cfg.nombre) return;
+  const d = document.createElement("div");
+  d.className = "conectado";
+  let msg = "🎓 Estás estudiando con <b>" + escHtml(cfg.nombre) + "</b>";
+  if(cfg.alumno) msg += ", " + escHtml(cfg.alumno);
+  msg += " — al completar cada estudio te envía un PDF con sus respuestas y su decisión. ¡Bendecido camino!";
+  d.innerHTML = msg;
+  const hero = document.querySelector(".hero");
+  if(hero && hero.parentNode) hero.parentNode.insertBefore(d, hero);
+})();
+
+/* ===== MODO CLARO / OSCURO ===== */
+function aplicarIconoTema(){
+  const b = document.getElementById("btnTema");
+  if(b) b.textContent = document.documentElement.classList.contains("modo-oscuro") ? "☀️" : "🌙";
+}
+function toggleTema(){
+  const oscuro = document.documentElement.classList.toggle("modo-oscuro");
+  try{ localStorage.setItem("fej_tema", oscuro ? "oscuro" : "claro"); }catch(e){}
+  aplicarIconoTema();
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", oscuro ? "#121417" : "#b4d5e6");
+}
+document.getElementById("btnTema").onclick = toggleTema;
+aplicarIconoTema();
+
+function render(){
+  const total = LECCIONES.length;
+  const doneMap = done();
+  const nDone = Object.keys(doneMap).length;
+
+  document.getElementById("pill").textContent = nDone + "/20";
+  document.getElementById("barra").style.width = (nDone / 20 * 100) + "%";
+  document.getElementById("btnContinuar").textContent = nDone ? "▶ Continuar" : "▶ Comenzar";
+  document.getElementById("btnContinuar").onclick = () => {
+    const prox = LECCIONES.find(l => !doneMap[l.d]) || LECCIONES[0];
+    location.href = "leccion.html?dia=" + prox.d;
+  };
+
+  document.getElementById("stories").innerHTML = LECCIONES.map(l =>
+    `<div class="st" onclick="location.href='leccion.html?dia=${l.d}'">
+       <div class="ring ${doneMap[l.d] ? "done" : ""}"><span>${l.e}</span></div>
+       <small>Día ${l.d}</small>
+     </div>`).join("");
+
+  document.getElementById("lista").innerHTML = LECCIONES.map(l => {
+    const hecho = doneMap[l.d];
+    return `<a class="card" href="leccion.html?dia=${l.d}">
+      <div class="thumb" style="background:${l.g}">${l.e}</div>
+      <div class="tx">
+        <div class="d">DÍA ${l.d}</div>
+        <h3>${l.t}</h3>
+        <div class="stx ${hecho ? "ok" : ""}">${hecho ? "✓ Completado" : "Sin completar"}</div>
+      </div>
+      <div class="he">${hecho ? "❤️" : "🤍"}</div>
+    </a>`;
+  }).join("");
+
+  /* Estudio Apocalipsis: cuántas lecciones completadas */
+  try{
+    const ad = JSON.parse(localStorage.getItem("fejapo_done") || "{}");
+    const na = Object.keys(ad).length;
+    const ax = document.getElementById("apoStx");
+    if(ax) ax.textContent = na
+      ? "✓ " + na + " de 18 lecciones completadas — seguí el recorrido profético"
+      : "De las siete iglesias a la Tierra Nueva, con el mismo formato que conocés";
+  }catch(e){}
+}
+render();
+</script>
+</body>
+</html>
