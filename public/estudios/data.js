@@ -11,7 +11,7 @@ const LECCIONES = [];
 // ============ VERSIÓN DE LA APP ============
 /* Se muestra en el pie de pantalla ("Fe de Jesús · v9") para poder verificar
    en el celular que la última versión subida a GitHub llegó al teléfono. */
-window.fejVersion = "11";
+window.fejVersion = "13";
 
 // ============ ENLACE PERSONALIZADO DE INSTRUCTOR ============
 /* Un instructor comparte: ...estudios/?i=SU_TELEFONO&n=SU_NOMBRE&a=NOMBRE_ALUMNO
@@ -78,8 +78,8 @@ window.fejTelDestino = function(){
   var s = document.createElement("style");
   s.textContent = `
 header .t{font-size:20px}
-.logo{font-size:24px}
-.logo small{font-size:16px}
+.logo{font-size:22px}
+.logo small{font-size:13px;white-space:nowrap}
 .pill{font-size:17px}
 .st small{font-size:14px}
 .hero .dia{font-size:16px}
