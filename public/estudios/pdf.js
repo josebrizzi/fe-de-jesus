@@ -194,6 +194,10 @@ function construirPdf(doc, medidorExt){
         bloques.push({ t: "(sin responder)", x1: XP, size: 11, it: true, color: GRISCL, lh: 15.5, gapAntes: 3 });
       }
     }
+    if(it.ensenanza){
+      bloques.push({ t: "ENSEÑANZA PARA EL INSTRUCTOR", x1: XP, size: 8, bold: true, color: VERDE, lh: 11, gapAntes: 5 });
+      bloques.push({ t: it.ensenanza, x1: XP, size: 10.5, it: true, color: GRIS, lh: 14.5, gapAntes: 2 });
+    }
     if(idx < doc.items.length - 1) bloques.push({ regla: true, gapAntes: 8 });
     escribir(bloques);
   });

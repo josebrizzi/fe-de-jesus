@@ -11,7 +11,7 @@ const LECCIONES = [];
 // ============ VERSIÓN DE LA APP ============
 /* Se muestra en el pie de pantalla ("Fe de Jesús · v9") para poder verificar
    en el celular que la última versión subida a GitHub llegó al teléfono. */
-window.fejVersion = "16";
+window.fejVersion = "17";
 
 // ============ ENLACE PERSONALIZADO DE INSTRUCTOR ============
 /* Un instructor comparte: ...estudios/?i=SU_TELEFONO&n=SU_NOMBRE&a=NOMBRE_ALUMNO
@@ -72,7 +72,7 @@ window.fejTelDestino = function(){
   }
 })();
 
-// ============ JERARQUÍA DE TAMAÑOS v16 (estudio compacto: lectura, preguntas y oración al mismo tamaño) ============
+// ============ JERARQUÍA DE TAMAÑOS v17 (estudio compacto: lectura, preguntas y oración al mismo tamaño) ============
 (function(){
   var s = document.createElement("style");
   s.textContent = `header .t{font-size:17px}

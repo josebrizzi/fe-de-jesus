@@ -163,7 +163,7 @@ html.modo-oscuro .fin20{background:var(--panel2);color:var(--texto)}
   <div class="bd" id="shBody"></div>
 </div>
 <div class="toast" id="toast"></div>
-<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · Apocalipsis · v16</footer>
+<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · Apocalipsis · v17</footer>
 
 <script src="data.js"></script>
 <script src="apo-data-a.js"></script>
@@ -475,7 +475,6 @@ function htmlPregunta(p, misResp){
   const ops = p.ops || (window.QUIZ && window.QUIZ[clave]) || null;
   const st = quizEstado[p.n];
   const hecho = !!getDone()[L.d];   /* día completado: vista de revisión */
-  const yaEscribio = !!(misResp[p.n] && misResp[p.n].trim());
 
   let cuerpo = "";
   if(ops){
@@ -497,8 +496,7 @@ function htmlPregunta(p, misResp){
     const etiqueta = hecho ? "👆 La respuesta correcta está en verde:" : "👆 Marcá la respuesta que creés correcta:";
     cuerpo =
       '<label class="respLbl">' + etiqueta + '</label>' +
-      '<div class="quiz" data-q="' + p.n + '">' + botones + nols + '</div>' +
-      (hecho ? '<div class="corrn">✅ Revisión abierta — tu instructor te acompaña con la enseñanza</div>' : "");
+      '<div class="quiz" data-q="' + p.n + '">' + botones + nols + '</div>';
   } else {
     cuerpo =
       '<label class="respLbl">✍️ Tu respuesta:</label>' +
@@ -506,16 +504,12 @@ function htmlPregunta(p, misResp){
       '<textarea class="respTa" id="ta_' + p.n + '" oninput="guardarResp(' + p.n + ', this.value)">' + escapeHtml(misResp[p.n] || "") + '</textarea>';
   }
 
-  /* Enseñanza: en multiple choice se abre al completar el estudio; en las escritas, al escribir */
-  const ensOn = ops ? hecho : yaEscribio;
-
+  /* La enseñanza (RESUMEN_ENSENANZA / p.des) ya NO se muestra en pantalla:
+     viaja únicamente dentro del PDF que recibe el instructor. */
   return '<div class="preg" id="preg_' + p.n + '">' +
      '<span class="pnum">' + p.n + '</span><span class="pq">' + escapeHtml(p.p) + '</span>' +
      '<div class="chips">' + chips(p.r).map(c => '<button class="chip" onclick="openRef(\'' + c.replace(/'/g,"\\'") + '\')">' + escapeHtml(c) + '</button>').join("") + '</div>' +
      cuerpo +
-     '<div class="ensenanza ' + (ensOn ? "on" : "") + '" id="ens_' + p.n + '">' +
-       '<div class="des">' + linkRefs((window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des) + '</div>' +
-     '</div>' +
    '</div>';
 }
 
@@ -543,7 +537,7 @@ function htmlDecision(completa){
       '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
     '</div>' +
     '<a class="enviarBtn" id="btnEnviar" onclick="completarYEnviar(event)">' + (getDone()[L.d] ? '📤 Reenviar a mi instructor' : '📤 Completar y enviar a mi instructor') + '</a>' +
-    '<div class="corrn" style="color:var(--azultx)">📄 Al tocar acá el estudio se marca como completado, se arma tu PDF con las respuestas y lo compartís por WhatsApp' + (nombreInstructor() ? " con " + escapeHtml(nombreInstructor()) : " con tu instructor") + '. Recién entonces se abren la enseñanza y las respuestas correctas.</div>' +
+    '<div class="corrn" style="color:var(--azultx)">📄 Al tocar acá el estudio se marca como completado, se arma tu PDF con las respuestas y lo compartís por WhatsApp' + (nombreInstructor() ? " con " + escapeHtml(nombreInstructor()) : " con tu instructor") + '. Recién entonces se abren las respuestas correctas.</div>' +
   '</section>';
 }
 
@@ -643,11 +637,6 @@ function guardarResp(n, texto){
   const r = getResp();
   r[n] = texto;
   saveResp(r);
-  const ens = document.getElementById("ens_" + n);
-  if(ens){
-    if(texto.trim()){ if(!ens.classList.contains("on")) ens.classList.add("on"); }
-    else ens.classList.remove("on");
-  }
   const motiva = document.getElementById("mo_" + n);
   if(motiva){
     const palabras = texto.trim().split(/\s+/).filter(Boolean).length;
@@ -730,10 +719,11 @@ function armarDocPdf(datos){
           referencia: p.r || "",
           opciones: ops.slice().sort(function(a, b){ return a.localeCompare(b, "es"); }),
           elegida: (st && st.sel && !st.nols) ? st.sel : null,
-          nols: !!(st && st.nols)
+          nols: !!(st && st.nols),
+          ensenanza: (window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des || ""
         });
       } else {
-        items.push({ n: p.n, pregunta: p.p, referencia: p.r || "", escrita: (misResp[p.n] || "").trim() });
+        items.push({ n: p.n, pregunta: p.p, referencia: p.r || "", escrita: (misResp[p.n] || "").trim(), ensenanza: (window.RESUMEN_ENSENANZA && window.RESUMEN_ENSENANZA[clave]) || p.des || "" });
       }
     });
   });
