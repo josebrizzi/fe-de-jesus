@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b4d5e6">
+<title>Lectura del día · Devocionales</title>
+<style>*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --fondo:#e7e9ec;--panel:#ffffff;--panel2:#f1f3f6;--borde:#e1e5ea;
+  --texto:#1f2429;--texto2:#6b7480;
+  --azul:#414141;--azulsoft:#eceef1;
+  --celeste:#b4d5e6;--celesoft:#dcebf4;--celetx:#2e5871;
+  --verde:#279a58;
+  --btnfg:#ffffff;
+  --hdrbg:#b4d5e6;--hdrb:rgba(31,36,41,.10)
+}
+html.modo-oscuro{
+  --fondo:#101214;--panel:#1a1e23;--panel2:#232830;--borde:#2b313a;
+  --texto:#e9ecef;--texto2:#9aa3ae;
+  --azul:#b4d5e6;--azulsoft:rgba(180,213,230,.14);
+  --celeste:#b4d5e6;--celesoft:rgba(180,213,230,.13);--celetx:#bcd9ec;
+  --verde:#34b468;
+  --btnfg:#16324a;
+  --hdrbg:#16191d;--hdrb:rgba(255,255,255,.06)
+}
+body{font-family:Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);padding-bottom:40px;transition:background .25s,color .25s}
+.wrap{max-width:600px;margin:0 auto}
+header{position:sticky;top:0;background:var(--hdrbg);box-shadow:0 1px 0 var(--hdrb);z-index:20}
+.hrow{display:flex;align-items:center;gap:9px;padding:9px 14px}
+.volver{background:var(--panel);border:none;border-radius:50%;width:32px;height:32px;font-size:14px;cursor:pointer;flex:0 0 auto;box-shadow:0 1px 3px rgba(31,36,41,.15)}
+.logo{font-weight:700;font-size:15px;line-height:1.15}
+.logo small{display:block;font-weight:400;font-size:11px;color:var(--texto)}
+.tema{background:rgba(255,255,255,.75);border:none;border-radius:50%;width:32px;height:32px;font-size:15px;cursor:pointer;margin-left:auto}
+html.modo-oscuro .tema{background:var(--panel2)}
+.card{background:var(--panel);border:none;border-radius:14px;padding:14px 15px;margin:10px 14px 0;box-shadow:0 1px 2px rgba(31,36,41,.05),0 3px 12px rgba(31,36,41,.06)}
+.libro{display:flex;gap:10px;align-items:center}
+.thumb{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 auto}
+.libro h3{font-size:14.5px;font-weight:700;line-height:1.25}
+.libro .irhoy{margin-left:auto;background:var(--azulsoft);color:var(--celetx);border:none;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.fecha{margin-top:14px;font-size:12px;font-weight:700;color:var(--celetx);text-transform:uppercase;letter-spacing:1px}
+.dia{display:inline-block;background:var(--azulsoft);color:var(--texto);border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700;margin-top:6px}
+h1.tit{font-size:22px;line-height:1.3;margin-top:10px;font-weight:700}
+.verso{margin-top:12px;padding:11px 13px;background:var(--celesoft);border-left:4px solid var(--celeste);border-radius:10px;font-size:15px;line-height:1.55;font-style:italic;color:var(--celetx)}
+.verso b{display:block;font-style:normal;font-size:12px;margin-top:6px;text-align:right}
+.texto{margin-top:13px;font-size:17px;line-height:1.68;color:var(--texto)}
+.texto p{margin:0 0 13px}
+.fuente{margin-top:4px;font-size:12.5px;color:var(--texto2);font-style:italic}
+.sincont{padding:18px 6px;text-align:center;color:var(--texto2);font-size:14.5px;line-height:1.6}
+.sincont .ic{font-size:34px;display:block;margin-bottom:8px}
+.acciones{display:flex;gap:9px;margin:14px 14px 0}
+.navg{flex:1;background:var(--panel);border:none;border-radius:12px;padding:12px 10px;font-size:13.5px;font-weight:700;color:var(--texto);cursor:pointer;box-shadow:0 1px 2px rgba(31,36,41,.05),0 3px 10px rgba(31,36,41,.06)}
+.navg:active{transform:scale(.97)}
+.navg small{display:block;font-weight:400;font-size:10.5px;color:var(--texto2);margin-top:2px}
+.marcar{display:block;width:calc(100% - 28px);margin:10px 14px 0;background:var(--azul);color:var(--btnfg);border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(31,36,41,.18)}
+.marcar:active{transform:scale(.98)}
+.marcar.leida{background:var(--verde);color:#fff}
+/* ===== CALENDARIO ===== */
+.cal h2{font-size:11.5px;color:var(--texto2);margin:20px 18px 8px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.cal .mes{display:flex;align-items:center;gap:8px;margin:0 14px}
+.cal .mes b{flex:1;text-align:center;font-size:15px}
+.cal .ma{background:var(--panel);border:none;border-radius:50%;width:34px;height:34px;font-size:15px;cursor:pointer;box-shadow:0 1px 3px rgba(31,36,41,.12)}
+.cal .g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:10px 14px 0;background:var(--panel);border-radius:14px;padding:12px;box-shadow:0 1px 2px rgba(31,36,41,.05),0 3px 12px rgba(31,36,41,.06)}
+.cal .cab{font-size:10.5px;font-weight:700;color:var(--texto2);text-align:center;padding:4px 0}
+.cal .cd{position:relative;border:none;background:transparent;border-radius:9px;padding:8px 0;font-size:13px;font-family:inherit;color:var(--texto);cursor:pointer;min-height:34px}
+.cal .cd:active{transform:scale(.93)}
+.cal .cd.otro{visibility:hidden}
+.cal .cd.hoy{outline:2px solid var(--celeste);outline-offset:-2px;font-weight:700}
+.cal .cd.sel{background:var(--azul);color:var(--btnfg);font-weight:700}
+.cal .cd .puntito{position:absolute;left:50%;transform:translateX(-50%);bottom:3px;width:5px;height:5px;border-radius:50%;background:var(--verde)}
+html.modo-oscuro .cal .cd.sel .puntito{background:#0d2013}
+footer{text-align:center;color:var(--texto2);font-size:11.5px;padding:24px}
+/* ===== PANTALLA DE CARGA ===== */
+#splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--celeste) 0%,var(--celesoft) 45%,var(--fondo) 100%);opacity:1;transition:opacity .5s ease}
+html.modo-oscuro #splash{background:linear-gradient(180deg,#16324a 0%,var(--fondo) 75%)}
+#splash.fuera{opacity:0;pointer-events:none}
+.sp-box{text-align:center;padding:0 30px;max-width:340px;width:100%}
+.sp-logo{width:86px;height:86px;margin:0 auto 18px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 12px 32px rgba(31,36,41,.2);animation:spPulso 1.7s ease-in-out infinite}
+@keyframes spPulso{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.sp-titulo{font-size:27px;font-weight:700;letter-spacing:.3px;color:var(--texto)}
+.sp-sub{font-size:13px;color:var(--texto2);margin-top:6px}
+.sp-barra{height:6px;background:rgba(255,255,255,.6);border-radius:4px;margin:24px auto 0;max-width:210px;overflow:hidden}
+html.modo-oscuro .sp-barra{background:var(--panel2)}
+.sp-barra i{display:block;width:45%;height:100%;border-radius:4px;background:#ffd76e;animation:spCorre 1.15s ease-in-out infinite}
+@keyframes spCorre{0%{transform:translateX(-105%)}100%{transform:translateX(240%)}}
+.sp-estado{font-size:12.5px;color:var(--texto2);margin-top:13px;min-height:17px}
+@media (prefers-reduced-motion:reduce){.sp-logo,.sp-barra i{animation:none}}</style>
+<script>try{if(localStorage.getItem("dev_tema")==="oscuro")document.documentElement.classList.add("modo-oscuro")}catch(e){}</script>
+</head>
+<body>
+
+<div id="splash" role="status" aria-live="polite">
+  <div class="sp-box">
+    <div class="sp-logo">🌅</div>
+    <div class="sp-titulo">Devocionales</div>
+    <div class="sp-sub">Un día a la vez</div>
+    <div class="sp-barra"><i></i></div>
+    <div class="sp-estado" id="spEstado">Abriendo la lectura…</div>
+  </div>
+</div>
+<script>
+(function(){
+  var s=document.getElementById("splash"),st=document.getElementById("spEstado");
+  if(!s) return;
+  var t0=Date.now(),listo=false;
+  function fuera(){
+    if(listo) return; listo=true;
+    s.classList.add("fuera");
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); },600);
+  }
+  var t=setInterval(function(){
+    var r=document.getElementById("lecturaCard");
+    if(r && r.children.length && Date.now()-t0>350){ clearInterval(t); setTimeout(fuera,250); }
+  },180);
+  window.addEventListener("load",function(){ setTimeout(fuera,500); });
+  setTimeout(fuera,10000);
+})();
+</script>
+
+<div class="wrap">
+
+  <header>
+    <div class="hrow">
+      <button class="volver" onclick="location.href='index.html'" title="Volver">◀</button>
+      <div class="logo">Devocionales<small>Un día a la vez</small></div>
+      <button class="tema" id="btnTema" title="Modo claro / oscuro">🌙</button>
+    </div>
+  </header>
+
+  <section class="card libro" id="libroCard"></section>
+  <section class="card" id="lecturaCard"></section>
+  <div class="acciones">
+    <button class="navg" id="btnAnt">◀ Anterior<small>lectura del día previo</small></button>
+    <button class="navg" id="btnSig">Siguiente ▶<small>lectura del día siguiente</small></button>
+  </div>
+  <button class="marcar" id="btnMarcar">✓ Marcar como leída</button>
+
+  <section class="cal">
+    <h2>📅 Calendario</h2>
+    <div class="mes">
+      <button class="ma" id="mesAnt" title="Mes anterior">◀</button>
+      <b id="mesNombre">—</b>
+      <button class="ma" id="mesSig" title="Mes siguiente">▶</button>
+    </div>
+    <div class="g" id="calGrid"></div>
+  </section>
+
+  <footer>Devocionales · v1 · "UN DÍA A LA VEZ"</footer>
+</div>
+
+<script src="devocionales.js"></script>
+<script>
+/* El archivo de datos del libro (dev-d01.js …) se carga aquí, ANTES del render,
+   según el ?id= de la URL (lista blanca: solo d01…d99). */
+document.write('<script src="dev-' + (function(){
+  var id = new URLSearchParams(location.search).get("id") || "";
+  return (/^d[0-9]{2}$/.test(id) ? id : "d01");
+})() + '.js"><\/script>');
+</script>
+
+<script>
+/* ===== MODO CLARO / OSCURO ===== */
+function aplicarIconoTema(){
+  const b = document.getElementById("btnTema");
+  if(b) b.textContent = document.documentElement.classList.contains("modo-oscuro") ? "☀️" : "🌙";
+}
+function toggleTema(){
+  const oscuro = document.documentElement.classList.toggle("modo-oscuro");
+  try{ localStorage.setItem("dev_tema", oscuro ? "oscuro" : "claro"); }catch(e){}
+  aplicarIconoTema();
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", oscuro ? "#121417" : "#b4d5e6");
+}
+document.getElementById("btnTema").onclick = toggleTema;
+aplicarIconoTema();
+
+/* ===== FECHAS ===== */
+const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const DIAS  = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+function hoy(){ const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function iso(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function clave(d){ return String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); } /* "MM-DD": la clave anual del devocional */
+function ordinal(d){
+  const ini = new Date(d.getFullYear(), 0, 1);
+  return Math.round((d - ini) / 86400000) + 1;
+}
+function fechaLarga(d){ return DIAS[d.getDay()] + ", " + d.getDate() + " de " + MESES[d.getMonth()].toLowerCase() + " de " + d.getFullYear(); }
+function sumarDias(d,n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+/* ===== PARÁMETROS ===== */
+const QS = new URLSearchParams(location.search);
+let ID = QS.get("id") || "";
+if(!/^d[0-9]{2}$/.test(ID) || !window.DEVOCIONALES.some(v => v.id === ID)) ID = window.DEVOCIONALES[0].id;
+const META = window.DEVOCIONALES.find(v => v.id === ID);
+let F = hoy();
+if(QS.get("f")){
+  const p = QS.get("f").split("-");
+  if(p.length === 3){ const c = new Date(+p[0], +p[1]-1, +p[2]); if(!isNaN(c)) F = c; }
+}
+try{ localStorage.setItem("dev_ultimo", ID); }catch(e){}
+
+/* ===== LEÍDAS ===== */
+function leidas(){ try{ return JSON.parse(localStorage.getItem("dev_leidas") || "{}"); }catch(e){ return {}; } }
+function estaLeida(){ const m = leidas()[ID] || {}; return !!(m[clave(F)]); }
+function marcar(){
+  const todo = leidas();
+  const m = todo[ID] || {};
+  if(m[clave(F)]) delete m[clave(F)]; else m[clave(F)] = 1;
+  todo[ID] = m;
+  try{ localStorage.setItem("dev_leidas", JSON.stringify(todo)); }catch(e){}
+  render();
+}
+
+/* ===== CALENDARIO: MES MOSTRADO ===== */
+let mesVisto = new Date(F.getFullYear(), F.getMonth(), 1);
+
+function render(){
+  /* --- cabecera del libro --- */
+  const nLeidas = (()=>{ const m = leidas()[ID] || {}; let n=0; for(const k in m){ if(m[k]) n++; } return n; })();
+  document.getElementById("libroCard").innerHTML =
+    '<div class="thumb" style="background:' + META.g + '">' + META.e + '</div>' +
+    '<div><h3>' + esc(META.t) + '</h3><div class="stx">✓ ' + nLeidas + ' de 366 leídas</div></div>' +
+    '<button class="irhoy" onclick="irHoy()">Ir a hoy</button>';
+
+  /* --- lectura --- */
+  const lec = (window.DEVDATOS && window.DEVDATOS[ID] && window.DEVDATOS[ID].lecturas) ? window.DEVDATOS[ID].lecturas[clave(F)] : null;
+  let cuerpo = '<div class="fecha">' + fechaLarga(F) + '</div>' +
+    '<span class="dia">DÍA ' + ordinal(F) + ' DE 366</span>';
+  if(lec){
+    cuerpo += '<h1 class="tit">' + esc(lec.t || "") + '</h1>';
+    if(lec.vt) cuerpo += '<div class="verso">“' + esc(lec.vt) + '”' + (lec.v ? '<b>' + esc(lec.v) + '</b>' : '') + '</div>';
+    cuerpo += '<div class="texto">' + String(lec.x || "").split(/\n{2,}/).map(p => '<p>' + esc(p) + '</p>').join("") + '</div>';
+    if(lec.f) cuerpo += '<div class="fuente">' + esc(lec.f) + '</div>';
+  } else {
+    cuerpo += '<div class="sincont"><span class="ic">📭</span><b>Esta lectura todavía no fue cargada.</b><br>' +
+      'El texto de este devocional se está preparando. Elegí otra fecha del calendario o volvé a probar más pronto.</div>';
+  }
+  document.getElementById("lecturaCard").innerHTML = cuerpo;
+
+  /* --- botones --- */
+  const bm = document.getElementById("btnMarcar");
+  bm.classList.toggle("leida", estaLeida());
+  bm.textContent = estaLeida() ? "✓ Leída — tocá para desmarcar" : "✓ Marcar como leída";
+  document.getElementById("btnAnt").onclick = () => ir(sumarDias(F,-1));
+  document.getElementById("btnSig").onclick = () => ir(sumarDias(F,1));
+
+  /* --- calendario --- */
+  if(mesVisto.getFullYear() !== F.getFullYear() || mesVisto.getMonth() !== F.getMonth()){
+    mesVisto = new Date(F.getFullYear(), F.getMonth(), 1);
+  }
+  document.getElementById("mesNombre").textContent = MESES[mesVisto.getMonth()] + " " + mesVisto.getFullYear();
+  const primero = new Date(mesVisto.getFullYear(), mesVisto.getMonth(), 1);
+  const dias = new Date(mesVisto.getFullYear(), mesVisto.getMonth()+1, 0).getDate();
+  const H = hoy();
+  let g = ["D","L","M","M","J","V","S"].map(x => '<span class="cab">' + x + '</span>').join("");
+  for(let i = 0; i < primero.getDay(); i++) g += '<span class="cd otro"></span>';
+  for(let dd = 1; dd <= dias; dd++){
+    const fDia = new Date(mesVisto.getFullYear(), mesVisto.getMonth(), dd);
+    let cls = "cd";
+    if(fDia.getTime() === H.getTime()) cls += " hoy";
+    if(fDia.getTime() === F.getTime()) cls += " sel";
+    const puntito = estaLeidaEn(fDia) ? '<span class="puntito"></span>' : "";
+    g += '<button class="' + cls + '" onclick="irDeCal(' + fDia.getFullYear() + ',' + fDia.getMonth() + ',' + dd + ')">' + dd + puntito + '</button>';
+  }
+  document.getElementById("calGrid").innerHTML = g;
+
+  /* --- URL (deep link compartible) --- */
+  try{ history.replaceState(null, "", "lectura.html?id=" + ID + "&f=" + iso(F)); }catch(e){}
+  document.title = "Lectura del " + fechaLarga(F) + " · Devocionales";
+}
+function estaLeidaEn(fDia){ const m = leidas()[ID] || {}; return !!(m[clave(fDia)]); }
+function ir(d){ F = d; render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+function irDeCal(y,m,dd){ F = new Date(y, m, dd); render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+function irHoy(){ F = hoy(); render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+document.getElementById("mesAnt").onclick = () => { mesVisto = new Date(mesVisto.getFullYear(), mesVisto.getMonth()-1, 1); render(); };
+document.getElementById("mesSig").onclick = () => { mesVisto = new Date(mesVisto.getFullYear(), mesVisto.getMonth()+1, 1); render(); };
+document.getElementById("btnMarcar").onclick = marcar;
+
+render();
+</script>
+<script>
+if("serviceWorker" in navigator){ try{ navigator.serviceWorker.register("./sw.js"); }catch(e){} }
+</script>
+</body>
+</html>

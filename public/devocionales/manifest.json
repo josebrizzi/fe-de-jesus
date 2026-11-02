@@ -1,0 +1,18 @@
+{
+  "name": "Devocionales — Un día a la vez",
+  "short_name": "Devocionales",
+  "description": "Doce devocionales con una lectura para cada día del año.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e7e9ec",
+  "theme_color": "#b4d5e6",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

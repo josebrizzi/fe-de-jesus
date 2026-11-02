@@ -1,0 +1,52 @@
+════════════════════════════════════════════════════════════
+ DEVOCIONALES — "Un día a la vez" · v1
+ Instrucciones de subida (GitHub → Render)
+════════════════════════════════════════════════════════════
+
+QUÉ ES
+------
+App aparte de Fe de Jesús, con la misma familia visual (celeste,
+modo claro/oscuro, pantalla de carga). Solo texto: 12 libros de
+devocionales, cada uno con 366 lecturas (una por día del año,
+incluido el 29 de febrero).
+
+PASOS PARA PUBLICARLA
+---------------------
+1. Entra a tu repo GitHub:  github.com/josebrizzi/fe-de-jesus
+2. Parate adentro de la carpeta  public/  (NO en la raíz).
+3. Creá ahí una carpeta nueva llamada  devocionales
+4. Subí adentro de public/devocionales/ LOS 17 ARCHIVOS de este paquete:
+      index.html, lectura.html, devocionales.js,
+      dev-d01.js … dev-d12.js (12 archivos),
+      sw.js, manifest.json, icon.svg, hero.jpg
+5. Esperá a que Render termine el deploy (1-3 minutos).
+6. La app queda en:
+      https://fe-de-jesus.onrender.com/devocionales/
+   Verificá que abajo diga  "Devocionales · v1".
+
+COMO LA USAN LOS ALUMNOS
+------------------------
+- Entran con el link → abre la lectura de HOY del último libro leído.
+- "Ir a hoy" vuelve siempre al día de la fecha.
+- ◀ Anterior / Siguiente ▶ cambian de día (cruza meses y años).
+- "✓ Marcar como leída" guarda el avance en el celular (puntito verde
+  en el calendario + contador en la biblioteca).
+- El calendario salta a cualquier fecha de cualquier mes.
+- El modo claro/oscuro funciona igual que en Fe de Jesús.
+- Funciona OFFLINE después de la primera visita (PWA instalable:
+  en el celular, "Agregar a la pantalla de inicio").
+
+CARGAR EL TEXTO DE LOS 12 DEVOCIONALES
+--------------------------------------
+Los libros están creados y vacíos (el Devocional 1 tiene 3 lecturas
+de ejemplo del 1 al 3 de enero, marcadas como EJEMPLO).
+Cuando tengas los PDF listos, los convertimos a estos archivos
+dev-dNN.js y solo hay que re-subir esos archivos.
+
+PARA AGREGAR UN DEVOCIONAL NUEVO (13°, 14°…)
+--------------------------------------------
+1. Crear dev-d13.js con las lecturas (mismo formato que dev-d01.js).
+2. En devocionales.js, copiar una línea del registro y cambiar:
+   id:"d13", el título, la descripción, el emoji y el color.
+3. Subir los 2 archivos.
+════════════════════════════════════════════════════════════
