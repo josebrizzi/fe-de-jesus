@@ -1,52 +1,44 @@
-════════════════════════════════════════════════════════════
- DEVOCIONALES — "Un día a la vez" · v1
- Instrucciones de subida (GitHub → Render)
-════════════════════════════════════════════════════════════
+ACTUALIZACIÓN DE LOS DEVOCIONALES — 15 LIBROS COMPLETOS
+========================================================
 
-QUÉ ES
-------
-App aparte de Fe de Jesús, con la misma familia visual (celeste,
-modo claro/oscuro, pantalla de carga). Solo texto: 12 libros de
-devocionales, cada uno con 366 lecturas (una por día del año,
-incluido el 29 de febrero).
+Qué contiene esta carpeta:
+  · dev-d01.js … dev-d15.js  → los 15 devocionales con sus 366 lecturas
+  · devocionales.js          → la lista de libros de la biblioteca (ahora son 15)
+  · sw.js                    → versión de caché nueva (obliga a la app a refrescarse)
 
-PASOS PARA PUBLICARLA
----------------------
-1. Entra a tu repo GitHub:  github.com/josebrizzi/fe-de-jesus
-2. Parate adentro de la carpeta  public/  (NO en la raíz).
-3. Creá ahí una carpeta nueva llamada  devocionales
-4. Subí adentro de public/devocionales/ LOS 17 ARCHIVOS de este paquete:
-      index.html, lectura.html, devocionales.js,
-      dev-d01.js … dev-d12.js (12 archivos),
-      sw.js, manifest.json, icon.svg, hero.jpg
-5. Esperá a que Render termine el deploy (1-3 minutos).
-6. La app queda en:
-      https://fe-de-jesus.onrender.com/devocionales/
-   Verificá que abajo diga  "Devocionales · v1".
+Cómo subirlos a GitHub (mismo método de siempre):
+  1. Entrá a  github.com/josebrizzi/fe-de-jesus
+  2. Abrí la carpeta  public  →  devocionales
+  3. Botón "Add file" → "Upload files"
+  4. ARRASTRÁ TODOS ESTOS 17 ARCHIVOS JUNTOS a la pantalla
+     (dev-d01.js … dev-d15.js, devocionales.js y sw.js)
+     — GitHub avisa que va a reemplazar los existentes: está bien, aceptalo.
+  5. Botón verde "Commit changes".
+  6. Esperá 1-2 minutos (Render redespliega solo) y probá la app.
 
-COMO LA USAN LOS ALUMNOS
-------------------------
-- Entran con el link → abre la lectura de HOY del último libro leído.
-- "Ir a hoy" vuelve siempre al día de la fecha.
-- ◀ Anterior / Siguiente ▶ cambian de día (cruza meses y años).
-- "✓ Marcar como leída" guarda el avance en el celular (puntito verde
-  en el calendario + contador en la biblioteca).
-- El calendario salta a cualquier fecha de cualquier mes.
-- El modo claro/oscuro funciona igual que en Fe de Jesús.
-- Funciona OFFLINE después de la primera visita (PWA instalable:
-  en el celular, "Agregar a la pantalla de inicio").
+Para ver los cambios en el celular:
+  · La primera vez cerrá la app y volvé a abrir (se actualiza sola).
+  · Si algo quedara viejo: abrí la app → menú del navegador →
+    "Información del sitio" → borrar y recargar.
 
-CARGAR EL TEXTO DE LOS 12 DEVOCIONALES
---------------------------------------
-Los libros están creados y vacíos (el Devocional 1 tiene 3 lecturas
-de ejemplo del 1 al 3 de enero, marcadas como EJEMPLO).
-Cuando tengas los PDF listos, los convertimos a estos archivos
-dev-dNN.js y solo hay que re-subir esos archivos.
+Los 15 libros cargados (en orden por año):
+  d01 La fe por la cual vivo (1959)          d09 Alza tus ojos (1982)
+  d02 A fin de conocerle (1965)              d10 Reflejemos a Jesús (1985)
+  d03 En los lugares celestiales (1968)      d11 Exaltad a Jesús (1988)
+  d04 Conflicto y valor (1971)               d12 Dios nos cuida (1991)
+  d05 La maravillosa gracia de Dios (1974)   d13 Recibiréis poder (1995)
+  d06 Maranata: el Señor viene (1976)        d14 El Cristo triunfante (1999)
+  d07 Hijos e hijas de Dios (1978)           d15 Ser semejante a Jesús (2004)
+  d08 Cada día con Dios (1979)
 
-PARA AGREGAR UN DEVOCIONAL NUEVO (13°, 14°…)
---------------------------------------------
-1. Crear dev-d13.js con las lecturas (mismo formato que dev-d01.js).
-2. En devocionales.js, copiar una línea del registro y cambiar:
-   id:"d13", el título, la descripción, el emoji y el color.
-3. Subir los 2 archivos.
-════════════════════════════════════════════════════════════
+Notas:
+  · Los 15 libros son distintos: NO hay duplicados.
+  · Todos quedaron con las 366 lecturas (una por cada día, incluido el 29 de febrero;
+    en los libros de 365 días, el 29-feb repite la lectura del 28-feb).
+  · Detalles menores del libro original (no de la app):
+    - "Recibiréis poder": la lectura del 11 de diciembre venía fechada mal
+      ("1 de diciembre") en el PDF; se reubicó en su día correcto.
+    - "La fe por la cual vivo": no trae lectura del 27 de agosto; ese día
+      repite la del 26.
+    - "La fe por la cual vivo" y "Recibiréis poder" ya traen su lectura
+      del 29 de febrero.

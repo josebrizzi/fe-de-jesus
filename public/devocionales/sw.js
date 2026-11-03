@@ -1,8 +1,8 @@
-/* Service Worker — Devocionales (Un día a la vez) · v1
+/* Service Worker — Devocionales (Un día a la vez) · v2
    Precachea el esqueleto de la app. Los libros (dev-dNN.js) se van
    guardando en la caché a medida que se leen, así el paquete base
    queda liviano aunque los devocionales pesen varios MB. */
-const CACHE = "dev-v1";
+const CACHE = "dev-v2";
 const PRECACHE = [
   "./", "./index.html", "./lectura.html", "./hero.jpg",
   "./devocionales.js", "./manifest.json", "./icon.svg"
