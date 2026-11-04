@@ -82,7 +82,6 @@ header .t{flex:1;font-weight:700;font-size:17px}
 .opt.err .letra{background:var(--rojo);color:#fff}
 .opt.nolsb .letra{background:var(--panel2);font-size:15px}
 .nolsb.sel{border-color:var(--azul);background:var(--azulsoft)}
-.corrn{font-size:14px;font-weight:700;color:var(--verde);margin-top:8px}
 .opt:disabled{cursor:default}
 @keyframes treme{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .hint{font-size:14px;color:var(--rojo);font-weight:600;margin-top:2px;display:none}
@@ -112,15 +111,9 @@ ul.lis li span{font-size:16px !important}
 .dbtns button{flex:1;border:2px solid var(--inputb);background:var(--panel);border-radius:999px;padding:11px;font-size:19px;font-weight:700;cursor:pointer;color:var(--texto2)}
 .dbtns button.on-si{background:var(--verde);border-color:var(--verde);color:#fff}
 .dbtns button.on-no{background:#8a94a3;border-color:#8a94a3;color:#fff}
-.enviarBtn{width:100%;border:none;border-radius:999px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;background:var(--verde);color:#fff;margin-top:13px;text-decoration:none;display:block;text-align:center}
-.certBtn{width:100%;border:none;border-radius:999px;padding:14px;font-size:17px;font-weight:700;cursor:pointer;background:var(--azul);color:var(--btnfg);margin-top:11px;text-decoration:none;display:block;text-align:center}
 .cplt{width:100%;border:none;border-radius:999px;padding:14px;font-size:19px;font-weight:700;cursor:pointer;background:var(--azul);color:var(--btnfg);margin:8px 0;box-shadow:0 4px 12px rgba(31,36,41,.25)}
 .cplt.on{background:var(--verde);color:#fff;box-shadow:0 4px 12px rgba(39,154,88,.30)}
 .cplt:disabled{background:var(--btnoffbg);color:var(--btnofftx);cursor:not-allowed;box-shadow:none}
-.navg{display:flex;gap:9px;margin:16px 0}
-.navg button{flex:1;border:1.5px solid var(--inputb);background:var(--panel);border-radius:999px;padding:12px;font-size:17px;font-weight:700;cursor:pointer;color:var(--texto)}
-.navg button.prim{background:var(--azul);border-color:var(--azul);color:var(--btnfg);box-shadow:0 3px 10px rgba(31,36,41,.22)}
-.navg button:disabled{opacity:.35;cursor:default}
 .fin20{background:#414141;color:#fff;border-radius:16px;padding:20px;text-align:center;margin:12px 0;font-size:17px;font-weight:700;box-shadow:var(--sombra)}
 html.modo-oscuro .fin20{background:var(--panel2);color:var(--texto)}
 .oracion{background:linear-gradient(135deg,var(--orb1),var(--orb2));border:1px solid var(--orbord);border-left:4px solid var(--orah)}
@@ -163,7 +156,7 @@ html.modo-oscuro .fin20{background:var(--panel2);color:var(--texto)}
   <div class="bd" id="shBody"></div>
 </div>
 <div class="toast" id="toast"></div>
-<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · v17</footer>
+<footer style="text-align:center;opacity:.55;font-size:12px;padding:18px 0 26px">Fe de Jesús · v18</footer>
 
 <script src="data.js"></script>
 <script src="data-a.js"></script>
@@ -397,7 +390,6 @@ function toggleDone(){
     calcularCorreccion();
     toast("❤️ ¡Estudio " + L.d + " completado!");
     if(typeof window.fejRespaldo === "function") window.fejRespaldo();
-    if(L.d === 20) setTimeout(function(){ location.href = "certificado.html"; }, 1400);
   }
   setDone(o);
   const y = window.scrollY;
@@ -521,8 +513,6 @@ function htmlDecision(completa){
       '<button id="btnSi" class="' + (deces[L.d] === "si" ? "on-si" : "") + '" onclick="decidir(\'si\')">SÍ</button>' +
       '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
     '</div>' +
-    '<a class="enviarBtn" id="btnEnviar" onclick="completarYEnviar(event)">' + (getDone()[L.d] ? '📤 Reenviar a mi instructor' : '📤 Completar y enviar a mi instructor') + '</a>' +
-    '<div class="corrn" style="color:var(--azultx)">📄 Al tocar acá el estudio se marca como completado, se arma tu PDF con las respuestas y lo compartís por WhatsApp' + (nombreInstructor() ? " con " + escapeHtml(nombreInstructor()) : " con tu instructor") + '. Recién entonces se abren las respuestas correctas.</div>' +
   '</section>';
 }
 
@@ -552,17 +542,9 @@ function render(){
   const e = estadoRespuestas();
   if(L.dec) h += htmlDecision(todoAbierto || e.hechas === e.total);
 
-  if(L.d === 20) h += '<div class="fin20">JESÚS VIENE PRONTO 🎉<br><span style="font-weight:400;font-size:16px">¡Completaste los 20 estudios de Fe de Jesús!</span></div>' +
-    '<a class="certBtn" href="certificado.html">🎓 Ver mi certificado</a>';
+  if(L.d === 20) h += '<div class="fin20">JESÚS VIENE PRONTO 🎉<br><span style="font-weight:400;font-size:16px">¡Completaste los 20 estudios de Fe de Jesús!</span></div>';
 
   h += '<button class="cplt" id="btnCplt" onclick="completarYEnviar()"></button>';
-
-  const ant = LECCIONES.find(x => x.d === L.d - 1);
-  const sig = LECCIONES.find(x => x.d === L.d + 1);
-  h += '<div class="navg">' +
-    '<button ' + (ant ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d-1) + '\">← Anterior</button>' +
-    '<button class="prim" ' + (sig ? "" : "disabled") + ' onclick="location.href=\'leccion.html?dia=' + (L.d+1) + '\">Siguiente →</button>' +
-  '</div>';
 
   h += '<a class="invitar" href="instructor.html">🎓 ¿Querés acompañar a alguien más? Invitalo a estudiar</a>';
 
@@ -752,7 +734,7 @@ async function enviarEstudioPdf(datos){
         toast("📤 Estudio enviado" + (insN ? " a " + insN : "") + " ✅");
         return;
       }catch(err){
-        if(err && err.name === "AbortError"){ toast("Envío cancelado — tocá “Reenviar” cuando quieras"); return; }
+        if(err && err.name === "AbortError"){ toast("Envío cancelado — tocá “✓ Completado” cuando quieras"); return; }
         /* el navegador anunció soporte pero falló: sigo al plan B */
       }
     }
