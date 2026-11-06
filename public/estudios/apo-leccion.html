@@ -143,6 +143,7 @@ html.modo-oscuro .fin20{background:var(--panel2);color:var(--texto)}
 <header>
   <button onclick="location.href='apocalipsis.html'">←</button>
   <div class="t" id="hdTitle"></div>
+  <button id="btnResumen" title="Resumen de la lección">📋</button>
   <button id="btnTema" title="Modo claro / oscuro">🌙</button>
   <button id="btnDone">🤍</button>
 </header>
@@ -166,6 +167,7 @@ html.modo-oscuro .fin20{background:var(--panel2);color:var(--texto)}
 <script src="apo-data-d.js"></script>
 <script src="apo-data-e.js"></script>
 <script src="apo-data-f.js"></script>
+<script src="resumenes.js"></script>
 <script src="pdf.js"></script>
 
 <script>
@@ -354,6 +356,11 @@ const params = new URLSearchParams(location.search);
 const dia = +params.get("l") || 1;
 const L = LECCIONES_APO.find(x => x.d === dia) || LECCIONES_APO[0];
 
+/* v18: botón 📋 del encabezado — abre el resumen de esta lección */
+document.getElementById("btnResumen").onclick = function(){
+  if(typeof window.fejAbrirResumenes === "function") window.fejAbrirResumenes("apo", L.d);
+};
+
 /* Apocalipsis: las opciones de cada pregunta vienen en el propio dato (p.ops);
    si no hubiera, se usa el banco global (window.QUIZ) por compatibilidad. */
 function opsDe(p){
@@ -530,6 +537,7 @@ function htmlDecision(completa){
       '<button id="btnSi" class="' + (deces[L.d] === "si" ? "on-si" : "") + '" onclick="decidir(\'si\')">SÍ</button>' +
       '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
     '</div>' +
+    '<div class="corrn" style="color:var(--azultx)">📄 Al tocar «Completar y enviar» abajo, el estudio se marca como completado, se arma tu PDF con las respuestas y lo compartís por WhatsApp' + (nombreInstructor() ? " con " + escapeHtml(nombreInstructor()) : " con tu instructor") + '. Recién entonces se abren las respuestas correctas.</div>' +
   '</section>';
 }
 
@@ -563,7 +571,8 @@ function render(){
 
   h += '<button class="cplt" id="btnCplt" onclick="completarYEnviar()"></button>';
 
-  h += '<a class="invitar" href="instructor.html">🎓 ¿Querés acompañar a alguien más? Invitalo a estudiar</a>';
+  h += '<a class="invitar" href="instructor.html">🎓 ¿Querés acompañar a alguien más? Invitalo a estudiar</a>' +
+       '<a class="invitar" href="index.html">📖 Ir al curso Fe de Jesús</a>';
 
   document.getElementById("app").innerHTML = h;
   renderDone();

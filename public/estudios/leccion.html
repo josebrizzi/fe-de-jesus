@@ -142,6 +142,7 @@ html.modo-oscuro .fin20{background:var(--panel2);color:var(--texto)}
 <header>
   <button onclick="location.href='index.html'">←</button>
   <div class="t" id="hdTitle"></div>
+  <button id="btnResumen" title="Resumen del estudio">📋</button>
   <button id="btnTema" title="Modo claro / oscuro">🌙</button>
   <button id="btnDone">🤍</button>
 </header>
@@ -166,6 +167,7 @@ html.modo-oscuro .fin20{background:var(--panel2);color:var(--texto)}
 <script src="quiz-a.js"></script>
 <script src="quiz-b.js"></script>
 <script src="resumen.js"></script>
+<script src="resumenes.js"></script>
 <script src="pdf.js"></script>
 
 <script>
@@ -354,6 +356,11 @@ const params = new URLSearchParams(location.search);
 const dia = +params.get("dia") || 1;
 const L = LECCIONES.find(x => x.d === dia) || LECCIONES[0];
 
+/* v18: botón 📋 del encabezado — abre el resumen de este estudio */
+document.getElementById("btnResumen").onclick = function(){
+  if(typeof window.fejAbrirResumenes === "function") window.fejAbrirResumenes("fej", L.d);
+};
+
 /* Estudio libre: sin candados entre días ni entre preguntas. */
 localStorage.setItem("fej_ultimo", L.d);
 document.getElementById("hdTitle").textContent = "Día " + L.d + " de 20";
@@ -513,6 +520,7 @@ function htmlDecision(completa){
       '<button id="btnSi" class="' + (deces[L.d] === "si" ? "on-si" : "") + '" onclick="decidir(\'si\')">SÍ</button>' +
       '<button id="btnNo" class="' + (deces[L.d] === "no" ? "on-no" : "") + '" onclick="decidir(\'no\')">NO</button>' +
     '</div>' +
+    '<div class="corrn" style="color:var(--azultx)">📄 Al tocar «Completar y enviar» abajo, el estudio se marca como completado, se arma tu PDF con las respuestas y lo compartís por WhatsApp' + (nombreInstructor() ? " con " + escapeHtml(nombreInstructor()) : " con tu instructor") + '. Recién entonces se abren las respuestas correctas.</div>' +
   '</section>';
 }
 
@@ -542,7 +550,8 @@ function render(){
   const e = estadoRespuestas();
   if(L.dec) h += htmlDecision(todoAbierto || e.hechas === e.total);
 
-  if(L.d === 20) h += '<div class="fin20">JESÚS VIENE PRONTO 🎉<br><span style="font-weight:400;font-size:16px">¡Completaste los 20 estudios de Fe de Jesús!</span></div>';
+  if(L.d === 20) h += '<div class="fin20">JESÚS VIENE PRONTO 🎉<br><span style="font-weight:400;font-size:16px">¡Completaste los 20 estudios de Fe de Jesús!</span></div>' +
+    '<a class="certBtn" href="index.html">🏠 Volver al inicio</a>';
 
   h += '<button class="cplt" id="btnCplt" onclick="completarYEnviar()"></button>';
 

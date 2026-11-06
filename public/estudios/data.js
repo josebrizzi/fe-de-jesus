@@ -72,7 +72,7 @@ window.fejTelDestino = function(){
   }
 })();
 
-// ============ JERARQUÍA DE TAMAÑOS v17 (estudio compacto: lectura, preguntas y oración al mismo tamaño) ============
+// ============ JERARQUÍA DE TAMAÑOS v18 (estudio compacto: lectura, preguntas y oración al mismo tamaño) ============
 (function(){
   var s = document.createElement("style");
   s.textContent = `header .t{font-size:17px}
@@ -143,4 +143,4 @@ function cargarModulo(src){
 cargarModulo("registro.js");
 cargarModulo("acerca.js");
 
-console.log("Fe de Jesús v" + window.fejVersion + ": data.js cargado ✓ (pantalla de carga + estudio compacto)");
+console.log("Fe de Jesús v" + window.fejVersion + ": data.js cargado ✓ (estudio compacto + resúmenes)");

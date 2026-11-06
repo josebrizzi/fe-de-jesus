@@ -3,7 +3,7 @@ const CACHE = "fej-v25";
 const PRECACHE = [
   "./", "./index.html", "./leccion.html", "./instructor.html", "./hero.jpg",
   "./data.js", "./data-a.js", "./data-b.js", "./data-c.js", "./data-d.js",
-  "./quiz-a.js", "./quiz-b.js", "./pdf.js", "./resumen.js",
+  "./quiz-a.js", "./quiz-b.js", "./pdf.js", "./resumen.js", "./resumenes.js",
   "./registro.js", "./acerca.js",
   "./apocalipsis.html", "./apo-leccion.html",
   "./apo-data-a.js", "./apo-data-b.js", "./apo-data-c.js",
