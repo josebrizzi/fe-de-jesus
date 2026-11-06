@@ -5,7 +5,8 @@
 const CACHE = "dev-v2";
 const PRECACHE = [
   "./", "./index.html", "./lectura.html", "./hero.jpg",
-  "./devocionales.js", "./manifest.json", "./icon.svg"
+  "./devocionales.js", "./manifest.json", "./icon.svg",
+  "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./icon-180.png"
 ];
 
 self.addEventListener("install", e => {
