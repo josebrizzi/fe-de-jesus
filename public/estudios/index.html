@@ -163,6 +163,30 @@ html.modo-oscuro .sp-barra{background:var(--panel2)}
   </div>
 
   <div class="sec">
+    <h2>Resúmenes en PDF para compartir</h2>
+    <a class="card" href="Fe-de-Jesus-Resumen-de-ideas-clave.pdf" target="_blank" rel="noopener" title="Compartir este PDF"
+       onclick="return compartirPdf(event,'Fe-de-Jesus-Resumen-de-ideas-clave.pdf','Fe de Jesús — Resumen de ideas clave')">
+      <div class="thumb" style="background:linear-gradient(135deg,#2e5871,#6fa3c7)">📗</div>
+      <div class="tx">
+        <div class="d">PDF · 20 ESTUDIOS</div>
+        <h3>Fe de Jesús — Resumen de ideas clave</h3>
+        <div class="stx">Idea central, ideas clave y versículo de cada estudio. Tocá para compartirlo por WhatsApp o donde quieras</div>
+      </div>
+      <div class="he">⤴</div>
+    </a>
+    <a class="card" href="Apocalipsis-Resumen-de-ideas-clave.pdf" target="_blank" rel="noopener" title="Compartir este PDF"
+       onclick="return compartirPdf(event,'Apocalipsis-Resumen-de-ideas-clave.pdf','Apocalipsis — Resumen de ideas clave')">
+      <div class="thumb" style="background:linear-gradient(135deg,#6a1b9a,#b71c1c)">📕</div>
+      <div class="tx">
+        <div class="d">PDF · 18 LECCIONES</div>
+        <h3>Apocalipsis — Resumen de ideas clave</h3>
+        <div class="stx">Idea central, ideas clave y versículo de cada lección. Tocá para compartirlo por WhatsApp o donde quieras</div>
+      </div>
+      <div class="he">⤴</div>
+    </a>
+  </div>
+
+  <div class="sec">
     <h2>Invitá a otros a estudiar</h2>
     <a class="btnInvitar" href="instructor.html">🎓 Generar mi enlace personal de instructor<small>El que lo abre queda conectado a tu WhatsApp: al terminar te envía el PDF con sus respuestas</small></a>
   </div>
@@ -179,6 +203,32 @@ html.modo-oscuro .sp-barra{background:var(--panel2)}
 
 <script>
 const done = () => JSON.parse(localStorage.getItem("fej_done") || "{}");
+
+/* ===== COMPARTIR RESÚMENES EN PDF =====
+   Los dos PDF viven dentro de la app; al tocar la tarjeta se comparte el
+   archivo (WhatsApp, correo, etc.) con la hoja para compartir del celular.
+   Si el navegador no lo permite, se abre el PDF para descargarlo y reenviarlo. */
+var fejPdfs = {}; /* archivo → File ya descargado, para compartir al instante */
+(function(){
+  ["Fe-de-Jesus-Resumen-de-ideas-clave.pdf","Apocalipsis-Resumen-de-ideas-clave.pdf"].forEach(function(a){
+    fetch(a).then(function(r){ return r.blob(); }).then(function(b){
+      fejPdfs[a] = new File([b], a, { type: "application/pdf" });
+    }).catch(function(){});
+  });
+})();
+function compartirPdf(ev, archivo, titulo){
+  ev.preventDefault();
+  var abrir = function(){ try{ window.open(archivo, "_blank", "noopener"); }catch(e){ location.href = archivo; } };
+  var f = fejPdfs[archivo];
+  if(f && navigator.share && navigator.canShare && navigator.canShare({ files: [f] })){
+    navigator.share({ files: [f], title: titulo, text: titulo }).catch(function(err){
+      if(err && err.name !== "AbortError") abrir();
+    });
+    return false;
+  }
+  abrir();
+  return false;
+}
 
 /* ===== BANNER DE CONEXIÓN (enlace de instructor) ===== */
 function escHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }

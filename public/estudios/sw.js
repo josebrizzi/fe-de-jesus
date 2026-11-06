@@ -1,9 +1,11 @@
-/* Service Worker — Fe de Jesús (estudios) · v18 */
-const CACHE = "fej-v25";
+/* Service Worker — Fe de Jesús (estudios) · v18 + resúmenes PDF */
+const CACHE = "fej-v26";
 const PRECACHE = [
   "./", "./index.html", "./leccion.html", "./instructor.html", "./hero.jpg",
   "./data.js", "./data-a.js", "./data-b.js", "./data-c.js", "./data-d.js",
   "./quiz-a.js", "./quiz-b.js", "./pdf.js", "./resumen.js", "./resumenes.js",
+  "./Fe-de-Jesus-Resumen-de-ideas-clave.pdf",
+  "./Apocalipsis-Resumen-de-ideas-clave.pdf",
   "./registro.js", "./acerca.js",
   "./apocalipsis.html", "./apo-leccion.html",
   "./apo-data-a.js", "./apo-data-b.js", "./apo-data-c.js",
