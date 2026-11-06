@@ -11,7 +11,7 @@ const LECCIONES = [];
 // ============ VERSIÓN DE LA APP ============
 /* Se muestra en el pie de pantalla ("Fe de Jesús · v9") para poder verificar
    en el celular que la última versión subida a GitHub llegó al teléfono. */
-window.fejVersion = "14";
+window.fejVersion = "18";
 
 // ============ ENLACE PERSONALIZADO DE INSTRUCTOR ============
 /* Un instructor comparte: ...estudios/?i=SU_TELEFONO&n=SU_NOMBRE&a=NOMBRE_ALUMNO
@@ -72,7 +72,7 @@ window.fejTelDestino = function(){
   }
 })();
 
-// ============ JERARQUÍA DE TAMAÑOS v14 (chrome compacto, lectura grande) ============
+// ============ JERARQUÍA DE TAMAÑOS v18 (estudio compacto: lectura, preguntas y oración al mismo tamaño) ============
 (function(){
   var s = document.createElement("style");
   s.textContent = `header .t{font-size:17px}
@@ -89,21 +89,40 @@ window.fejTelDestino = function(){
 .card h3{font-size:15px;line-height:1.35}
 .stx{font-size:12.5px}
 .he{font-size:18px}
-.card h2{font-size:20px}
-.intro{font-size:20px;line-height:1.7}
-.pq{font-size:20px}
-.pnum{width:26px;height:26px;font-size:13px}
-.chip{font-size:16px;padding:6px 13px}
-.resp{font-size:17px}
-.des{font-size:20px;line-height:1.72}
-ul.lis li{font-size:20px;line-height:1.6}
-ul.lis li span{font-size:16px !important}
-.colwrap h4{font-size:17px}
-.dec h2{font-size:20px}
-.dec p{font-size:19px}
-.dbtns button{font-size:19px}
-.navg button{font-size:17px}
-.cplt{font-size:19px}
+.card h2{font-size:18px}
+.intro{font-size:17px;line-height:1.6}
+.preg{padding-left:34px;margin:13px 0}
+.preg::before{left:10px;top:28px;bottom:-9px}
+.pnum{width:23px;height:23px;font-size:12px}
+.pq{font-size:17px}
+.chips{margin:7px 0;gap:5px}
+.chip{font-size:14.5px;padding:5px 11px}
+.respLbl{font-size:15px;margin-top:9px}
+.respTa{font-size:16px;min-height:54px;padding:9px 12px}
+.motiva{font-size:13px}
+.quiz{margin-top:9px;gap:6px}
+.opt{font-size:16px;padding:9px 11px;border-radius:11px}
+.opt .letra{width:23px;height:23px;font-size:13px}
+.corrn{font-size:13px;margin-top:6px}
+.hint{font-size:13px}
+.score{font-size:16px;padding:12px;margin:10px 0}
+.ensenanza{margin-top:10px;padding-top:10px}
+.des{font-size:17px;line-height:1.62}
+ul.lis li{font-size:17px;line-height:1.55;padding:6px 0}
+ul.lis li span{font-size:14.5px !important}
+.colwrap h4{font-size:15px}
+.dec h2{font-size:17px}
+.dec p{font-size:16.5px;line-height:1.55;margin:7px 0}
+.dec label{font-size:14px;margin:9px 0 4px}
+.dec input{padding:10px 14px;font-size:16px}
+.dbtns button{font-size:16.5px;padding:10px}
+.enviarBtn{padding:12px;font-size:15.5px}
+.certBtn{padding:12px;font-size:16px}
+.cplt{font-size:17px;padding:13px}
+.navg button{font-size:16px;padding:11px}
+.oracion h2{font-size:17px}
+.oracion .pedir{font-size:16.5px;line-height:1.6;margin:6px 0}
+.resp{font-size:16px}
 #sheet h3{font-size:26px}
 #sheet .vv{font-size:16px}
 #sheet .bd{font-size:25px;line-height:1.8}
@@ -124,4 +143,4 @@ function cargarModulo(src){
 cargarModulo("registro.js");
 cargarModulo("acerca.js");
 
-console.log("Fe de Jesús v" + window.fejVersion + ": data.js cargado ✓");
+console.log("Fe de Jesús v" + window.fejVersion + ": data.js cargado ✓ (estudio compacto + resúmenes)");
