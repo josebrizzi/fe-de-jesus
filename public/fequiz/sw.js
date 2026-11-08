@@ -1,10 +1,11 @@
 /* FeQuiz — service worker: precarga todo el juego para funcionar sin conexión */
-const CACHE = 'fequiz-v2';
+const CACHE = 'fequiz-v4';
 const NUCLEO = [
   './',
   './index.html',
   './estilos.css',
   './app.js',
+  './grupal.js',
   './datos/datos.js',
   './favicon.svg',
   './manifest.webmanifest',
@@ -30,6 +31,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
+  if (url.pathname.indexOf('/api/') === 0) return;   // la API del modo grupal va siempre a la red
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request).then(resp => {
       if (resp.ok) {

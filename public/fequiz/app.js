@@ -151,10 +151,16 @@
     btnVolver.classList.toggle('oculto', !(S.vista === 'juego' || S.vista === 'selector'));
   }
   btnVolver.addEventListener('click', () => {
+    if (window.FEQUIZ_GRUPAL && window.FEQUIZ_GRUPAL.activo) {
+      window.FEQUIZ_GRUPAL.salir(); ir('inicio'); return;
+    }
     if (S.vista === 'juego') { pararTimers(); ir('selector'); }
     else ir('inicio');
   });
-  btnMarca.addEventListener('click', () => { pararTimers(); ir('inicio'); });
+  btnMarca.addEventListener('click', () => {
+    if (window.FEQUIZ_GRUPAL && window.FEQUIZ_GRUPAL.activo) window.FEQUIZ_GRUPAL.salir();
+    pararTimers(); ir('inicio');
+  });
 
   function pararTimers() {
     clearInterval(S.timer); clearTimeout(S.auto);
@@ -225,6 +231,7 @@
     P.querySelectorAll('.tarjeta-modo').forEach(b =>
       b.addEventListener('click', () => { sonidos.tap(); ir('selector', b.dataset.modo); }));
     $('#btn-mixto').addEventListener('click', () => arrancar('mixto'));
+    document.dispatchEvent(new Event('fequiz-inicio'));
   }
 
   /* ============================================================

@@ -66,3 +66,46 @@ Datos extraídos del contenido real de Fe de Jesús v18:
   (144 preguntas) = 294 preguntas.
 
 Versión 1 · Noviembre 2026
+
+════════════════════════════════════════════════════════════
+  MODO GRUPAL (nuevo) — toda la iglesia juega con un PIN
+════════════════════════════════════════════════════════════
+
+QUÉ ES
+  Estilo Kahoot: el anfitrión dirige desde la pantalla grande
+  (proyector, TV o celular), aparece un CÓDIGO de 6 números y
+  cada persona entra desde su celular. Todos aparecen en la
+  lista del anfitrión, juegan la MISMA partida al mismo tiempo
+  y compiten por puntos (velocidad + racha). Al final: podio
+  con los mejores y botón de REVANCHA.
+
+PASOS PARA ACTIVARLO (una sola vez)
+1. Subí a public/fequiz/ los archivos nuevos de esta versión
+   (index.html, app.js, grupal.js, estilos.css, sw.js y el
+   nuevo servidor.js).
+2. En tu repo abrí server.js, toca el lápiz ✏️ y agregá esta
+   línea AL FINAL del archivo:
+
+     require("./public/fequiz/servidor.js")(app);
+
+3. "Commit changes". Esperá 2 minutos a que Render despliegue.
+
+CÓMO SE USA
+· ANFITRIÓN: abrí /fequiz/ → "DIRIGIR PARTIDA" → elegí el
+  estudio (o modo mixto). Aparece el PIN. Los jugadores entran
+  y los ves aparecer en la lista. Tocá EMPEZAR.
+· JUGADORES: abren /fequiz/ → "UNIRSE CON PIN" → ponen el
+  código y su apodo → esperan → responden con los botones de
+  colores.
+· Entre pregunta y pregunta el anfitrión ve "Los mejores" y
+  pasa con SIGUIENTE (si nadie toca, avanza solo).
+· Al final: podio 🥇🥈🥉 y REVANCHA con los mismos jugadores.
+
+DETALLES
+· El modo individual sigue funcionando igual (y offline).
+· El modo grupal necesita internet (es en vivo, obvio).
+· Las salas viven en memoria y se borran solas a las 3 horas.
+· Si alguien se queda sin conexión y vuelve a entrar, la app
+  lo devuelve solo a la misma partida.
+
+Versión 2 · Noviembre 2026
