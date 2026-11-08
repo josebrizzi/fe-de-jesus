@@ -1,0 +1,18 @@
+{
+  "id": "/fequiz/",
+  "name": "FeQuiz — Fe de Jesús · Edición joven",
+  "short_name": "FeQuiz",
+  "description": "Juego de preguntas estilo Kahoot con el contenido de Fe de Jesús: 20 estudios y 18 lecciones del Apocalipsis.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#46178F",
+  "theme_color": "#46178F",
+  "icons": [
+    { "src": "./iconos/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./iconos/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./iconos/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

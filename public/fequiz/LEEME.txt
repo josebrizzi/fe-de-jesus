@@ -1,0 +1,68 @@
+════════════════════════════════════════════════════════════
+  FEQUIZ — Fe de Jesús · Edición joven (estilo Kahoot)
+  Instrucciones para publicarlo en tu página
+════════════════════════════════════════════════════════════
+
+QUÉ ES
+  Una app de preguntas y respuestas estilo Kahoot con TODO el
+  contenido de Fe de Jesús: 20 estudios + 18 lecciones del
+  Apocalipsis (294 preguntas reales, sacadas de tus lecciones).
+  Funciona sin conexión (PWA), guarda récords y puntos por
+  persona, y tiene sonido, racha, tiempo y confeti.
+
+────────────────────────────────────────────────────────────
+CÓMO SUBIRLO A TU PÁGINA (GitHub → Render)
+────────────────────────────────────────────────────────────
+1. Entra a tu repo:  github.com/josebrizzi/fe-de-jesus
+2. Abrí la carpeta  public
+3. Botón "Add file" → "Create new folder"
+   y nombrala exactamente:  fequiz
+4. Con la carpeta abierta, "Add file" → "Upload files"
+   y arrastrá TODO el contenido de esta carpeta
+   (index.html, estilos.css, app.js y las subcarpetas
+   datos, fuentes, iconos + los archivos sueltos).
+   Importante: los archivos tienen que quedar DENTRO de
+   public/fequiz/, no en la raíz del repo.
+5. "Commit changes". Render despliega solo.
+6. Probá:  https://fe-de-jesus.onrender.com/fequiz/
+
+¿POR QUÉ PUBLIC/FEQUIZ?
+  Tu server.js sirve todo lo que está dentro de "public".
+  Por eso /fe-de-jesus/ funciona (public/fe-de-jesus) y por
+  eso /fequiz/ va a funcionar directo, sin tocar server.js.
+
+  OJO con lo de "la carpeta estudios": si subías archivos a
+  una carpeta que no está dentro de public/, quedan sin
+  publicar (por eso los archivos sueltos de la raíz daban 404).
+  Los PDF de resúmenes y cualquier archivo nuevo de la app
+  Fe de Jesús van dentro de public/fe-de-jesus/.
+
+────────────────────────────────────────────────────────────
+PARA INSTALAR EN EL CELULAR (PWA)
+────────────────────────────────────────────────────────────
+· Android (Chrome): abre /fequiz/ → menú ⋮ → "Instalar app"
+  o "Agregar a pantalla de inicio".
+· iPhone (Safari): abre /fequiz/ → botón Compartir →
+  "Agregar a inicio".
+· Funciona sin conexión después de la primera carga.
+
+────────────────────────────────────────────────────────────
+CÓMO CAMBIAR PREGUNTAS O AGREGAR JUEGOS
+────────────────────────────────────────────────────────────
+Todo el contenido está en  datos/datos.js.
+Cada pregunta se ve así:
+
+  { "p": "Texto de la pregunta",
+    "opciones": ["CORRECTA", "incorrecta", "incorrecta", "incorrecta"],
+    "r": "Juan 3:16",
+    "resp": "Respuesta breve para mostrar" }
+
+  · La PRIMERA opción es siempre la correcta
+    (la app las mezcla al azar al mostrarlas).
+  · Podés dejar 2 opciones (tipo verdadero/falso).
+
+Datos extraídos del contenido real de Fe de Jesús v18:
+  20 estudios (150 preguntas) + 18 lecciones de Apocalipsis
+  (144 preguntas) = 294 preguntas.
+
+Versión 1 · Noviembre 2026

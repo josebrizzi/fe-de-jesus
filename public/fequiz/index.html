@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FeQuiz — Fe de Jesús · Edición joven</title>
+<meta name="description" content="Juego de preguntas estilo Kahoot con el contenido de Fe de Jesús: 20 estudios y 18 lecciones del Apocalipsis.">
+<meta name="theme-color" content="#46178F">
+<meta name="color-scheme" content="dark">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./iconos/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FeQuiz">
+<link rel="stylesheet" href="./estilos.css">
+</head>
+<body>
+
+<!-- Fondo decorativo: figuras flotantes estilo Kahoot -->
+<div class="fondo" aria-hidden="true">
+  <svg class="fig f1" viewBox="0 0 100 100"><polygon points="50,6 96,94 4,94" fill="#fff"/></svg>
+  <svg class="fig f2" viewBox="0 0 100 100"><polygon points="50,2 98,50 50,98 2,50" fill="#fff"/></svg>
+  <svg class="fig f3" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fff"/></svg>
+  <svg class="fig f4" viewBox="0 0 100 100"><rect x="6" y="6" width="88" height="88" rx="10" fill="#fff"/></svg>
+  <svg class="fig f5" viewBox="0 0 100 100"><polygon points="50,2 98,50 50,98 2,50" fill="#fff"/></svg>
+  <svg class="fig f6" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fff"/></svg>
+</div>
+
+<header class="barra">
+  <button id="btn-volver" class="btn-icono oculto" aria-label="Volver" title="Volver">
+    <svg viewBox="0 0 24 24"><path d="M15.5 4.5 8 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button id="btn-marca" class="marca" aria-label="Inicio">
+    <span class="marca-figuras" aria-hidden="true">
+      <svg viewBox="0 0 20 20"><polygon points="10,2 18,18 2,18" fill="#E21B3C"/></svg>
+      <svg viewBox="0 0 20 20"><polygon points="10,1 19,10 10,19 1,10" fill="#1368CE"/></svg>
+      <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#FFA602"/></svg>
+      <svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="2.5" fill="#26890C"/></svg>
+    </span>
+    <span class="marca-nombre">FEQUIZ</span>
+  </button>
+  <button id="btn-sonido" class="btn-icono" aria-label="Sonido" title="Sonido">
+    <svg id="ico-sonido-on" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg id="ico-sonido-off" viewBox="0 0 24 24" class="oculto"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+</header>
+
+<main id="pantalla"></main>
+
+<canvas id="confeti" aria-hidden="true"></canvas>
+
+<script src="./datos/datos.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
