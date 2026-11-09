@@ -1204,3 +1204,7 @@ server.listen(PORT, "0.0.0.0", () => {
 // ===== MODO-LIBRE-V36: acceso libre (sin claves) =====
 global.__accesoOk = function(req){ return true; };
 // ===== FIN MODO-LIBRE-V36 =====
+
+// ===== FeQuiz MODO GRUPAL: monta /api/fequiz (salas con PIN) =====
+require("./public/fequiz/servidor.js")(app);
+// ===== FIN FeQuiz MODO GRUPAL =====
