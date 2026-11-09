@@ -236,10 +236,27 @@
       ${d.activos ? `<div class="chips-jugadores">${chips}</div>`
                   : `<p class="sub-seccion">Todavía no entró nadie…</p>`}
       <button id="g-empezar" class="btn-grande verde" ${d.activos ? '' : 'disabled'}>EMPEZAR</button>
+      <div class="fila-dos">
+        <button id="g-proyectar" class="btn-grande azul"><span class="g-mini">PANTALLA GRANDE</span>📺 PROYECTAR</button>
+        <button id="g-invitar" class="btn-grande whatsapp"><span class="g-mini">GRUPO · AMIGOS</span>WHATSAPP</button>
+      </div>
       <button id="g-cerrar" class="btn-grande hueco" style="margin-top:12px">CERRAR LA PARTIDA</button>`;
     $('#g-empezar').addEventListener('click', async () => {
       sonidos.tap();
       try { await api('/arrancar', { pin: G.pin, token: G.token }); } catch (e) {}
+    });
+    $('#g-proyectar').addEventListener('click', () => {
+      sonidos.tap();
+      /* abre la pantalla de proyección como espejo de esta sala */
+      window.open('proyeccion.html?pin=' + encodeURIComponent(G.pin) + '&token=' + encodeURIComponent(G.token),
+        'fequiz-proyeccion');
+    });
+    $('#g-invitar').addEventListener('click', () => {
+      sonidos.tap();
+      const enlace = location.origin + location.pathname + '?pin=' + G.pin;
+      const texto = '🎮 ¡Se viene FeQuiz!\n\nSumate a la partida desde este enlace (tocá y ya estás adentro):\n' +
+        enlace + '\n\nDespués escribí tu apodo · PIN ' + G.pin + ' por si la pantalla lo pide';
+      window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
     });
     $('#g-cerrar').addEventListener('click', async () => {
       try { await api('/cerrar', { pin: G.pin, token: G.token }); } catch (e) {}
@@ -516,15 +533,15 @@
     }
   }
 
-  /* --- jugador: entrar con pin --- */
-  function vistaUnirse() {
+  /* --- jugador: entrar con pin (acepta PIN precargado del enlace de invitación) --- */
+  function vistaUnirse(pinPrecargado) {
     G.rol = 'jugador';
     const apodoGuardado = (function () { try { return JSON.parse(localStorage.getItem('fequiz_apodo') || '""'); } catch (e) { return ''; } })();
     P.innerHTML = `
       <h2 class="tit-seccion">Unirse con PIN</h2>
-      <p class="sub-seccion">Pedile el código al anfitrión</p>
+      <p class="sub-seccion">${pinPrecargado ? 'Sumate a la partida · el código ya está cargado' : 'Pedile el código al anfitrión'}</p>
       <input id="g-pin" class="apodo pin-input" inputmode="numeric" maxlength="6"
-        placeholder="······" autocomplete="off" autocapitalize="off">
+        placeholder="······" autocomplete="off" autocapitalize="off" value="${pinPrecargado ? esc(pinPrecargado) : ''}">
       <input id="g-apodo" class="apodo" style="margin-top:12px" maxlength="14"
         placeholder="TU APODO" value="${esc(apodoGuardado || '')}" autocomplete="off">
       <p class="g-error oculto" id="g-err"></p>
@@ -553,7 +570,7 @@
     }
     $('#g-entrar').addEventListener('click', entrar);
     [pin, apodo].forEach(i => i.addEventListener('keydown', ev => { if (ev.key === 'Enter') entrar(); }));
-    pin.focus();
+    (pinPrecargado ? apodo : pin).focus();
   }
 
   function headerVolver(visible) {
@@ -564,6 +581,7 @@
   /* ---------- sección en el inicio ---------- */
   function pintarHome() {
     if (!window.FEQUIZ_DATOS) return;
+    if (G.activo) return;   /* hay una vista grupal en curso (p. ej. entrar por enlace) */
     const vieja = $('#grupal-zona');
     if (vieja) vieja.remove();
     const stats = document.querySelector('.stats-zona');
@@ -623,6 +641,23 @@
   /* ---------- arranque ---------- */
   document.addEventListener('fequiz-inicio', pintarHome);
   if ($('#btn-mixto')) pintarHome();               // el inicio ya estaba dibujado
+
+  /* ---------- enlace de invitación (?pin=123456) ----------
+     El anfitrión manda el enlace por WhatsApp: la app abre la
+     pantalla UNIRSE CON PIN con el código ya cargado. */
+  (function entrarPorEnlace() {
+    let pin = '';
+    try { pin = (new URLSearchParams(location.search).get('pin') || '').replace(/\D/g, '').slice(0, 6); } catch (e) {}
+    if (pin.length !== 6 && location.hash.indexOf('pin=') > -1) {
+      try { pin = (new URLSearchParams(location.hash.slice(1)).get('pin') || '').replace(/\D/g, '').slice(0, 6); } catch (e) {}
+    }
+    if (pin.length !== 6) return;
+    borrarSesion();                    /* el enlace manda: se descarta la sesión vieja */
+    G.activo = true;                   /* evita que el inicio pise esta pantalla */
+    headerVolver(true);
+    vistaUnirse(pin);
+  })();
+
   (function reanudarSilencioso() {
     const s = leerSesion();
     if (!s || !s.pin || s.rol !== 'jugador') return;   // el anfitrión vuelve con el botón del inicio

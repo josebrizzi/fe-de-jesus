@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FeQuiz · Pantalla del proyector</title>
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<style>
+/* ============================================================
+   FEQUIZ — PANTALLA DE PROYECCIÓN (espejo de la partida)
+   Se abre sola con el botón PROYECTAR del anfitrión.
+   Solo muestra: no tiene botones de control (se dirige desde
+   el celular del anfitrión). Pensada para proyector / TV.
+   ============================================================ */
+@font-face { font-family: 'Montserrat'; font-style: normal; font-display: swap; font-weight: 100 900;
+  src: url('./fuentes/montserrat-variable.woff2') format('woff2-variations'),
+       url('./fuentes/montserrat-variable.woff2') format('woff2'); }
+
+:root {
+  --morado: #46178F; --morado-osc: #2C0E63; --morado-hondo: #1E0A45;
+  --rojo: #E21B3C; --azul: #1368CE; --amarillo: #FFA602; --verde: #26890C;
+  --blanco-75: rgba(255,255,255,.78); --blanco-25: rgba(255,255,255,.22);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
+  color: #fff; overflow: hidden; cursor: default;
+  background:
+    radial-gradient(130% 100% at 50% 0%, #5B21B6 0%, var(--morado) 50%, var(--morado-osc) 100%);
+}
+.fondo-fig { position: fixed; inset: 0; z-index: 0; opacity: .055; pointer-events: none; }
+.fondo-fig svg { position: absolute; }
+.oculto { display: none !important; }
+
+/* ---------- marco general: todo entra en una pantalla ---------- */
+#v {
+  position: fixed; inset: 0; z-index: 2;
+  display: flex; flex-direction: column;
+  padding: clamp(10px, 2.4vh, 26px) clamp(14px, 3vw, 48px) calc(clamp(10px, 2.4vh, 26px) + env(safe-area-inset-bottom));
+}
+
+/* ---------- esquinas: estado + pantalla completa + aviso ---------- */
+.esq { position: fixed; right: clamp(8px, 1.6vw, 22px); bottom: clamp(8px, 1.8vh, 18px); z-index: 6;
+  display: flex; align-items: center; gap: 10px; }
+.aviso-ctrl { font-size: clamp(9px, 1.2vh, 13px); font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: .4px; }
+.btn-fs {
+  border: 0; border-radius: 10px; background: rgba(255,255,255,.12); color: #fff;
+  width: clamp(34px, 4.6vh, 46px); height: clamp(34px, 4.6vh, 46px);
+  display: grid; place-items: center; cursor: pointer;
+}
+.btn-fs:hover { background: rgba(255,255,255,.22); }
+.btn-fs svg { width: 55%; height: 55%; }
+.estado-red { position: fixed; left: clamp(8px, 1.6vw, 22px); bottom: clamp(8px, 1.8vh, 18px); z-index: 6;
+  display: flex; align-items: center; gap: 7px; font-size: clamp(9px, 1.3vh, 13px); font-weight: 700;
+  color: rgba(255,255,255,.55); }
+.punto { width: 9px; height: 9px; border-radius: 50%; background: #38E05C; box-shadow: 0 0 8px #38E05C; }
+.punto.mal { background: #FF6D7E; box-shadow: 0 0 8px #FF6D7E; animation: late .8s ease-in-out infinite; }
+
+/* ---------- cabecera reutilizable ---------- */
+.marca-zona { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 1.4vw, 16px); flex: 0 0 auto; }
+.marca-zona .figs { display: grid; grid-template-columns: repeat(2, 1em); gap: .28em; font-size: clamp(14px, 2.6vh, 24px); }
+.marca-zona .figs svg { width: 1em; height: 1em; display: block; }
+.marca-zona .nombre { font-weight: 800; letter-spacing: .35em; font-size: clamp(16px, 3.2vh, 30px); }
+.origen { display: flex; align-items: center; justify-content: center; gap: .5em; font-weight: 700;
+  color: var(--blanco-75); font-size: clamp(13px, 2.3vh, 21px); }
+
+/* ============ LOBBY ============ */
+.lb { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(6px, 1.4vh, 16px); }
+.lb .marca-zona { position: absolute; top: clamp(10px, 2.4vh, 26px); left: 0; right: 0; }
+.pin-caja { background: #fff; border-radius: clamp(12px, 2.4vh, 24px); padding: clamp(10px, 2vh, 22px) clamp(26px, 5vw, 70px) clamp(12px, 2.2vh, 24px);
+  text-align: center; box-shadow: 0 clamp(6px, 1.4vh, 14px) 0 rgba(0,0,0,.28); }
+.pin-rotulo { font-size: clamp(11px, 1.8vh, 17px); font-weight: 800; letter-spacing: .35em; color: #9a86c9; }
+.pin-numero { font-size: clamp(58px, 13vh, 128px); font-weight: 800; letter-spacing: .14em; color: var(--morado);
+  line-height: 1.05; font-variant-numeric: tabular-nums; }
+.lb-url { font-size: clamp(12px, 2vh, 19px); font-weight: 700; color: var(--blanco-75); }
+.lb-url b { color: #fff; }
+.lb-cuenta { font-size: clamp(15px, 2.6vh, 25px); font-weight: 700; color: var(--blanco-75); }
+.lb-cuenta b { color: var(--amarillo); font-size: 1.35em; }
+.chips { display: flex; flex-wrap: wrap; gap: clamp(6px, 1.2vh, 12px); justify-content: center;
+  max-width: 92vw; max-height: 34vh; overflow: hidden; }
+.chip-j { background: rgba(255,255,255,.14); border: clamp(1px, .3vh, 2px) solid rgba(255,255,255,.25);
+  border-radius: 999px; padding: clamp(5px, 1.1vh, 11px) clamp(12px, 1.8vw, 22px);
+  font-size: clamp(14px, 2.6vh, 25px); font-weight: 700; animation: entra .28s ease-out; }
+@keyframes entra { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes late { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.espera { display: flex; gap: 8px; justify-content: center; }
+.espera i { width: clamp(8px, 1.4vh, 13px); height: clamp(8px, 1.4vh, 13px); border-radius: 50%; background: rgba(255,255,255,.7); animation: rebote .9s ease-in-out infinite; }
+.espera i:nth-child(2) { animation-delay: .15s; } .espera i:nth-child(3) { animation-delay: .3s; }
+@keyframes rebote { 0%, 100% { transform: translateY(0); opacity: .45; } 50% { transform: translateY(-9px); opacity: 1; } }
+
+/* ============ CUENTA ============ */
+.ct { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vh; }
+.ct-num { font-size: clamp(90px, 26vh, 260px); font-weight: 800; text-shadow: 0 clamp(6px, 1.4vh, 14px) 0 rgba(0,0,0,.3);
+  animation: pop .72s ease-out; }
+@keyframes pop { from { transform: scale(2.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.ct-sub { font-size: clamp(15px, 2.8vh, 27px); font-weight: 700; color: var(--blanco-75); }
+
+/* ============ PREGUNTA / REVELACIÓN ============ */
+.j { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(6px, 1.3vh, 14px); }
+.j-top { display: flex; align-items: center; gap: clamp(8px, 1.4vw, 18px); flex: 0 0 auto; }
+.j-chip { background: rgba(0,0,0,.26); border-radius: 999px; padding: clamp(4px, .9vh, 9px) clamp(11px, 1.6vw, 20px);
+  font-size: clamp(11px, 2vh, 19px); font-weight: 800; letter-spacing: .08em; }
+.j-top .spacer { flex: 1; }
+.j-timer { width: clamp(34px, 6.4vh, 62px); height: clamp(34px, 6.4vh, 62px); border-radius: 50%;
+  display: grid; place-items: center; background: rgba(255,255,255,.14);
+  font-size: clamp(15px, 3vh, 28px); font-weight: 800; font-variant-numeric: tabular-nums; }
+.j-timer.apurado { box-shadow: inset 0 0 0 3px var(--amarillo); }
+.j-timer.critico { box-shadow: inset 0 0 0 3px var(--rojo); animation: late .5s ease-in-out infinite; }
+.j-pista { flex: 0 0 auto; height: clamp(6px, 1.1vh, 11px); border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
+.j-barra { height: 100%; width: 100%; border-radius: 99px; background: #fff; }
+.j-preg { flex: 0 0 auto; background: #fff; color: #2b2b2b; border-radius: clamp(10px, 2vh, 20px);
+  padding: clamp(10px, 2.2vh, 24px) clamp(14px, 2.6vw, 36px);
+  font-weight: 800; text-align: center; display: grid; place-items: center;
+  font-size: clamp(19px, 4.1vh, 42px); line-height: 1.22; }
+.j-preg.larga { font-size: clamp(15px, 2.9vh, 30px); }
+.opcs { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+  gap: clamp(7px, 1.5vh, 15px); }
+.opc { border-radius: clamp(9px, 1.8vh, 18px); display: flex; align-items: center; gap: clamp(8px, 1.4vw, 18px);
+  padding: clamp(8px, 1.6vh, 18px) clamp(12px, 2vw, 28px); color: #fff;
+  box-shadow: 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3); overflow: hidden;
+  font-size: clamp(13px, 2.5vh, 25px); font-weight: 700; line-height: 1.2; }
+.opc.larga { font-size: clamp(11px, 1.9vh, 19px); }
+.opc .figura { width: clamp(17px, 3.4vh, 32px); height: clamp(17px, 3.4vh, 32px); flex: 0 0 auto; }
+.opc .figura svg { width: 100%; height: 100%; display: block; }
+.opc .texto { flex: 1; }
+.opc .conteo { align-self: center; background: rgba(0,0,0,.3); border-radius: 999px; padding: .2em .6em;
+  font-size: .8em; font-weight: 800; flex: 0 0 auto; }
+.opc.r1 { background: var(--rojo); } .opc.r2 { background: var(--azul); }
+.opc.r3 { background: var(--amarillo); color: #3d2800; } .opc.r4 { background: var(--verde); }
+.revel .opc { opacity: .3; filter: saturate(.55); }
+.revel .opc.acierto { opacity: 1; filter: none; box-shadow: 0 0 0 clamp(3px, .6vh, 6px) #fff, 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3);
+  animation: pulso .6s ease-out 2; }
+@keyframes pulso { 0% { transform: scale(1); } 50% { transform: scale(1.025); } 100% { transform: scale(1); } }
+.revel .opc .palomita { flex: 0 0 auto; width: clamp(20px, 4vh, 38px); height: clamp(20px, 4vh, 38px); }
+.veredicto { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: clamp(7px, 1.2vw, 14px);
+  font-weight: 800; font-size: clamp(14px, 2.8vh, 27px); color: #7DDB6A; }
+.veredicto svg { width: clamp(18px, 3.4vh, 32px); height: clamp(18px, 3.4vh, 32px); flex: 0 0 auto; }
+.versiculo { flex: 0 0 auto; text-align: center; font-weight: 700; color: var(--amarillo);
+  font-size: clamp(12px, 2.2vh, 21px); }
+.revel-zona { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(8px, 1.6vw, 20px); }
+.revel-izq { min-height: 0; display: flex; flex-direction: column; gap: clamp(6px, 1.2vh, 13px); }
+.revel-der { min-height: 0; display: flex; flex-direction: column; gap: clamp(5px, 1vh, 10px); }
+.top-tit { font-size: clamp(12px, 2.1vh, 20px); font-weight: 800; letter-spacing: .2em; color: var(--blanco-75); }
+.top-f { display: flex; align-items: center; gap: clamp(7px, 1.1vw, 15px); background: rgba(0,0,0,.22);
+  border-radius: clamp(8px, 1.5vh, 14px); padding: clamp(5px, 1vh, 11px) clamp(10px, 1.4vw, 18px);
+  font-size: clamp(12px, 2.4vh, 23px); font-weight: 700; }
+.top-f.primero { background: rgba(255,166,2,.2); box-shadow: inset 0 0 0 2px rgba(255,166,2,.55); }
+.top-f .pos { flex: 0 0 auto; width: 1.7em; text-align: center; }
+.top-f .apo { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-f .pts { font-weight: 800; color: var(--amarillo); font-variant-numeric: tabular-nums; }
+
+/* ============ PODIO ============ */
+.pd { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1vh, 12px); }
+.pd-saludo { font-size: clamp(20px, 4.6vh, 44px); font-weight: 800; letter-spacing: .06em; text-shadow: 0 4px 0 rgba(0,0,0,.25); }
+.pd-rotulo { font-size: clamp(11px, 2vh, 19px); font-weight: 800; letter-spacing: .5em; color: var(--blanco-75); }
+.pd-zona { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(10px, 2vw, 30px);
+  width: 100%; align-items: center; }
+.pd-barras { display: flex; align-items: flex-end; justify-content: center; gap: clamp(8px, 1.6vw, 24px); height: 100%; max-height: 52vh; }
+.pd-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1vh; height: 100%; }
+.pd-medalla { font-size: clamp(24px, 6vh, 58px); }
+.pd-apodo { font-weight: 800; font-size: clamp(13px, 2.6vh, 26px); max-width: 16vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pd-pts { font-weight: 800; color: var(--amarillo); font-size: clamp(11px, 2.1vh, 21px); font-variant-numeric: tabular-nums; }
+.pd-barra { width: clamp(46px, 8.4vw, 130px); border-radius: clamp(8px, 1.5vh, 14px) clamp(8px, 1.5vh, 14px) 0 0;
+  background: rgba(255,255,255,.85); box-shadow: 0 0 0 clamp(2px, .5vh, 5px) rgba(0,0,0,.15); }
+.pd-barra.b0 { height: 100%; background: #FFD54D; }
+.pd-barra.b1 { height: 68%; background: #D9D9D9; }
+.pd-barra.b2 { height: 50%; background: #E0A26B; }
+.pd-lista { align-self: center; max-height: 52vh; overflow-y: auto; display: flex; flex-direction: column; gap: clamp(4px, .9vh, 9px); }
+
+/* ============ mensajes fijos ============ */
+.ms { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 2vh; padding: 0 6vw; }
+.ms h1 { font-size: clamp(20px, 4.4vh, 42px); font-weight: 800; }
+.ms p { font-size: clamp(13px, 2.4vh, 23px); font-weight: 600; color: var(--blanco-75); line-height: 1.5; }
+.ms .mini { font-size: clamp(11px, 1.9vh, 17px); }
+#confeti { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+
+/* Portrait (celular en vertical): la grilla de opciones pasa a 1 columna
+   y la revelación apila sus zonas */
+@media (max-aspect-ratio: 5/6) {
+  .opcs { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); }
+  .revel-zona { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+  .pd-zona { grid-template-columns: 1fr; }
+  .pd-barras { max-height: 26vh; }
+  .pd-lista { max-height: 22vh; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="fondo-fig" aria-hidden="true">
+  <svg style="top:-10%;left:-8%;width:44vmin;height:44vmin" viewBox="0 0 100 100"><polygon points="50,6 96,94 4,94" fill="#fff"/></svg>
+  <svg style="top:30%;right:-12%;width:36vmin;height:36vmin" viewBox="0 0 100 100"><polygon points="50,2 98,50 50,98 2,50" fill="#fff"/></svg>
+  <svg style="bottom:-16%;left:10%;width:50vmin;height:50vmin" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fff"/></svg>
+  <svg style="top:12%;right:16%;width:18vmin;height:18vmin" viewBox="0 0 100 100"><rect x="6" y="6" width="88" height="88" rx="10" fill="#fff"/></svg>
+</div>
+
+<div id="v"><div class="ms"><h1>Conectando con la sala…</h1><p>PIN <b id="m-pin">—</b></p></div></div>
+
+<div class="estado-red oculto" id="estado-red"><span class="punto mal"></span><span>Reconectando…</span></div>
+
+<div class="esq">
+  <span class="aviso-ctrl">controlá la partida desde el celular del anfitrión</span>
+  <button class="btn-fs" id="btn-fs" title="Pantalla completa" aria-label="Pantalla completa">
+    <svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<canvas id="confeti" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- parámetros ---------- */
+  var qs = new URLSearchParams(location.search);
+  var PIN = (qs.get('pin') || '').replace(/\D/g, '').slice(0, 6);
+  var TOKEN = qs.get('token') || '';
+  document.getElementById('m-pin').textContent = PIN || '—';
+
+  var V = document.getElementById('v');
+  var estadoRed = document.getElementById('estado-red');
+
+  var FIG = [
+    '<svg viewBox="0 0 20 20"><polygon points="10,2 18.5,18 1.5,18" fill="#fff"/></svg>',
+    '<svg viewBox="0 0 20 20"><polygon points="10,1 19,10 10,19 1,10" fill="#fff"/></svg>',
+    '<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8.5" fill="#fff"/></svg>',
+    '<svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="2.5" fill="#fff"/></svg>'
+  ];
+  var PALOMITA = '<svg class="palomita" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var MEDALLAS = ['🥇', '🥈', '🥉'];
+  var FIGURAS_MARCA = '<span class="figs" aria-hidden="true">' +
+    '<svg viewBox="0 0 20 20"><polygon points="10,2 18,18 2,18" fill="#E21B3C"/></svg>' +
+    '<svg viewBox="0 0 20 20"><polygon points="10,1 19,10 10,19 1,10" fill="#1368CE"/></svg>' +
+    '<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#FFA602"/></svg>' +
+    '<svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="2.5" fill="#26890C"/></svg></span>';
+
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var fmt = function (n) { return Number(n || 0).toLocaleString('es-AR'); };
+
+  var G = { ult: null, offset: 0, clave: '', vivo: true, cerrada: false, raf: 0, podioConfeti: false };
+
+  /* ---------- sondeo ---------- */
+  async function sondear() {
+    if (G.cerrada) return;
+    try {
+      var r = await fetch('/api/fequiz/estado?pin=' + encodeURIComponent(PIN) + '&token=' + encodeURIComponent(TOKEN));
+      var d = await r.json();
+      if (!r.ok || !d || d.ok === false) {
+        if (d && d.error === 'no-pin') { salaCerrada(); return; }
+        throw new Error('estado');
+      }
+      G.vivo = true; estadoRed.classList.add('oculto');
+      G.ult = d;
+      G.offset = d.servidorAhora - Date.now();
+      pintar(d);
+    } catch (e) {
+      G.vivo = false;
+      estadoRed.classList.remove('oculto');
+    }
+  }
+  function salaCerrada() {
+    G.cerrada = true;
+    V.innerHTML = '<div class="ms"><h1>LA SALA SE CERRÓ</h1>' +
+      '<p>La partida terminó o el anfitrión la cerró.<br>Podés cerrar esta pantalla.</p></div>';
+  }
+
+  /* ---------- ciclo visual (timer + cuenta) ---------- */
+  function ahoraServ() { return Date.now() + G.offset; }
+  function ciclo() {
+    var d = G.ult;
+    if (d && G.vivo) {
+      if (d.estado === 'pregunta') {
+        var barra = document.getElementById('j-barra'), num = document.getElementById('j-timer');
+        if (barra && d.preguntaHasta) {
+          var rest = Math.max(0, d.preguntaHasta - ahoraServ());
+          barra.style.width = (rest / (d.segs * 1000) * 100) + '%';
+          var seg = Math.ceil(rest / 1000);
+          if (num) {
+            num.textContent = seg;
+            num.classList.toggle('apurado', seg <= 10 && seg > 5);
+            num.classList.toggle('critico', seg <= 5);
+          }
+        }
+      } else if (d.estado === 'cuenta') {
+        var n = document.getElementById('ct-num');
+        if (n && d.cuentaHasta) {
+          var rest2 = Math.max(0, d.cuentaHasta - ahoraServ());
+          var paso = rest2 > 2400 ? '3' : rest2 > 1400 ? '2' : rest2 > 400 ? '1' : '¡YA!';
+          if (n.textContent !== paso) { n.textContent = paso; n.style.animation = 'none'; void n.offsetWidth; n.style.animation = ''; }
+        }
+      }
+    }
+    G.raf = requestAnimationFrame(ciclo);
+  }
+
+  /* ---------- pintado por estado ---------- */
+  function pintar(d) {
+    var huellaJug = (d.jugadores || []).map(function (j) { return j.apodo; }).join(',');
+    var clave = [d.estado, d.idx, d.activos, d.respondieron, huellaJug, d.total].join('|');
+    if (clave === G.clave) return;
+    G.clave = clave;
+
+    if (d.estado === 'lobby') vLobby(d);
+    else if (d.estado === 'cuenta') vCuenta(d);
+    else if (d.estado === 'pregunta') vPregunta(d);
+    else if (d.estado === 'revelacion') vRevelacion(d);
+    else if (d.estado === 'podio') vPodio(d);
+  }
+
+  function marca(titulo, icono) {
+    return '<div class="marca-zona">' + FIGURAS_MARCA + '<span class="nombre">FEQUIZ</span></div>' +
+      (titulo ? '<div class="origen" style="margin-top:clamp(2px,.6vh,8px)">' +
+        '<span>' + esc(icono || '🎮') + '</span><span>' + esc(titulo) + '</span></div>' : '');
+  }
+
+  function vLobby(d) {
+    var url = location.origin + '/fequiz/';
+    var chips = (d.jugadores || []).map(function (j) { return '<span class="chip-j">' + esc(j.apodo) + '</span>'; }).join('');
+    V.innerHTML = marca() +
+      '<div class="lb">' +
+        '<div class="pin-caja"><div class="pin-rotulo">CÓDIGO DE LA PARTIDA</div>' +
+        '<div class="pin-numero">' + esc(String(d.pin).slice(0, 3)) + ' ' + esc(String(d.pin).slice(3)) + '</div></div>' +
+        '<div class="lb-url">Sumate desde tu celular en <b>' + esc(url.replace(/^https?:\/\//, '')) + '</b> → UNIRSE CON PIN</div>' +
+        '<div class="lb-cuenta"><b>' + d.activos + '</b> ' + (d.activos === 1 ? 'jugador esperando' : 'jugadores esperando') + '</div>' +
+        (chips ? '<div class="chips">' + chips + '</div>' : '<div class="espera"><i></i><i></i><i></i></div>') +
+      '</div>';
+  }
+
+  function vCuenta(d) {
+    V.innerHTML = marca() + '<div class="ct">' +
+      '<div class="origen"><span>' + esc(d.icono) + '</span><span>' + esc(d.titulo) + '</span></div>' +
+      '<div class="ct-num" id="ct-num">3</div>' +
+      '<div class="ct-sub">Preparen los celulares…</div></div>';
+  }
+
+  function opcionesHtml(q, esRevelacion) {
+    var conteos = esRevelacion && q.conteos;
+    var maxTxt = 0;
+    q.opciones.forEach(function (t) { maxTxt = Math.max(maxTxt, String(t).length); });
+    var clsLarga = maxTxt > 38 ? ' larga' : '';
+    return '<div class="opcs">' + q.opciones.map(function (t, i) {
+      var acierto = esRevelacion && i === q.correctaIdx;
+      return '<div class="opc r' + (i + 1) + clsLarga + (acierto ? ' acierto' : '') + '">' +
+        '<span class="figura">' + FIG[i] + '</span>' +
+        '<span class="texto">' + esc(t) + '</span>' +
+        (esRevelacion && acierto ? PALOMITA : '') +
+        (conteos && conteos[i] ? '<span class="conteo">' + conteos[i] + '</span>' : '') +
+        '</div>';
+    }).join('') + '</div>';
+  }
+
+  function vPregunta(d) {
+    var q = d.pregunta;
+    V.innerHTML = marca(d.titulo, d.icono) +
+      '<div class="j">' +
+        '<div class="j-top">' +
+          '<span class="j-chip">PREGUNTA ' + (d.idx + 1) + ' DE ' + d.total + '</span>' +
+          '<span class="spacer"></span>' +
+          '<span class="j-chip" id="j-resp">Respondieron ' + d.respondieron + '/' + d.activos + '</span>' +
+          '<span class="j-timer" id="j-timer">' + d.segs + '</span>' +
+        '</div>' +
+        '<div class="j-pista"><div class="j-barra" id="j-barra"></div></div>' +
+        '<div class="j-preg' + (q.p.length > 110 ? ' larga' : '') + '">' + esc(q.p) + '</div>' +
+        opcionesHtml(q, false) +
+      '</div>';
+  }
+
+  function vRevelacion(d) {
+    var q = d.revelacion;
+    var top = (d.top || []).map(function (j, i) {
+      return '<div class="top-f' + (i === 0 ? ' primero' : '') + '">' +
+        '<span class="pos">' + (i < 3 ? MEDALLAS[i] : (i + 1) + '°') + '</span>' +
+        '<span class="apo">' + esc(j.apodo) + '</span>' +
+        '<span class="pts">' + fmt(j.puntos) + '</span></div>';
+    }).join('');
+    V.innerHTML = marca(d.titulo, d.icono) +
+      '<div class="j revel">' +
+        '<div class="j-top"><span class="j-chip">PREGUNTA ' + (d.idx + 1) + ' DE ' + d.total + '</span>' +
+        '<span class="spacer"></span><span class="j-chip">Respondieron ' + d.respondieron + '/' + d.activos + '</span></div>' +
+        '<div class="revel-zona">' +
+          '<div class="revel-izq">' +
+            '<div class="j-preg' + (q.p.length > 110 ? ' larga' : '') + '" style="font-size:clamp(14px,2.7vh,28px)">' + esc(q.p) + '</div>' +
+            opcionesHtml(q, true) +
+            '<div class="veredicto">' + PALOMITA + '<span>' + esc(q.resp || q.opciones[q.correctaIdx]) + '</span></div>' +
+            (q.r ? '<div class="versiculo">' + esc(q.r) + '</div>' : '') +
+          '</div>' +
+          '<div class="revel-der">' +
+            '<div class="top-tit">LOS MEJORES</div>' + top +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function vPodio(d) {
+    var top = d.top || [];
+    var medallero = [top[1], top[0], top[2]];
+    var barras = medallero.map(function (j, i) {
+      var lugar = i === 1 ? 0 : i === 0 ? 1 : 2;
+      if (!j) return '<div class="pd-col"><div class="pd-barra b' + lugar + '"></div></div>';
+      return '<div class="pd-col"><div class="pd-medalla">' + MEDALLAS[lugar] + '</div>' +
+        '<div class="pd-apodo">' + esc(j.apodo) + '</div>' +
+        '<div class="pd-pts">' + fmt(j.puntos) + '</div>' +
+        '<div class="pd-barra b' + lugar + '"></div></div>';
+    }).join('');
+    var lista = top.map(function (j, i) {
+      return '<div class="top-f' + (i === 0 ? ' primero' : '') + '">' +
+        '<span class="pos">' + (i < 3 ? MEDALLAS[i] : (i + 1) + '°') + '</span>' +
+        '<span class="apo">' + esc(j.apodo) + '</span>' +
+        '<span class="pts">' + fmt(j.puntos) + '</span></div>';
+    }).join('');
+    V.innerHTML = marca() +
+      '<div class="pd">' +
+        '<div class="pd-saludo">¡SE TERMINÓ EL JUEGO!</div>' +
+        '<div class="pd-rotulo">PODIO</div>' +
+        '<div class="pd-zona">' +
+          '<div class="pd-barras">' + barras + '</div>' +
+          '<div class="pd-lista">' + lista + '</div>' +
+        '</div>' +
+      '</div>';
+    if (!G.podioConfeti) { G.podioConfeti = true; confeti(); }
+  }
+
+  /* ---------- confeti (solo en el podio) ---------- */
+  function confeti() {
+    var cv = document.getElementById('confeti');
+    var ctx = cv.getContext('2d');
+    cv.width = innerWidth; cv.height = innerHeight;
+    var colores = ['#E21B3C', '#1368CE', '#FFA602', '#26890C', '#ffffff'];
+    var ps = [];
+    for (var i = 0; i < 180; i++) ps.push({
+      x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .5,
+      w: 7 + Math.random() * 8, h: 10 + Math.random() * 10,
+      c: colores[Math.floor(Math.random() * colores.length)],
+      vy: 2.6 + Math.random() * 3.4, vx: -1.8 + Math.random() * 3.6,
+      a: Math.random() * Math.PI, va: -.14 + Math.random() * .28
+    });
+    var t0 = performance.now();
+    (function animar(t) {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      for (var i = 0; i < ps.length; i++) {
+        var p = ps[i];
+        p.x += p.vx; p.y += p.vy; p.a += p.va;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+        ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+      if (t - t0 < 4200) requestAnimationFrame(animar); else ctx.clearRect(0, 0, cv.width, cv.height);
+    })(t0);
+  }
+
+  /* ---------- pantalla completa + pantalla despierta ---------- */
+  document.getElementById('btn-fs').addEventListener('click', function () {
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    } catch (e) {}
+  });
+  try {
+    if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(function () {});
+  } catch (e) {}
+
+  /* ---------- arranque ---------- */
+  if (!PIN) {
+    V.innerHTML = '<div class="ms"><h1>PANTALLA DE PROYECCIÓN</h1>' +
+      '<p>Esta pantalla se abre sola con el botón <b>PROYECTAR</b> que aparece al crear la partida (modo grupal).</p>' +
+      '<p class="mini">Anfitrión: abrí FeQuiz → DIRIGIR PARTIDA → elegí el estudio → PROYECTAR.</p></div>';
+  } else {
+    sondear();
+    setInterval(sondear, 1000);
+    G.raf = requestAnimationFrame(ciclo);
+  }
+})();
+</script>
+</body>
+</html>
