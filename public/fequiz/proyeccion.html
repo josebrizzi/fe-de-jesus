@@ -38,91 +38,91 @@ body {
 #v {
   position: fixed; inset: 0; z-index: 2;
   display: flex; flex-direction: column;
-  padding: clamp(10px, 2.4vh, 26px) clamp(14px, 3vw, 48px) calc(clamp(10px, 2.4vh, 26px) + env(safe-area-inset-bottom));
+  padding:2.4vh;padding:clamp(10px, 2.4vh, 26px) clamp(14px, 3vw, 48px) calc(clamp(10px, 2.4vh, 26px) + env(safe-area-inset-bottom));
 }
 
 /* ---------- esquinas: estado + pantalla completa + aviso ---------- */
-.esq { position: fixed; right: clamp(8px, 1.6vw, 22px); bottom: clamp(8px, 1.8vh, 18px); z-index: 6;
+.esq { position: fixed; right:1.6vw;right:clamp(8px, 1.6vw, 22px); bottom:1.8vh;bottom:clamp(8px, 1.8vh, 18px); z-index: 6;
   display: flex; align-items: center; gap: 10px; }
-.aviso-ctrl { font-size: clamp(9px, 1.2vh, 13px); font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: .4px; }
+.aviso-ctrl { font-size:1.2vh;font-size:clamp(9px, 1.2vh, 13px); font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: .4px; }
 .btn-fs {
   border: 0; border-radius: 10px; background: rgba(255,255,255,.12); color: #fff;
-  width: clamp(34px, 4.6vh, 46px); height: clamp(34px, 4.6vh, 46px);
+  width:4.6vh;width:clamp(34px, 4.6vh, 46px); height:4.6vh;height:clamp(34px, 4.6vh, 46px);
   display: grid; place-items: center; cursor: pointer;
 }
 .btn-fs:hover { background: rgba(255,255,255,.22); }
 .btn-fs svg { width: 55%; height: 55%; }
-.estado-red { position: fixed; left: clamp(8px, 1.6vw, 22px); bottom: clamp(8px, 1.8vh, 18px); z-index: 6;
-  display: flex; align-items: center; gap: 7px; font-size: clamp(9px, 1.3vh, 13px); font-weight: 700;
+.estado-red { position: fixed; left:1.6vw;left:clamp(8px, 1.6vw, 22px); bottom:1.8vh;bottom:clamp(8px, 1.8vh, 18px); z-index: 6;
+  display: flex; align-items: center; gap: 7px; font-size:1.3vh;font-size:clamp(9px, 1.3vh, 13px); font-weight: 700;
   color: rgba(255,255,255,.55); }
 .punto { width: 9px; height: 9px; border-radius: 50%; background: #38E05C; box-shadow: 0 0 8px #38E05C; }
 .punto.mal { background: #FF6D7E; box-shadow: 0 0 8px #FF6D7E; animation: late .8s ease-in-out infinite; }
 
 /* ---------- cabecera reutilizable ---------- */
-.marca-zona { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 1.4vw, 16px); flex: 0 0 auto; }
-.marca-zona .figs { display: grid; grid-template-columns: repeat(2, 1em); gap: .28em; font-size: clamp(14px, 2.6vh, 24px); }
+.marca-zona { display: flex; align-items: center; justify-content: center; gap:1.4vw;gap:clamp(8px, 1.4vw, 16px); flex: 0 0 auto; }
+.marca-zona .figs { display: grid; grid-template-columns: repeat(2, 1em); gap: .28em; font-size:2.6vh;font-size:clamp(14px, 2.6vh, 24px); }
 .marca-zona .figs svg { width: 1em; height: 1em; display: block; }
-.marca-zona .nombre { font-weight: 800; letter-spacing: .35em; font-size: clamp(16px, 3.2vh, 30px); }
+.marca-zona .nombre { font-weight: 800; letter-spacing: .35em; font-size:3.2vh;font-size:clamp(16px, 3.2vh, 30px); }
 .origen { display: flex; align-items: center; justify-content: center; gap: .5em; font-weight: 700;
-  color: var(--blanco-75); font-size: clamp(13px, 2.3vh, 21px); }
+  color: var(--blanco-75); font-size:2.3vh;font-size:clamp(13px, 2.3vh, 21px); }
 
 /* ============ LOBBY ============ */
-.lb { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(6px, 1.4vh, 16px); }
-.lb .marca-zona { position: absolute; top: clamp(10px, 2.4vh, 26px); left: 0; right: 0; }
-.pin-caja { background: #fff; border-radius: clamp(12px, 2.4vh, 24px); padding: clamp(10px, 2vh, 22px) clamp(26px, 5vw, 70px) clamp(12px, 2.2vh, 24px);
+.lb { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap:1.4vh;gap:clamp(6px, 1.4vh, 16px); }
+.lb .marca-zona { position: absolute; top:2.4vh;top:clamp(10px, 2.4vh, 26px); left: 0; right: 0; }
+.pin-caja { background: #fff; border-radius:2.4vh;border-radius:clamp(12px, 2.4vh, 24px); padding:2vh;padding:clamp(10px, 2vh, 22px) clamp(26px, 5vw, 70px) clamp(12px, 2.2vh, 24px);
   text-align: center; box-shadow: 0 clamp(6px, 1.4vh, 14px) 0 rgba(0,0,0,.28); }
-.pin-rotulo { font-size: clamp(11px, 1.8vh, 17px); font-weight: 800; letter-spacing: .35em; color: #9a86c9; }
-.pin-numero { font-size: clamp(58px, 13vh, 128px); font-weight: 800; letter-spacing: .14em; color: var(--morado);
+.pin-rotulo { font-size:1.8vh;font-size:clamp(11px, 1.8vh, 17px); font-weight: 800; letter-spacing: .35em; color: #9a86c9; }
+.pin-numero { font-size:13vh;font-size:clamp(58px, 13vh, 128px); font-weight: 800; letter-spacing: .14em; color: var(--morado);
   line-height: 1.05; font-variant-numeric: tabular-nums; }
-.lb-url { font-size: clamp(12px, 2vh, 19px); font-weight: 700; color: var(--blanco-75); }
+.lb-url { font-size:2vh;font-size:clamp(12px, 2vh, 19px); font-weight: 700; color: var(--blanco-75); }
 .lb-url b { color: #fff; }
-.lb-cuenta { font-size: clamp(15px, 2.6vh, 25px); font-weight: 700; color: var(--blanco-75); }
+.lb-cuenta { font-size:2.6vh;font-size:clamp(15px, 2.6vh, 25px); font-weight: 700; color: var(--blanco-75); }
 .lb-cuenta b { color: var(--amarillo); font-size: 1.35em; }
-.chips { display: flex; flex-wrap: wrap; gap: clamp(6px, 1.2vh, 12px); justify-content: center;
+.chips { display: flex; flex-wrap: wrap; gap:1.2vh;gap:clamp(6px, 1.2vh, 12px); justify-content: center;
   max-width: 92vw; max-height: 34vh; overflow: hidden; }
-.chip-j { background: rgba(255,255,255,.14); border: clamp(1px, .3vh, 2px) solid rgba(255,255,255,.25);
-  border-radius: 999px; padding: clamp(5px, 1.1vh, 11px) clamp(12px, 1.8vw, 22px);
-  font-size: clamp(14px, 2.6vh, 25px); font-weight: 700; animation: entra .28s ease-out; }
+.chip-j { background: rgba(255,255,255,.14); border:.3vh;border:clamp(1px, .3vh, 2px) solid rgba(255,255,255,.25);
+  border-radius: 999px; padding:1.1vh;padding:clamp(5px, 1.1vh, 11px) clamp(12px, 1.8vw, 22px);
+  font-size:2.6vh;font-size:clamp(14px, 2.6vh, 25px); font-weight: 700; animation: entra .28s ease-out; }
 @keyframes entra { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes late { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 .espera { display: flex; gap: 8px; justify-content: center; }
-.espera i { width: clamp(8px, 1.4vh, 13px); height: clamp(8px, 1.4vh, 13px); border-radius: 50%; background: rgba(255,255,255,.7); animation: rebote .9s ease-in-out infinite; }
+.espera i { width:1.4vh;width:clamp(8px, 1.4vh, 13px); height:1.4vh;height:clamp(8px, 1.4vh, 13px); border-radius: 50%; background: rgba(255,255,255,.7); animation: rebote .9s ease-in-out infinite; }
 .espera i:nth-child(2) { animation-delay: .15s; } .espera i:nth-child(3) { animation-delay: .3s; }
 @keyframes rebote { 0%, 100% { transform: translateY(0); opacity: .45; } 50% { transform: translateY(-9px); opacity: 1; } }
 
 /* ============ CUENTA ============ */
 .ct { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vh; }
-.ct-num { font-size: clamp(90px, 26vh, 260px); font-weight: 800; text-shadow: 0 clamp(6px, 1.4vh, 14px) 0 rgba(0,0,0,.3);
+.ct-num { font-size:26vh;font-size:clamp(90px, 26vh, 260px); font-weight: 800; text-shadow: 0 clamp(6px, 1.4vh, 14px) 0 rgba(0,0,0,.3);
   animation: pop .72s ease-out; }
 @keyframes pop { from { transform: scale(2.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.ct-sub { font-size: clamp(15px, 2.8vh, 27px); font-weight: 700; color: var(--blanco-75); }
+.ct-sub { font-size:2.8vh;font-size:clamp(15px, 2.8vh, 27px); font-weight: 700; color: var(--blanco-75); }
 
 /* ============ PREGUNTA / REVELACIÓN ============ */
-.j { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: clamp(6px, 1.3vh, 14px); }
-.j-top { display: flex; align-items: center; gap: clamp(8px, 1.4vw, 18px); flex: 0 0 auto; }
-.j-chip { background: rgba(0,0,0,.26); border-radius: 999px; padding: clamp(4px, .9vh, 9px) clamp(11px, 1.6vw, 20px);
-  font-size: clamp(11px, 2vh, 19px); font-weight: 800; letter-spacing: .08em; }
+.j { flex: 1; min-height: 0; display: flex; flex-direction: column; gap:1.3vh;gap:clamp(6px, 1.3vh, 14px); }
+.j-top { display: flex; align-items: center; gap:1.4vw;gap:clamp(8px, 1.4vw, 18px); flex: 0 0 auto; }
+.j-chip { background: rgba(0,0,0,.26); border-radius: 999px; padding:.9vh;padding:clamp(4px, .9vh, 9px) clamp(11px, 1.6vw, 20px);
+  font-size:2vh;font-size:clamp(11px, 2vh, 19px); font-weight: 800; letter-spacing: .08em; }
 .j-top .spacer { flex: 1; }
-.j-timer { width: clamp(34px, 6.4vh, 62px); height: clamp(34px, 6.4vh, 62px); border-radius: 50%;
+.j-timer { width:6.4vh;width:clamp(34px, 6.4vh, 62px); height:6.4vh;height:clamp(34px, 6.4vh, 62px); border-radius: 50%;
   display: grid; place-items: center; background: rgba(255,255,255,.14);
-  font-size: clamp(15px, 3vh, 28px); font-weight: 800; font-variant-numeric: tabular-nums; }
+  font-size:3vh;font-size:clamp(15px, 3vh, 28px); font-weight: 800; font-variant-numeric: tabular-nums; }
 .j-timer.apurado { box-shadow: inset 0 0 0 3px var(--amarillo); }
 .j-timer.critico { box-shadow: inset 0 0 0 3px var(--rojo); animation: late .5s ease-in-out infinite; }
-.j-pista { flex: 0 0 auto; height: clamp(6px, 1.1vh, 11px); border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
+.j-pista { flex: 0 0 auto; height:1.1vh;height:clamp(6px, 1.1vh, 11px); border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
 .j-barra { height: 100%; width: 100%; border-radius: 99px; background: #fff; }
-.j-preg { flex: 0 0 auto; background: #fff; color: #2b2b2b; border-radius: clamp(10px, 2vh, 20px);
-  padding: clamp(10px, 2.2vh, 24px) clamp(14px, 2.6vw, 36px);
+.j-preg { flex: 0 0 auto; background: #fff; color: #2b2b2b; border-radius:2vh;border-radius:clamp(10px, 2vh, 20px);
+  padding:2.2vh;padding:clamp(10px, 2.2vh, 24px) clamp(14px, 2.6vw, 36px);
   font-weight: 800; text-align: center; display: grid; place-items: center;
-  font-size: clamp(19px, 4.1vh, 42px); line-height: 1.22; }
-.j-preg.larga { font-size: clamp(15px, 2.9vh, 30px); }
+  font-size:4.1vh;font-size:clamp(19px, 4.1vh, 42px); line-height: 1.22; }
+.j-preg.larga { font-size:2.9vh;font-size:clamp(15px, 2.9vh, 30px); }
 .opcs { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
-  gap: clamp(7px, 1.5vh, 15px); }
-.opc { border-radius: clamp(9px, 1.8vh, 18px); display: flex; align-items: center; gap: clamp(8px, 1.4vw, 18px);
-  padding: clamp(8px, 1.6vh, 18px) clamp(12px, 2vw, 28px); color: #fff;
+  gap:1.5vh;gap:clamp(7px, 1.5vh, 15px); }
+.opc { border-radius:1.8vh;border-radius:clamp(9px, 1.8vh, 18px); display: flex; align-items: center; gap:1.4vw;gap:clamp(8px, 1.4vw, 18px);
+  padding:1.6vh;padding:clamp(8px, 1.6vh, 18px) clamp(12px, 2vw, 28px); color: #fff;
   box-shadow: 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3); overflow: hidden;
-  font-size: clamp(13px, 2.5vh, 25px); font-weight: 700; line-height: 1.2; }
-.opc.larga { font-size: clamp(11px, 1.9vh, 19px); }
-.opc .figura { width: clamp(17px, 3.4vh, 32px); height: clamp(17px, 3.4vh, 32px); flex: 0 0 auto; }
+  font-size:2.5vh;font-size:clamp(13px, 2.5vh, 25px); font-weight: 700; line-height: 1.2; }
+.opc.larga { font-size:1.9vh;font-size:clamp(11px, 1.9vh, 19px); }
+.opc .figura { width:3.4vh;width:clamp(17px, 3.4vh, 32px); height:3.4vh;height:clamp(17px, 3.4vh, 32px); flex: 0 0 auto; }
 .opc .figura svg { width: 100%; height: 100%; display: block; }
 .opc .texto { flex: 1; }
 .opc .conteo { align-self: center; background: rgba(0,0,0,.3); border-radius: 999px; padding: .2em .6em;
@@ -133,66 +133,76 @@ body {
 .revel .opc.acierto { opacity: 1; filter: none; box-shadow: 0 0 0 clamp(3px, .6vh, 6px) #fff, 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3);
   animation: pulso .6s ease-out 2; }
 @keyframes pulso { 0% { transform: scale(1); } 50% { transform: scale(1.025); } 100% { transform: scale(1); } }
-.revel .opc .palomita { flex: 0 0 auto; width: clamp(20px, 4vh, 38px); height: clamp(20px, 4vh, 38px); }
-.veredicto { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: clamp(7px, 1.2vw, 14px);
-  font-weight: 800; font-size: clamp(14px, 2.8vh, 27px); color: #7DDB6A; }
-.veredicto svg { width: clamp(18px, 3.4vh, 32px); height: clamp(18px, 3.4vh, 32px); flex: 0 0 auto; }
+.revel .opc .palomita { flex: 0 0 auto; width:4vh;width:clamp(20px, 4vh, 38px); height:4vh;height:clamp(20px, 4vh, 38px); }
+.veredicto { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap:1.2vw;gap:clamp(7px, 1.2vw, 14px);
+  font-weight: 800; font-size:2.8vh;font-size:clamp(14px, 2.8vh, 27px); color: #7DDB6A; }
+.veredicto svg { width:3.4vh;width:clamp(18px, 3.4vh, 32px); height:3.4vh;height:clamp(18px, 3.4vh, 32px); flex: 0 0 auto; }
 .versiculo { flex: 0 0 auto; text-align: center; font-weight: 700; color: var(--amarillo);
-  font-size: clamp(12px, 2.2vh, 21px); }
-.revel-zona { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(8px, 1.6vw, 20px); }
-.revel-izq { min-height: 0; display: flex; flex-direction: column; gap: clamp(6px, 1.2vh, 13px); }
-.revel-der { min-height: 0; display: flex; flex-direction: column; gap: clamp(5px, 1vh, 10px); }
-.top-tit { font-size: clamp(12px, 2.1vh, 20px); font-weight: 800; letter-spacing: .2em; color: var(--blanco-75); }
-.top-f { display: flex; align-items: center; gap: clamp(7px, 1.1vw, 15px); background: rgba(0,0,0,.22);
-  border-radius: clamp(8px, 1.5vh, 14px); padding: clamp(5px, 1vh, 11px) clamp(10px, 1.4vw, 18px);
-  font-size: clamp(12px, 2.4vh, 23px); font-weight: 700; }
+  font-size:2.2vh;font-size:clamp(12px, 2.2vh, 21px); }
+.revel-zona { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1.35fr 1fr; gap:1.6vw;gap:clamp(8px, 1.6vw, 20px); }
+.revel-izq { min-height: 0; display: flex; flex-direction: column; gap:1.2vh;gap:clamp(6px, 1.2vh, 13px); }
+.revel-der { min-height: 0; display: flex; flex-direction: column; gap:1vh;gap:clamp(5px, 1vh, 10px); }
+.top-tit { font-size:2.1vh;font-size:clamp(12px, 2.1vh, 20px); font-weight: 800; letter-spacing: .2em; color: var(--blanco-75); }
+.top-f { display: flex; align-items: center; gap:1.1vw;gap:clamp(7px, 1.1vw, 15px); background: rgba(0,0,0,.22);
+  border-radius:1.5vh;border-radius:clamp(8px, 1.5vh, 14px); padding:1vh;padding:clamp(5px, 1vh, 11px) clamp(10px, 1.4vw, 18px);
+  font-size:2.4vh;font-size:clamp(12px, 2.4vh, 23px); font-weight: 700; }
 .top-f.primero { background: rgba(255,166,2,.2); box-shadow: inset 0 0 0 2px rgba(255,166,2,.55); }
 .top-f .pos { flex: 0 0 auto; width: 1.7em; text-align: center; }
 .top-f .apo { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .top-f .pts { font-weight: 800; color: var(--amarillo); font-variant-numeric: tabular-nums; }
 
 /* ============ PODIO ============ */
-.pd { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1vh, 12px); }
-.pd-saludo { font-size: clamp(20px, 4.6vh, 44px); font-weight: 800; letter-spacing: .06em; text-shadow: 0 4px 0 rgba(0,0,0,.25); }
-.pd-rotulo { font-size: clamp(11px, 2vh, 19px); font-weight: 800; letter-spacing: .5em; color: var(--blanco-75); }
-.pd-zona { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(10px, 2vw, 30px);
+.pd { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; gap:1vh;gap:clamp(4px, 1vh, 12px); }
+.pd-saludo { font-size:4.6vh;font-size:clamp(20px, 4.6vh, 44px); font-weight: 800; letter-spacing: .06em; text-shadow: 0 4px 0 rgba(0,0,0,.25); }
+.pd-rotulo { font-size:2vh;font-size:clamp(11px, 2vh, 19px); font-weight: 800; letter-spacing: .5em; color: var(--blanco-75); }
+.pd-zona { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1.1fr; gap:2vw;gap:clamp(10px, 2vw, 30px);
   width: 100%; align-items: center; }
-.pd-barras { display: flex; align-items: flex-end; justify-content: center; gap: clamp(8px, 1.6vw, 24px); height: 100%; max-height: 52vh; }
+.pd-barras { display: flex; align-items: flex-end; justify-content: center; gap:1.6vw;gap:clamp(8px, 1.6vw, 24px); height: 100%; max-height: 52vh; }
 .pd-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1vh; height: 100%; }
-.pd-medalla { font-size: clamp(24px, 6vh, 58px); }
-.pd-apodo { font-weight: 800; font-size: clamp(13px, 2.6vh, 26px); max-width: 16vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pd-pts { font-weight: 800; color: var(--amarillo); font-size: clamp(11px, 2.1vh, 21px); font-variant-numeric: tabular-nums; }
-.pd-barra { width: clamp(46px, 8.4vw, 130px); border-radius: clamp(8px, 1.5vh, 14px) clamp(8px, 1.5vh, 14px) 0 0;
+.pd-medalla { font-size:6vh;font-size:clamp(24px, 6vh, 58px); }
+.pd-apodo { font-weight: 800; font-size:2.6vh;font-size:clamp(13px, 2.6vh, 26px); max-width: 16vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pd-pts { font-weight: 800; color: var(--amarillo); font-size:2.1vh;font-size:clamp(11px, 2.1vh, 21px); font-variant-numeric: tabular-nums; }
+.pd-barra { width:8.4vw;width:clamp(46px, 8.4vw, 130px); border-radius:1.5vh;border-radius:clamp(8px, 1.5vh, 14px) clamp(8px, 1.5vh, 14px) 0 0;
   background: rgba(255,255,255,.85); box-shadow: 0 0 0 clamp(2px, .5vh, 5px) rgba(0,0,0,.15); }
 .pd-barra.b0 { height: 100%; background: #FFD54D; }
 .pd-barra.b1 { height: 68%; background: #D9D9D9; }
 .pd-barra.b2 { height: 50%; background: #E0A26B; }
-.pd-lista { align-self: center; max-height: 52vh; overflow-y: auto; display: flex; flex-direction: column; gap: clamp(4px, .9vh, 9px); }
+.pd-lista { align-self: center; max-height: 52vh; overflow-y: auto; display: flex; flex-direction: column; gap:.9vh;gap:clamp(4px, .9vh, 9px); }
 
 /* ============ mensajes fijos ============ */
 .ms { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; gap: 2vh; padding: 0 6vw; }
-.ms h1 { font-size: clamp(20px, 4.4vh, 42px); font-weight: 800; }
-.ms p { font-size: clamp(13px, 2.4vh, 23px); font-weight: 600; color: var(--blanco-75); line-height: 1.5; }
-.ms .mini { font-size: clamp(11px, 1.9vh, 17px); }
+.ms h1 { font-size:4.4vh;font-size:clamp(20px, 4.4vh, 42px); font-weight: 800; }
+.ms p { font-size:2.4vh;font-size:clamp(13px, 2.4vh, 23px); font-weight: 600; color: var(--blanco-75); line-height: 1.5; }
+.ms .mini { font-size:1.9vh;font-size:clamp(11px, 1.9vh, 17px); }
 .ms .err { color: #FF9AA5; font-weight: 800; }
 
 /* ---------- pantalla de conexión (proyector sin enlace) ---------- */
-.entrada { display: flex; flex-direction: column; align-items: center; gap: clamp(10px, 2vh, 20px); }
-.entrada input { background: #fff; color: var(--morado); border: 0; border-radius: clamp(10px, 2vh, 18px);
-  width: min(76vw, 430px); padding: clamp(10px, 2.4vh, 24px) clamp(14px, 3vw, 30px);
-  font-family: inherit; font-weight: 800; font-size: clamp(30px, 7.5vh, 68px);
+.entrada { display: flex; flex-direction: column; align-items: center; gap:2vh;gap:clamp(10px, 2vh, 20px); }
+.entrada input { background: #fff; color: var(--morado); border: 0; border-radius:2vh;border-radius:clamp(10px, 2vh, 18px);
+  width: min(76vw, 430px); padding:2.4vh;padding:clamp(10px, 2.4vh, 24px) clamp(14px, 3vw, 30px);
+  font-family: inherit; font-weight: 800; font-size:7.5vh;font-size:clamp(30px, 7.5vh, 68px);
   letter-spacing: .14em; text-align: center; font-variant-numeric: tabular-nums; outline: none;
   box-shadow: 0 clamp(5px, 1.2vh, 12px) 0 rgba(0,0,0,.28); }
 .entrada input::placeholder { color: #C9BDE6; letter-spacing: .2em; }
-.entrada button { border: 0; cursor: pointer; border-radius: 999px; background: var(--verde); color: #fff;
-  font-family: inherit; font-weight: 800; font-size: clamp(14px, 2.6vh, 24px); letter-spacing: .12em;
-  padding: clamp(10px, 2vh, 20px) clamp(26px, 5.5vw, 64px);
+#btn-ir { border: 0; cursor: pointer; border-radius: 999px; background: var(--verde); color: #fff;
+  font-family: inherit; font-weight: 800; font-size:2.6vh;font-size:clamp(14px, 2.6vh, 24px); letter-spacing: .12em;
+  padding:2vh;padding:clamp(10px, 2vh, 20px) clamp(26px, 5.5vw, 64px);
   box-shadow: 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3); }
-.entrada button:active { transform: translateY(2px); }
+#btn-ir:active { transform: translateY(2px); }
+/* teclado en pantalla: para Smart TV con control remoto (y también con mouse) */
+.teclado { display: flex; flex-wrap: wrap; justify-content: space-between;
+  width: min(64vw, 40vh, 380px); margin-top: -1vh; }
+.teclas { width: 31%; margin-top: 1.6vh; border: 0; cursor: pointer; font-family: inherit;
+  font-weight: 800; font-size:4vh;font-size:clamp(18px, 4vh, 36px); color: #fff;
+  background: rgba(255,255,255,.14); border-radius:1.6vh;border-radius:clamp(9px, 1.6vh, 16px);
+  padding:1.2vh;padding:clamp(7px, 1.2vh, 13px) 0; box-shadow: 0 clamp(3px, .7vh, 7px) 0 rgba(0,0,0,.22); }
+.teclas:active, .teclas:focus { background: rgba(255,255,255,.34); outline: 3px solid rgba(255,255,255,.9); outline-offset: 2px; }
+.teclas.borrar { background: rgba(226,27,60,.34); }
+.relleno { width: 30%; visibility: hidden; }
 .btn-otra { border: 0; cursor: pointer; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff;
-  font-family: inherit; font-weight: 800; font-size: clamp(12px, 2.3vh, 21px); letter-spacing: .1em;
-  padding: clamp(9px, 1.8vh, 18px) clamp(20px, 4vw, 46px);
+  font-family: inherit; font-weight: 800; font-size:2.3vh;font-size:clamp(12px, 2.3vh, 21px); letter-spacing: .1em;
+  padding:1.8vh;padding:clamp(9px, 1.8vh, 18px) clamp(20px, 4vw, 46px);
   box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); margin-top: 1vh; }
 .btn-otra:active { transform: translateY(2px); }
 #confeti { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
@@ -205,6 +215,12 @@ body {
   .pd-zona { grid-template-columns: 1fr; }
   .pd-barras { max-height: 26vh; }
   .pd-lista { max-height: 22vh; width: 100%; }
+}
+
+/* pantallas bajitas (TV chica / notebook en diagonal): achica el teclado */
+@media (max-height: 460px) {
+  .teclas { font-size:4.6vh;font-size:clamp(14px, 4.6vh, 22px); padding:1.6vh;padding:clamp(4px, 1.6vh, 8px) 0; margin-top: 1.2vh; }
+  .entrada input { font-size:9vh;font-size:clamp(22px, 9vh, 40px); }
 }
 </style>
 </head>
@@ -234,10 +250,24 @@ body {
 (function () {
   'use strict';
 
-  /* ---------- parámetros ---------- */
-  var qs = new URLSearchParams(location.search);
-  var PIN = (qs.get('pin') || '').replace(/\D/g, '').slice(0, 6);
-  var TOKEN = qs.get('token') || '';
+  /* ---------- parámetros ----------
+     se leen a mano (sin URLSearchParams) para que funcione también
+     en navegadores viejos, como el de muchas PCs de proyector */
+  function leerUrl() {
+    var s = {};
+    var partes = String(location.search || '').replace(/^\?/, '').split('&');
+    for (var i = 0; i < partes.length; i++) {
+      if (!partes[i]) continue;
+      var kv = partes[i].split('=');
+      try {
+        s[decodeURIComponent(kv[0] || '')] = decodeURIComponent(String(kv[1] || '').replace(/\+/g, ' '));
+      } catch (e) { /* parte rara: se ignora */ }
+    }
+    return s;
+  }
+  var qs = leerUrl();
+  var PIN = String(qs.pin || '').replace(/\D/g, '').slice(0, 6);
+  var TOKEN = String(qs.token || '');
   var CLAVE_PROY = 'fequiz_proy';
   document.getElementById('m-pin').textContent = PIN || '—';
 
@@ -287,6 +317,20 @@ body {
       '<p>Escribí el código de la partida:<br>el que muestra el celular del anfitrión</p>' +
       '<div class="entrada">' +
         '<input id="in-pin" inputmode="numeric" maxlength="6" autocomplete="off" autocapitalize="off" placeholder="······">' +
+        '<div class="teclado">' +
+          '<button class="teclas" type="button">1</button>' +
+          '<button class="teclas" type="button">2</button>' +
+          '<button class="teclas" type="button">3</button>' +
+          '<button class="teclas" type="button">4</button>' +
+          '<button class="teclas" type="button">5</button>' +
+          '<button class="teclas" type="button">6</button>' +
+          '<button class="teclas" type="button">7</button>' +
+          '<button class="teclas" type="button">8</button>' +
+          '<button class="teclas" type="button">9</button>' +
+          '<button class="teclas borrar" type="button">&lt;-</button>' +
+          '<button class="teclas" type="button">0</button>' +
+          '<span class="relleno"></span>' +
+        '</div>' +
         '<button id="btn-ir">CONECTAR</button>' +
       '</div>' +
       (mensaje ? '<p class="err">' + esc(mensaje) + '</p>'
@@ -306,34 +350,70 @@ body {
     }
     btn.addEventListener('click', ir);
     inp.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') ir(); });
-    setTimeout(function () { inp.focus(); }, 60);
+    /* teclado en pantalla: para el control remoto del TV (y también con mouse) */
+    var teclas = document.querySelectorAll('.teclas');
+    function pulsoTecla() {
+      if (this.className.indexOf('borrar') >= 0) inp.value = inp.value.slice(0, -1);
+      else if (inp.value.length < 6) inp.value += this.textContent;
+      if (window.matchMedia && window.matchMedia('(pointer: fine)').matches) inp.focus();
+      if (inp.value.length === 6) ir();   /* con 6 dígitos conecta sola */
+    }
+    for (var i = 0; i < teclas.length; i++) teclas[i].addEventListener('click', pulsoTecla);
+    /* en PC se enfoca la casilla para escribir con el teclado;
+       en TV no se enfoca, para que no se abra el teclado del televisor */
+    try {
+      if (window.matchMedia && window.matchMedia('(pointer: fine)').matches) {
+        setTimeout(function () { inp.focus(); }, 60);
+      }
+    } catch (e) {}
+  }
+
+  /* ---------- pedir al servidor ----------
+     usa fetch si existe y, si no, XHR: así funciona también en
+     navegadores viejos que no tienen fetch (Chrome antes de 2015) */
+  function pedir(url, cb) {
+    if (window.fetch) {
+      fetch(url).then(function (r) { return r.json(); }).then(
+        function (d) { cb(d); },
+        function () { cb(null); }
+      );
+    } else {
+      try {
+        var x = new XMLHttpRequest();
+        x.open('GET', url, true);
+        x.onreadystatechange = function () {
+          if (x.readyState !== 4) return;
+          var d = null;
+          try { d = JSON.parse(x.responseText); } catch (e) {}
+          cb(d);
+        };
+        x.send();
+      } catch (e) { cb(null); }
+    }
   }
 
   /* ---------- sondeo ---------- */
-  async function sondear() {
+  function sondear() {
     if (G.cerrada || !PIN) return;
-    try {
-      var url = '/api/fequiz/estado?pin=' + encodeURIComponent(PIN) +
-        (TOKEN ? '&token=' + encodeURIComponent(TOKEN) : '');
-      var r = await fetch(url);
-      var d = await r.json();
-      if (!r.ok || !d || d.ok === false) {
+    var url = '/api/fequiz/estado?pin=' + encodeURIComponent(PIN) +
+      (TOKEN ? '&token=' + encodeURIComponent(TOKEN) : '');
+    pedir(url, function (d) {
+      if (!d || d.ok === false) {
         if (d && d.error === 'no-pin') {
           if (G.conectado) { salaCerrada(); }
           else { olvidar(); pantallaEntrada(G.auto ? 'La sala anterior ya no está. Escribí el código nuevo.' : 'Ese código no existe. Revisalo.'); }
           return;
         }
-        throw new Error('estado');
+        G.vivo = false;
+        estadoRed.classList.remove('oculto');
+        return;
       }
       G.conectado = true; G.auto = false;
       G.vivo = true; estadoRed.classList.add('oculto');
       G.ult = d;
       G.offset = d.servidorAhora - Date.now();
       pintar(d);
-    } catch (e) {
-      G.vivo = false;
-      estadoRed.classList.remove('oculto');
-    }
+    });
   }
   function salaCerrada() {
     G.cerrada = true;
@@ -391,12 +471,12 @@ body {
 
   function marca(titulo, icono) {
     return '<div class="marca-zona">' + FIGURAS_MARCA + '<span class="nombre">FEQUIZ</span></div>' +
-      (titulo ? '<div class="origen" style="margin-top:clamp(2px,.6vh,8px)">' +
+      (titulo ? '<div class="origen" style="margin-top:.6vh;margin-top:clamp(2px, .6vh, 8px)">' +
         '<span>' + esc(icono || '🎮') + '</span><span>' + esc(titulo) + '</span></div>' : '');
   }
 
   function vLobby(d) {
-    var url = location.origin + '/fequiz/';
+    var url = location.protocol + '//' + location.host + '/fequiz/';
     var chips = (d.jugadores || []).map(function (j) { return '<span class="chip-j">' + esc(j.apodo) + '</span>'; }).join('');
     V.innerHTML = marca() +
       '<div class="lb">' +
@@ -461,7 +541,7 @@ body {
         '<span class="spacer"></span><span class="j-chip">Respondieron ' + d.respondieron + '/' + d.activos + '</span></div>' +
         '<div class="revel-zona">' +
           '<div class="revel-izq">' +
-            '<div class="j-preg' + (q.p.length > 110 ? ' larga' : '') + '" style="font-size:clamp(14px,2.7vh,28px)">' + esc(q.p) + '</div>' +
+            '<div class="j-preg' + (q.p.length > 110 ? ' larga' : '') + '" style="font-size:2.7vh;font-size:clamp(14px, 2.7vh, 28px)">' + esc(q.p) + '</div>' +
             opcionesHtml(q, true) +
             '<div class="veredicto">' + PALOMITA + '<span>' + esc(q.resp || q.opciones[q.correctaIdx]) + '</span></div>' +
             (q.r ? '<div class="versiculo">' + esc(q.r) + '</div>' : '') +

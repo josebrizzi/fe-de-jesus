@@ -285,6 +285,12 @@ module.exports = function instalarFeQuizGrupal(app) {
     res.json({ ok: true });
   });
 
+  /* ---------- GET /fequiz/proyeccion → pantalla del proyector (URL corta) ---------- */
+  app.get("/fequiz/proyeccion", (req, res) => {
+    const q = req.originalUrl.indexOf("?") >= 0 ? req.originalUrl.slice(req.originalUrl.indexOf("?")) : "";
+    res.redirect("/fequiz/proyeccion.html" + q);
+  });
+
   /* ---------- GET /api/fequiz/estado (todos, por sondeo) ---------- */
   app.get("/api/fequiz/estado", (req, res) => {
     barrer();
