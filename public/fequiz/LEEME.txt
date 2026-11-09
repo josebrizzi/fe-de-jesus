@@ -6,7 +6,7 @@
 QUÉ ES
   Una app de preguntas y respuestas estilo Kahoot con TODO el
   contenido de Fe de Jesús: 20 estudios + 18 lecciones del
-  Apocalipsis (294 preguntas reales, sacadas de tus lecciones).
+  Apocalipsis (384 preguntas reales, sacadas de tus lecciones).
   Funciona sin conexión (PWA), guarda récords y puntos por
   persona, y tiene sonido, racha, tiempo y confeti.
 
@@ -28,14 +28,12 @@ CÓMO SUBIRLO A TU PÁGINA (GitHub → Render)
 
 ¿POR QUÉ PUBLIC/FEQUIZ?
   Tu server.js sirve todo lo que está dentro de "public".
-  Por eso /fe-de-jesus/ funciona (public/fe-de-jesus) y por
-  eso /fequiz/ va a funcionar directo, sin tocar server.js.
+  Por eso /estudios/ funciona (public/estudios) y por eso
+  /fequiz/ funciona directo, sin tocar server.js.
 
-  OJO con lo de "la carpeta estudios": si subías archivos a
-  una carpeta que no está dentro de public/, quedan sin
-  publicar (por eso los archivos sueltos de la raíz daban 404).
-  Los PDF de resúmenes y cualquier archivo nuevo de la app
-  Fe de Jesús van dentro de public/fe-de-jesus/.
+  OJO: si subís archivos a una carpeta que no está dentro de
+  public/, quedan sin publicar (por eso los archivos sueltos
+  de la raíz daban 404). Todo lo nuevo va dentro de public/.
 
 ────────────────────────────────────────────────────────────
 PARA INSTALAR EN EL CELULAR (PWA)
@@ -62,8 +60,8 @@ Cada pregunta se ve así:
   · Podés dejar 2 opciones (tipo verdadero/falso).
 
 Datos extraídos del contenido real de Fe de Jesús v18:
-  20 estudios (150 preguntas) + 18 lecciones de Apocalipsis
-  (144 preguntas) = 294 preguntas.
+  20 estudios (240 preguntas) + 18 lecciones de Apocalipsis
+  (144 preguntas) = 384 preguntas.
 
 Versión 1 · Noviembre 2026
 
@@ -109,3 +107,19 @@ DETALLES
   lo devuelve solo a la misma partida.
 
 Versión 2 · Noviembre 2026
+
+────────────────────────────────────────────────────────────
+NOVEDADES DE LA VERSIÓN 3
+────────────────────────────────────────────────────────────
+· +90 preguntas nuevas: los 20 estudios quedaron con 12
+  preguntas cada uno (de 150 a 240) y el total quedó en 384
+  (240 + 144 del Apocalipsis). Son las preguntas de la
+  propuesta que aprobaste (PDF), con su versículo incluido.
+· Se sacaron los enlaces a la copia vieja de Fe de Jesús
+  ("Estudiar las lecciones completas" y "Repasar esta
+  lección en Fe de Jesús") que ya no funcionaban.
+· Corregido un error de tipeo en una pregunta del estudio 6.
+· Se actualizaron 3 archivos: datos/datos.js, app.js y sw.js
+  (más este LEEME). Subilos a public/fequiz/ y listo.
+
+Versión 3 · Noviembre 2026

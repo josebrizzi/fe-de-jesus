@@ -96,11 +96,6 @@
   /* ---------- datos ---------- */
   const DATOS = window.FEQUIZ_DATOS || { estudios: [], apocalipsis: [] };
   const claveJuego = (modo, id) => (modo === 'estudios' ? 'e' : 'a') + id;
-  const urlLeccion = (modo, id) =>
-    modo === 'estudios'
-      ? '../fe-de-jesus/leccion.html?dia=' + id
-      : '../fe-de-jesus/apo-leccion.html?l=' + id;
-
   function prepararPregunta(q, origen) {
     const ops = shuffle(q.opciones.map((t, i) => ({ t, i })));
     return {
@@ -221,7 +216,6 @@
       </div>
 
       <div class="pie">
-        <a href="../fe-de-jesus/inicio.html">Estudiar las lecciones completas</a>
         <span class="mini">FeQuiz · Fe de Jesús — mismo contenido, otra energía</span>
       </div>`;
 
@@ -502,7 +496,6 @@
         <div class="repaso">${repaso}</div>
         <button id="btn-otra" class="btn-grande verde">JUGAR OTRA VEZ</button>
         <button id="btn-otro" class="btn-grande hueco">ELEGIR OTRO JUEGO</button>
-        ${!esMixto ? `<div class="pie"><a href="${esc(urlLeccion(S.modo, S.juego.id))}">Repasar esta lección en Fe de Jesús</a></div>` : ''}
       </section>`;
 
     sonidos.fanfarria();
