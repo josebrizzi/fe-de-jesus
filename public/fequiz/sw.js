@@ -1,5 +1,5 @@
 /* FeQuiz — service worker: precarga todo el juego para funcionar sin conexión */
-const CACHE = 'fequiz-v6';
+const CACHE = 'fequiz-v7';
 const NUCLEO = [
   './',
   './index.html',

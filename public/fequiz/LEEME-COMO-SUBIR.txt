@@ -1,0 +1,60 @@
+==========================================================
+ FEQUIZ — PANTALLA DEL PROYECTOR DESDE LA PC
+==========================================================
+
+¿QUÉ HACE ESTA ACTUALIZACIÓN?
+-----------------------------
+Ahora la pantalla del proyector se puede abrir DIRECTO en
+la compu, sin celular:
+
+  1. En la compu del proyector entrá a:
+        fe-de-jesus.onrender.com/fequiz/proyeccion.html
+  2. Aparece "PANTALLA DEL PROYECTOR" con un cuadro blanco
+     grande para escribir el código.
+  3. Escribí el código que muestra tu celular (por ejemplo
+     301 069) y tocá CONECTAR.
+  4. La compu muestra el código gigante, los jugadores que
+     se van sumando, y después las preguntas, la respuesta
+     correcta, los mejores y el podio con confeti.
+  5. Todo el manejo sigue en TU CELULAR: EMPEZAR,
+     SIGUIENTE, VER PODIO, etc.
+
+Extras que trae:
+  * Si escribís un código mal, avisa "Ese código no existe".
+  * Si alguien refresca la página de la compu (F5), se
+    reconecta sola a la misma sala.
+  * Cuando la partida se cierra, muestra "LA SALA SE CERRÓ"
+    con un botón para conectar otra sala.
+  * En tu celular, abajo de la sala, aparece un recordatorio
+    con la dirección exacta para la compu.
+
+ARCHIVOS (3) — TODOS REEMPLAZAN A LOS QUE ESTÁN
+-----------------------------------------------
+Carpeta  public/fequiz  del repo josebrizzi/fe-de-jesus:
+
+  1. proyeccion.html  → REEMPLAZA
+  2. grupal.js        → REEMPLAZA
+  3. sw.js            → REEMPLAZA
+
+CÓMO SUBIRLOS DESDE EL CELULAR
+------------------------------
+1. github.com → tu repo fe-de-jesus → carpeta public/fequiz
+2. "Add file" → "Upload files"
+3. Elegí los 3 archivos de esta carpeta
+   (GitHub avisa que ya existen y los reemplaza: correcto)
+4. Escribí "proyector en pc" → "Commit changes"
+5. Render despliega solo en 1-3 minutos.
+
+PARA PROBARLO
+-------------
+1. Celular: creá la sala como siempre (MODO GRUPAL →
+   DIRIGIR PARTIDA → un estudio). Fijate el código.
+2. Compu del proyector: abrí
+      fe-de-jesus.onrender.com/fequiz/proyeccion.html
+   escribí el código y tocá CONECTAR.
+3. Tocá el botón de pantalla completa (esquina inferior
+   derecha de la compu).
+4. En tu celular: EMPEZAR. La compu va mostrando todo.
+
+TIP: guardá la página en los favoritos de la compu
+(Ctrl+D) para abrirla rápido cada semana.

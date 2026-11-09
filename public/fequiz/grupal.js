@@ -240,7 +240,8 @@
         <button id="g-proyectar" class="btn-grande azul"><span class="g-mini">PANTALLA GRANDE</span>📺 PROYECTAR</button>
         <button id="g-invitar" class="btn-grande whatsapp"><span class="g-mini">GRUPO · AMIGOS</span>WHATSAPP</button>
       </div>
-      <button id="g-cerrar" class="btn-grande hueco" style="margin-top:12px">CERRAR LA PARTIDA</button>`;
+      <button id="g-cerrar" class="btn-grande hueco" style="margin-top:12px">CERRAR LA PARTIDA</button>
+      <p class="mini-aviso" style="margin-top:14px">Proyector o compu: abrí <b>${esc(location.host)}/fequiz/proyeccion.html</b> y escribí el código</p>`;
     $('#g-empezar').addEventListener('click', async () => {
       sonidos.tap();
       try { await api('/arrancar', { pin: G.pin, token: G.token }); } catch (e) {}

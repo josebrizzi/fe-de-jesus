@@ -175,6 +175,26 @@ body {
 .ms h1 { font-size: clamp(20px, 4.4vh, 42px); font-weight: 800; }
 .ms p { font-size: clamp(13px, 2.4vh, 23px); font-weight: 600; color: var(--blanco-75); line-height: 1.5; }
 .ms .mini { font-size: clamp(11px, 1.9vh, 17px); }
+.ms .err { color: #FF9AA5; font-weight: 800; }
+
+/* ---------- pantalla de conexión (proyector sin enlace) ---------- */
+.entrada { display: flex; flex-direction: column; align-items: center; gap: clamp(10px, 2vh, 20px); }
+.entrada input { background: #fff; color: var(--morado); border: 0; border-radius: clamp(10px, 2vh, 18px);
+  width: min(76vw, 430px); padding: clamp(10px, 2.4vh, 24px) clamp(14px, 3vw, 30px);
+  font-family: inherit; font-weight: 800; font-size: clamp(30px, 7.5vh, 68px);
+  letter-spacing: .14em; text-align: center; font-variant-numeric: tabular-nums; outline: none;
+  box-shadow: 0 clamp(5px, 1.2vh, 12px) 0 rgba(0,0,0,.28); }
+.entrada input::placeholder { color: #C9BDE6; letter-spacing: .2em; }
+.entrada button { border: 0; cursor: pointer; border-radius: 999px; background: var(--verde); color: #fff;
+  font-family: inherit; font-weight: 800; font-size: clamp(14px, 2.6vh, 24px); letter-spacing: .12em;
+  padding: clamp(10px, 2vh, 20px) clamp(26px, 5.5vw, 64px);
+  box-shadow: 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3); }
+.entrada button:active { transform: translateY(2px); }
+.btn-otra { border: 0; cursor: pointer; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff;
+  font-family: inherit; font-weight: 800; font-size: clamp(12px, 2.3vh, 21px); letter-spacing: .1em;
+  padding: clamp(9px, 1.8vh, 18px) clamp(20px, 4vw, 46px);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); margin-top: 1vh; }
+.btn-otra:active { transform: translateY(2px); }
 #confeti { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
 
 /* Portrait (celular en vertical): la grilla de opciones pasa a 1 columna
@@ -218,6 +238,7 @@ body {
   var qs = new URLSearchParams(location.search);
   var PIN = (qs.get('pin') || '').replace(/\D/g, '').slice(0, 6);
   var TOKEN = qs.get('token') || '';
+  var CLAVE_PROY = 'fequiz_proy';
   document.getElementById('m-pin').textContent = PIN || '—';
 
   var V = document.getElementById('v');
@@ -241,18 +262,70 @@ body {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var fmt = function (n) { return Number(n || 0).toLocaleString('es-AR'); };
 
-  var G = { ult: null, offset: 0, clave: '', vivo: true, cerrada: false, raf: 0, podioConfeti: false };
+  var G = { ult: null, offset: 0, clave: '', vivo: true, cerrada: false, raf: 0, podioConfeti: false, conectado: false, auto: false };
+
+  /* el chip "PIN —" del mensaje inicial puede ya no estar en el DOM
+     (se reemplaza al cambiar de vista): siempre de forma protegida */
+  function ponerPin(texto) {
+    var el = document.getElementById('m-pin');
+    if (el) el.textContent = texto;
+  }
+
+  /* ---------- PIN guardado (para reconectar si se refresca la pantalla) ---------- */
+  function recordar(pin) { try { localStorage.setItem(CLAVE_PROY, JSON.stringify({ pin: pin, t: Date.now() })); } catch (e) {} }
+  function olvidar() { try { localStorage.removeItem(CLAVE_PROY); } catch (e) {} }
+
+  /* ---------- pantalla de conexión: escribir el código ---------- */
+  function pantallaEntrada(mensaje) {
+    G.cerrada = false;
+    G.conectado = false;
+    G.ult = null;
+    G.podioConfeti = false;
+    PIN = ''; TOKEN = '';
+    ponerPin('—');
+    V.innerHTML = '<div class="ms"><h1>PANTALLA DEL PROYECTOR</h1>' +
+      '<p>Escribí el código de la partida:<br>el que muestra el celular del anfitrión</p>' +
+      '<div class="entrada">' +
+        '<input id="in-pin" inputmode="numeric" maxlength="6" autocomplete="off" autocapitalize="off" placeholder="······">' +
+        '<button id="btn-ir">CONECTAR</button>' +
+      '</div>' +
+      (mensaje ? '<p class="err">' + esc(mensaje) + '</p>'
+               : '<p class="mini">En el celular del anfitrión: FeQuiz → MODO GRUPAL → DIRIGIR PARTIDA</p>') +
+      '</div>';
+    var inp = document.getElementById('in-pin'), btn = document.getElementById('btn-ir');
+    inp.addEventListener('input', function () { inp.value = inp.value.replace(/\D/g, '').slice(0, 6); });
+    function ir() {
+      var v = inp.value.replace(/\D/g, '');
+      if (v.length !== 6) { pantallaEntrada('El código tiene 6 números'); return; }
+      PIN = v; TOKEN = '';
+      recordar(PIN);
+      ponerPin(PIN);
+      V.innerHTML = '<div class="ms"><h1>Conectando con la sala…</h1>' +
+        '<p>PIN <b>' + esc(PIN.slice(0, 3)) + ' ' + esc(PIN.slice(3)) + '</b></p>' +
+        '<p class="mini">Si tarda un poco, es que el servidor se está despertando</p></div>';
+    }
+    btn.addEventListener('click', ir);
+    inp.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') ir(); });
+    setTimeout(function () { inp.focus(); }, 60);
+  }
 
   /* ---------- sondeo ---------- */
   async function sondear() {
-    if (G.cerrada) return;
+    if (G.cerrada || !PIN) return;
     try {
-      var r = await fetch('/api/fequiz/estado?pin=' + encodeURIComponent(PIN) + '&token=' + encodeURIComponent(TOKEN));
+      var url = '/api/fequiz/estado?pin=' + encodeURIComponent(PIN) +
+        (TOKEN ? '&token=' + encodeURIComponent(TOKEN) : '');
+      var r = await fetch(url);
       var d = await r.json();
       if (!r.ok || !d || d.ok === false) {
-        if (d && d.error === 'no-pin') { salaCerrada(); return; }
+        if (d && d.error === 'no-pin') {
+          if (G.conectado) { salaCerrada(); }
+          else { olvidar(); pantallaEntrada(G.auto ? 'La sala anterior ya no está. Escribí el código nuevo.' : 'Ese código no existe. Revisalo.'); }
+          return;
+        }
         throw new Error('estado');
       }
+      G.conectado = true; G.auto = false;
       G.vivo = true; estadoRed.classList.add('oculto');
       G.ult = d;
       G.offset = d.servidorAhora - Date.now();
@@ -264,8 +337,13 @@ body {
   }
   function salaCerrada() {
     G.cerrada = true;
+    olvidar();
     V.innerHTML = '<div class="ms"><h1>LA SALA SE CERRÓ</h1>' +
-      '<p>La partida terminó o el anfitrión la cerró.<br>Podés cerrar esta pantalla.</p></div>';
+      '<p>La partida terminó o el anfitrión la cerró.</p>' +
+      '<button class="btn-otra" id="btn-otra">CONECTAR A OTRA SALA</button></div>';
+    document.getElementById('btn-otra').addEventListener('click', function () {
+      pantallaEntrada();
+    });
   }
 
   /* ---------- ciclo visual (timer + cuenta) ---------- */
@@ -464,15 +542,24 @@ body {
   } catch (e) {}
 
   /* ---------- arranque ---------- */
-  if (!PIN) {
-    V.innerHTML = '<div class="ms"><h1>PANTALLA DE PROYECCIÓN</h1>' +
-      '<p>Esta pantalla se abre sola con el botón <b>PROYECTAR</b> que aparece al crear la partida (modo grupal).</p>' +
-      '<p class="mini">Anfitrión: abrí FeQuiz → DIRIGIR PARTIDA → elegí el estudio → PROYECTAR.</p></div>';
+  if (PIN) {
+    /* venís del botón PROYECTAR (o de un refresco con ?pin en el enlace) */
+    recordar(PIN);
   } else {
-    sondear();
-    setInterval(sondear, 1000);
-    G.raf = requestAnimationFrame(ciclo);
+    /* ¿hay un código guardado de hace menos de 3 horas? → reconectar solo */
+    var g = null;
+    try { g = JSON.parse(localStorage.getItem(CLAVE_PROY) || 'null'); } catch (e) {}
+    if (g && g.pin && String(g.pin).length === 6 && Date.now() - (g.t || 0) < 3 * 60 * 60 * 1000) {
+      PIN = String(g.pin);
+      ponerPin(PIN);
+      G.auto = true;
+    } else {
+      pantallaEntrada();
+    }
   }
+  sondear();
+  setInterval(sondear, 1000);
+  G.raf = requestAnimationFrame(ciclo);
 })();
 </script>
 </body>
