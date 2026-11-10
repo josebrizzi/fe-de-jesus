@@ -75,19 +75,34 @@
   }
   function borrarSesion() { try { localStorage.removeItem(CLAVE_SESION); } catch (e) {} }
 
-  /* ---------- API ---------- */
+  /* ---------- API ----------
+     Todas las llamadas tienen un tiempo límite: si la red se cuelga
+     (Wi-Fi saturado, servidor despertando) el pedido se corta solo a
+     los pocos segundos y el juego vuelve a intentar. Sin esto, una
+     sola llamada trabada deja el celular del jugador congelado. */
+  const API_MS = 9000;
   async function api(ruta, cuerpo) {
     const op = cuerpo ? {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo)
-    } : undefined;
-    const r = await fetch(API + ruta, op);
-    let d = null; try { d = await r.json(); } catch (e) {}
-    if (!r.ok || !d || d.ok === false) {
-      const err = new Error((d && d.error) || 'red');
-      err.codigo = d && d.error;
-      throw err;
+    } : { method: 'GET' };
+    let control = null;
+    if (typeof AbortController === 'function') {
+      control = new AbortController();
+      op.signal = control.signal;
     }
-    return d;
+    const reloj = setTimeout(() => { if (control) try { control.abort(); } catch (e) {} }, API_MS);
+    try {
+      const r = await fetch(API + ruta, op);
+      let d = null; try { d = await r.json(); } catch (e) {}
+      if (!r.ok || !d || d.ok === false) {
+        const err = new Error((d && d.error) || 'red');
+        err.codigo = d && d.error;
+        throw err;
+      }
+      return d;
+    } finally {
+      clearTimeout(reloj);
+    }
   }
 
   /* ---------- preparación de preguntas (anfitrión) ---------- */
@@ -153,6 +168,23 @@
     $('#g-volver-home').addEventListener('click', () => $('#btn-marca').click());
   }
 
+  /* la sesión del jugador ya no vale (se reinició el servidor, se borró
+     la sala): en vez de quedar congelado, se ofrece volver a entrar y el
+     servidor le devuelve sus puntos si entra con el mismo apodo */
+  function sesionCaida() {
+    pararSondeo();
+    G.activo = false;
+    const pin = G.pin;
+    borrarSesion();
+    P.innerHTML = `
+      <h2 class="tit-seccion">Se cortó tu conexión con la partida</h2>
+      <p class="sub-seccion">No pasa nada: volvé a entrar con el mismo apodo y seguís con tus puntos.</p>
+      <button class="btn-grande verde" id="g-reentrar">VOLVER A ENTRAR${pin ? ' · PIN ' + esc(pin) : ''}</button>
+      <button class="btn-grande hueco" id="g-home2" style="margin-top:12px">VOLVER AL INICIO</button>`;
+    $('#g-reentrar').addEventListener('click', () => vistaUnirse(pin));
+    $('#g-home2').addEventListener('click', () => $('#btn-marca').click());
+  }
+
   /* ---------- ciclo de reloj (timer y cuenta) ---------- */
   function ahoraServidor() { return Date.now() + G.offset; }
   function ciclo() {
@@ -198,12 +230,25 @@
     } else {
       const chip = $('#chip-respondieron');
       if (chip) chip.textContent = 'Respondieron ' + d.respondieron + '/' + d.activos;
+      /* auto-sanidad: si por una falla de la página los botones de respuesta
+         quedaron deshabilitados y el jugador todavía no respondió, se
+         redibuja la pregunta para que pueda pulsar de nuevo */
+      if (G.rol === 'jugador' && d.estado === 'pregunta' && d.pregunta &&
+          !(G.enviadaIdx === d.idx || (d.yo && d.yo.respondio))) {
+        const bots = P.querySelectorAll('.opcion');
+        let trabados = 0;
+        bots.forEach(b => { if (b.disabled) trabados++; });
+        if (bots.length && trabados === bots.length) { G.clave = ''; renderVista(d, ''); }
+      }
     }
     if (!G.raf) G.raf = requestAnimationFrame(ciclo);
   }
 
   function renderVista(d, antes) {
     quitarOverlay();
+    /* al volver a la sala de espera (nueva partida o revancha) se olvida
+       la respuesta marcada de la partida anterior */
+    if (d.estado === 'lobby' || d.estado === 'cuenta') G.enviadaIdx = -1;
     if (G.rol === 'anfitrion') {
       if (d.estado === 'lobby') vLobbyAnfitrion(d);
       else if (d.estado === 'cuenta') vCuenta(d);
@@ -315,7 +360,7 @@
       <h3 class="tit-top">Los mejores</h3>
       <div class="top-lista">${top}</div>
       <button id="g-siguiente" class="btn-grande verde" style="margin-top:14px">${d.idx + 1 < d.total ? 'SIGUIENTE' : 'VER PODIO'}</button>
-      <p class="mini-aviso">Si nadie toca, avanza solo en unos segundos</p>`;
+      <p class="mini-aviso">La partida espera: avanzá cuando termines de explicar el tema</p>`;
     $('#g-siguiente').addEventListener('click', async () => {
       sonidos.tap();
       try { await api('/siguiente', { pin: G.pin, token: G.token }); } catch (e) {}
@@ -353,6 +398,7 @@
         <button class="opcion r${i + 1}${enviada && G.miOpcion === i ? ' elegida' : ''}" data-i="${i}" ${enviada ? 'disabled' : ''}>
           <span class="figura">${FIG[i]}</span><span class="texto">${esc(t)}</span>
         </button>`).join('')}</div>
+      <p class="g-error oculto" id="g-aviso-envio" style="margin-top:10px"></p>
       ${enviada ? `<div class="enviada-ok">${ICO_OK}<span>¡Respuesta enviada! Esperando…</span></div>` : ''}`;
     if (!enviada) {
       P.querySelectorAll('.opcion').forEach(b => b.addEventListener('click', async () => {
@@ -362,8 +408,19 @@
         b.classList.remove('atenuada');
         sonidos.tap();
         G.enviadaIdx = d.idx;
-        try { await api('/responder', { pin: G.pin, token: G.token, opcion: i }); }
-        catch (e) { G.enviadaIdx = -1; }
+        try {
+          await api('/responder', { pin: G.pin, token: G.token, opcion: i });
+        } catch (e) {
+          if (e && e.codigo === 'clave') { sesionCaida(); return; }
+          if (e && e.codigo === 'repetida') { G.enviadaIdx = d.idx; sondear(); return; }
+          G.enviadaIdx = -1;
+          /* la respuesta no llegó (red lenta, se pasó el tiempo):
+             se vuelven a habilitar los botones para intentar de nuevo */
+          P.querySelectorAll('.opcion').forEach(x => { x.disabled = false; x.classList.remove('atenuada'); });
+          b.classList.add('elegida');
+          const av = $('#g-aviso-envio');
+          if (av) { av.textContent = 'No llegó la respuesta, tocá de nuevo'; av.classList.remove('oculto'); }
+        }
         sondear();
       }));
     }
@@ -431,6 +488,7 @@
       $('#g-revancha').addEventListener('click', async () => {
         sonidos.tap();
         G.podioHecho = false;
+        G.enviadaIdx = -1;
         try { await api('/revancha', { pin: G.pin, token: G.token }); } catch (e) {}
       });
       $('#g-cerrar').addEventListener('click', async () => {

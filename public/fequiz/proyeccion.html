@@ -205,6 +205,17 @@ body {
   padding:1.8vh;padding:clamp(9px, 1.8vh, 18px) clamp(20px, 4vw, 46px);
   box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); margin-top: 1vh; }
 .btn-otra:active { transform: translateY(2px); }
+/* botón SIGUIENTE del anfitrión en la revelación (solo si esta pantalla
+   tiene permiso, o sea que se abrió desde el celular del anfitrión) */
+.btn-avanzar { border: 0; cursor: pointer; border-radius: 999px; background: var(--verde); color: #fff;
+  font-family: inherit; font-weight: 800; font-size:3vh;font-size:clamp(15px, 3vh, 30px); letter-spacing: .08em;
+  padding:2.2vh;padding:clamp(10px, 2.2vh, 22px) clamp(24px, 4.5vw, 54px);
+  box-shadow: 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3); align-self: center; margin-top: 1.4vh;margin-top:clamp(7px, 1.4vh, 14px); }
+.btn-avanzar:active { transform: translateY(2px); }
+.btn-avanzar[disabled] { opacity: .55; }
+.aviso-avanzar { margin-top:auto; text-align:center; font-weight: 700; color: var(--blanco-75);
+  font-size:1.9vh;font-size:clamp(11px, 1.9vh, 17px); line-height: 1.45; padding: 0 1vw;
+  padding-bottom:5.5vh;padding-bottom:clamp(26px, 5.5vh, 52px); }
 #confeti { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
 
 /* Portrait (celular en vertical): la grilla de opciones pasa a 1 columna
@@ -563,6 +574,25 @@ body {
     }
   }
 
+  /* ---------- mandar una orden al servidor (POST) ----------
+     Igual que pedir(): fetch si existe, XHR si no. La usa el botón
+     SIGUIENTE cuando esta pantalla tiene el permiso del anfitrión. */
+  function mandar(ruta) {
+    var url = '/api/fequiz/' + ruta;
+    var cuerpo = JSON.stringify({ pin: PIN, token: TOKEN });
+    if (window.fetch) {
+      fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: cuerpo })
+        .catch(function () {});
+    } else {
+      try {
+        var x = new XMLHttpRequest();
+        x.open('POST', url, true);
+        x.setRequestHeader('Content-Type', 'application/json');
+        x.send(cuerpo);
+      } catch (e) {}
+    }
+  }
+
   /* ---------- sondeo ---------- */
   function sondear() {
     if (G.cerrada || !PIN) return;
@@ -738,9 +768,20 @@ body {
           '</div>' +
           '<div class="revel-der">' +
             '<div class="top-tit">LOS MEJORES</div>' + top +
+            (TOKEN
+              ? '<button class="btn-avanzar" id="btn-avanzar">' + (d.idx + 1 < d.total ? 'SIGUIENTE ▶' : 'VER PODIO ▶') + '</button>'
+              : '<div class="aviso-avanzar">La partida espera. Para pasar a la siguiente pregunta, tocá SIGUIENTE en el celular del anfitrión.</div>') +
           '</div>' +
         '</div>' +
       '</div>';
+    var ba = document.getElementById('btn-avanzar');
+    if (ba) ba.addEventListener('click', function () {
+      if (ba.disabled) return;
+      ba.disabled = true;
+      ba.textContent = 'UN MOMENTO…';
+      sndTic();
+      mandar('siguiente');
+    });
   }
 
   function vPodio(d) {

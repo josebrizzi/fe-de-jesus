@@ -181,9 +181,20 @@ module.exports = function instalarFeQuizGrupal(app) {
     const p = buscarPartida(req, res); if (!p) return;
     const apodo = limpiarApodo(req.body && req.body.apodo);
     if (!apodo) return res.status(400).json({ ok: false, error: "apodo" });
-    let repetido = false;
-    p.jugadores.forEach(j => { if (j.apodo.toLowerCase() === apodo.toLowerCase()) repetido = true; });
-    if (repetido) return res.status(409).json({ ok: false, error: "apodo" });
+    /* ¿el apodo ya está? → es una reconexión: se le devuelve SU ficha
+       con sus puntos y se le da una clave nueva. Así nadie queda afuera
+       por reconectar, y no pierde lo que venía jugando. */
+    let viejoTok = null, viejo = null;
+    p.jugadores.forEach((j, t) => {
+      if (j.apodo.toLowerCase() === apodo.toLowerCase()) { viejoTok = t; viejo = j; }
+    });
+    if (viejo) {
+      p.jugadores.delete(viejoTok);
+      const tok = token();
+      p.jugadores.set(tok, viejo);
+      p.actividad = Date.now();
+      return res.json({ ok: true, pin: p.pin, token: tok, apodo, titulo: p.titulo, icono: p.icono, reconectado: true });
+    }
     if (p.estado === "podio") return res.status(400).json({ ok: false, error: "termino" });
     const tok = token();
     p.jugadores.set(tok, {
