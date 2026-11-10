@@ -11,7 +11,7 @@
   const P = $('#pantalla');
   const API = '/api/fequiz';
   const CLAVE_SESION = 'fequiz_grupal';
-  const SEGS = 20;
+  const SEGS = 45;
   const PREG_MIXTO = 10;
 
   const FIG = [

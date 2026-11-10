@@ -346,52 +346,109 @@ body {
     o.start(t); o.stop(t + dur + 0.08);
   }
 
-  /* música de la sala: loop alegre y chato, para que no canse */
-  var LOBBY_MEL = [523.25, 659.25, 783.99, 880, 0, 783.99, 659.25, 587.33];
-  var LOBBY_BAJO = [130.81, 130.81, 98, 98, 110, 110, 98, 98];
+  /* Sonido de platillos / subidas: ruido blanco con caída (sin archivos) */
+  function ruido(dur, vol, cuando) {
+    if (!suena()) return;
+    var c = SND.ctx;
+    var t = c.currentTime + (cuando || 0);
+    var n = Math.max(1, Math.floor(c.sampleRate * dur));
+    var buf = c.createBuffer(1, n, c.sampleRate);
+    var data = buf.getChannelData(0);
+    for (var i = 0; i < n; i++) { data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 1.6); }
+    var src = c.createBufferSource(); src.buffer = buf;
+    var g = c.createGain();
+    g.gain.setValueAtTime(vol, t);
+    try { g.gain.exponentialRampToValueAtTime(0.0001, t + dur); } catch (e) {}
+    src.connect(g); g.connect(c.destination);
+    src.start(t); src.stop(t + dur + 0.05);
+  }
+
+  /* música de la sala: loop largo y continuo (2 compases) con base,
+     melodía y colchón de fondo, para que la espera no se sienta vacía */
+  var LOBBY_MEL = [523.25, 659.25, 783.99, 880, 0, 783.99, 659.25, 587.33,
+                   523.25, 587.33, 659.25, 783.99, 659.25, 0, 523.25, 0];
+  var LOBBY_BAJO = [130.81, 130.81, 98, 98, 110, 110, 98, 98,
+                    130.81, 130.81, 87.31, 87.31, 98, 98, 123.47, 123.47];
   function sndLobby() {
     if (SND.intervalo || !suena()) return;
     var barrita = function () {
-      for (var i = 0; i < 8; i++) {
+      for (var i = 0; i < 16; i++) {
         var t = i * 0.26;
-        if (LOBBY_MEL[i]) { tono(LOBBY_MEL[i], .14, 'square', .055, t); tono(LOBBY_MEL[i] * 2, .1, 'sine', .02, t); }
-        tono(LOBBY_BAJO[i], .2, 'triangle', .09, t);
-        tono(3000, .03, 'square', .018, t + 0.13);
+        if (LOBBY_MEL[i]) { tono(LOBBY_MEL[i], .15, 'square', .05, t); tono(LOBBY_MEL[i] * 2, .12, 'sine', .018, t); }
+        tono(LOBBY_BAJO[i], .22, 'triangle', .09, t);
+        if (i % 2 === 1) tono(3000, .03, 'square', .016, t);
       }
+      tono(261.63, 2.0, 'sine', .028, 0);
+      tono(329.63, 2.0, 'sine', .022, 0);
+      tono(392, 2.0, 'sine', .022, 0);
     };
     barrita();
-    SND.intervalo = setInterval(function () { if (SND.on) barrita(); }, 2080);
+    SND.intervalo = setInterval(function () { if (SND.on) barrita(); }, 4160);
   }
   function sndPararLobby() {
     if (SND.intervalo) { clearInterval(SND.intervalo); SND.intervalo = 0; }
   }
 
   function sndTic() { tono(1244.5, .07, 'square', .12); }
-  function sndYa() { tono(523.25, .22, 'square', .16, 0, 783.99); }
-  function sndPregunta() { /* tambor bum-bum + subida, al aparecer la pregunta */
-    tono(150, .22, 'sine', .4, 0, 55);
-    tono(150, .22, 'sine', .4, .24, 55);
-    tono(2200, .04, 'square', .05, 0);
-    tono(2200, .04, 'square', .05, .24);
-    tono(392, .3, 'triangle', .16, .5, 523.25);
+  function sndYa() { tono(523.25, .3, 'square', .18, 0, 1046.5); ruido(.35, .07, 0); }
+
+  /* PREGUNTA: golpe épico + latido de tensión CONTINUO mientras dura */
+  function sndPregunta() {
+    sndPararLobby();
+    if (!suena()) return;
+    tono(130, .5, 'sine', .5, 0, 38);            /* bombo profundo */
+    ruido(.55, .16, 0);                           /* crash */
+    tono(73.42, .95, 'sawtooth', .1, .02);        /* D2 grave sostenido */
+    tono(146.83, .95, 'sawtooth', .07, .02);
+    tono(220, .8, 'triangle', .08, .25);
+    tono(587.33, .6, 'triangle', .05, .55, 1174); /* subida tensa */
+    var paso = 0;
+    SND.intervalo = setInterval(function () {     /* corazón: bum-bum… */
+      if (!SND.on || !suena()) return;
+      tono(73.42, .3, 'sawtooth', .1, 0);
+      tono(73.42, .25, 'sawtooth', .08, .35);
+      tono(2600, .04, 'square', .018, .7);
+      if (paso % 4 === 3) { tono(196, .2, 'sine', .12, 1.05, 120); ruido(.25, .05, 1.05); }
+      paso++;
+    }, 1400);
   }
-  function sndRevela() { /* ¡correcto! arpegio brillante al mostrar la respuesta */
-    tono(523.25, .12, 'triangle', .2, 0);
-    tono(659.25, .12, 'triangle', .2, .09);
-    tono(783.99, .12, 'triangle', .2, .18);
-    tono(1046.5, .42, 'triangle', .22, .27);
-    tono(2093, .25, 'sine', .06, .5);
+
+  /* REVELACIÓN: subida + acorde triunfal largo (tiempo de explicar) */
+  function sndRevela() {
+    sndPararLobby();
+    if (!suena()) return;
+    ruido(.7, .1, 0);
+    tono(300, .7, 'triangle', .06, 0, 900);
+    tono(523.25, .14, 'triangle', .18, .35);
+    tono(659.25, .14, 'triangle', .18, .45);
+    tono(783.99, .14, 'triangle', .18, .55);
+    tono(1046.5, 1.1, 'triangle', .2, .68);
+    tono(1318.5, 1.1, 'triangle', .12, .68);
+    tono(1567.98, 1.0, 'sine', .08, .72);
+    tono(261.63, 1.1, 'triangle', .1, .68);
+    tono(2093, .3, 'sine', .05, 1.15);
   }
-  function sndFanfarria() { /* podio final */
-    tono(392, .16, 'square', .13, 0);
-    tono(523.25, .16, 'square', .13, .17);
-    tono(659.25, .16, 'square', .13, .34);
-    tono(783.99, .55, 'square', .16, .51);
-    tono(261.63, .6, 'triangle', .12, .51);
-    tono(1046.5, .5, 'sine', .08, .55);
-    tono(783.99, .16, 'square', .13, 1.2);
-    tono(1046.5, .7, 'square', .15, 1.38);
-    tono(523.25, .7, 'triangle', .12, 1.38);
+
+  /* PODIO: fanfarria épica de 4 compases con crash */
+  function sndFanfarria() {
+    sndPararLobby();
+    if (!suena()) return;
+    ruido(.6, .14, 0);
+    tono(392, .18, 'sawtooth', .12, .05);
+    tono(523.25, .18, 'sawtooth', .12, .25);
+    tono(659.25, .18, 'sawtooth', .12, .45);
+    tono(783.99, .5, 'sawtooth', .14, .65);
+    tono(1046.5, .5, 'sawtooth', .09, .65);
+    tono(261.63, .55, 'triangle', .12, .65);
+    tono(523.25, .18, 'sawtooth', .12, 1.25);
+    tono(659.25, .18, 'sawtooth', .12, 1.45);
+    tono(783.99, .18, 'sawtooth', .12, 1.65);
+    tono(1046.5, 1.5, 'sawtooth', .14, 1.85);
+    tono(1318.5, 1.4, 'sawtooth', .08, 1.85);
+    tono(523.25, 1.5, 'triangle', .12, 1.85);
+    tono(261.63, 1.5, 'triangle', .1, 1.85);
+    ruido(.9, .1, 1.85);
+    tono(2093, .5, 'sine', .05, 2.4);
   }
 
   function sndPinta() {

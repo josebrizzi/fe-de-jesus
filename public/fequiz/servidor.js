@@ -21,9 +21,8 @@ module.exports = function instalarFeQuizGrupal(app) {
   const PARTIDAS = new Map();          // pin -> partida
   const MAX_PARTIDAS = 30;             // salas simultáneas
   const TTL_MS = 3 * 60 * 60 * 1000;   // 3 h sin actividad → se borra
-  const SEGS_DEF = 20;                 // segundos por pregunta
+  const SEGS_DEF = 45;                 // segundos por pregunta
   const CUENTA_MS = 3400;              // cuenta regresiva 3-2-1
-  const REVELACION_AUTO_MS = 15000;    // avance automático de seguridad
 
   /* ---------- utilidades ---------- */
   const azar = n => Math.floor(Math.random() * n);
@@ -84,9 +83,9 @@ module.exports = function instalarFeQuizGrupal(app) {
       });
       p.estado = "revelacion";
       p.revelacionDesde = ahora;
-    } else if (p.estado === "revelacion" && ahora >= p.revelacionDesde + REVELACION_AUTO_MS) {
-      siguientePregunta(p);
     }
+    /* la revelación NO avanza sola: el anfitrión pasa a la siguiente
+       pregunta con SIGUIENTE cuando termina de explicar el tema */
     p.actividad = ahora;
   }
 
