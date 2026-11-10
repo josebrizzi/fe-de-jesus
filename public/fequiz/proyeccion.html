@@ -113,15 +113,15 @@ body {
 .j-preg { flex: 0 0 auto; background: #fff; color: #2b2b2b; border-radius:2vh;border-radius:clamp(10px, 2vh, 20px);
   padding:2.2vh;padding:clamp(10px, 2.2vh, 24px) clamp(14px, 2.6vw, 36px);
   font-weight: 800; text-align: center; display: grid; place-items: center;
-  font-size:4.1vh;font-size:clamp(19px, 4.1vh, 42px); line-height: 1.22; }
-.j-preg.larga { font-size:2.9vh;font-size:clamp(15px, 2.9vh, 30px); }
+  font-size:4.9vh;font-size:clamp(22px, 4.9vh, 50px); line-height: 1.22; }
+.j-preg.larga { font-size:3.6vh;font-size:clamp(18px, 3.6vh, 37px); }
 .opcs { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
   gap:1.5vh;gap:clamp(7px, 1.5vh, 15px); }
 .opc { border-radius:1.8vh;border-radius:clamp(9px, 1.8vh, 18px); display: flex; align-items: center; gap:1.4vw;gap:clamp(8px, 1.4vw, 18px);
   padding:1.6vh;padding:clamp(8px, 1.6vh, 18px) clamp(12px, 2vw, 28px); color: #fff;
   box-shadow: 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3); overflow: hidden;
-  font-size:2.5vh;font-size:clamp(13px, 2.5vh, 25px); font-weight: 700; line-height: 1.2; }
-.opc.larga { font-size:1.9vh;font-size:clamp(11px, 1.9vh, 19px); }
+  font-size:3.2vh;font-size:clamp(16px, 3.2vh, 32px); font-weight: 700; line-height: 1.2; }
+.opc.larga { font-size:2.6vh;font-size:clamp(13px, 2.6vh, 26px); }
 .opc .figura { width:3.4vh;width:clamp(17px, 3.4vh, 32px); height:3.4vh;height:clamp(17px, 3.4vh, 32px); flex: 0 0 auto; }
 .opc .figura svg { width: 100%; height: 100%; display: block; }
 .opc .texto { flex: 1; }
@@ -239,6 +239,7 @@ body {
 
 <div class="esq">
   <span class="aviso-ctrl">controlá la partida desde el celular del anfitrión</span>
+  <button class="btn-fs" id="btn-son" title="Sonido" aria-label="Sonido"></button>
   <button class="btn-fs" id="btn-fs" title="Pantalla completa" aria-label="Pantalla completa">
     <svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
@@ -291,8 +292,120 @@ body {
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var fmt = function (n) { return Number(n || 0).toLocaleString('es-AR'); };
+  /* Recorta textos largos (respuestas) para que entren en la pastilla.
+     Corta por espacio y agrega "…". Compatible con navegadores viejos. */
+  var recortar = function (t, max) {
+    t = String(t == null ? '' : t);
+    if (t.length <= max) return t;
+    var c = t.slice(0, max - 1);
+    var esp = c.lastIndexOf(' ');
+    if (esp > max * 0.5) c = c.slice(0, esp);
+    return c.replace(/[,;:.!\s]+$/, '') + '\u2026';
+  };
 
   var G = { ult: null, offset: 0, clave: '', vivo: true, cerrada: false, raf: 0, podioConfeti: false, conectado: false, auto: false };
+
+  /* ---------- SONIDO estilo Kahoot (generado por código, sin archivos) ----------
+     Todos los sonidos se fabrican con osciladores de Web Audio, así no hay
+     que subir ningún mp3. Si el navegador no soporta audio, todo queda mudo
+     y la pantalla sigue funcionando igual. */
+  var SON_ON = '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#fff"/><path d="M16.5 8.5a5 5 0 0 1 0 7M18.8 6.2a8.6 8.6 0 0 1 0 11.6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>';
+  var SON_OFF = '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#fff"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  var SND = { ctx: null, on: true, intervalo: 0 };
+
+  function sndCtx() {
+    if (!SND.ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { SND.ctx = new AC(); } catch (e) { return null; }
+    }
+    if (SND.ctx.state === 'suspended' && SND.ctx.resume) { try { SND.ctx.resume(); } catch (e) {} }
+    return SND.ctx;
+  }
+  /* Solo se emite si el contexto está corriendo (los navegadores exigen
+     una interacción del usuario antes de permitir sonido). */
+  function suena() {
+    if (!SND.on) return false;
+    var c = sndCtx();
+    return !!(c && c.state === 'running');
+  }
+  function tono(freq, dur, tipo, vol, cuando, freqFin) {
+    if (!suena()) return;
+    var c = SND.ctx;
+    var t = c.currentTime + (cuando || 0);
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = tipo || 'sine';
+    o.frequency.setValueAtTime(freq, t);
+    if (freqFin) { try { o.frequency.exponentialRampToValueAtTime(freqFin, t + dur); } catch (e) {} }
+    g.gain.setValueAtTime(0.0001, t);
+    try {
+      g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    } catch (e) {}
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t + dur + 0.08);
+  }
+
+  /* música de la sala: loop alegre y chato, para que no canse */
+  var LOBBY_MEL = [523.25, 659.25, 783.99, 880, 0, 783.99, 659.25, 587.33];
+  var LOBBY_BAJO = [130.81, 130.81, 98, 98, 110, 110, 98, 98];
+  function sndLobby() {
+    if (SND.intervalo || !suena()) return;
+    var barrita = function () {
+      for (var i = 0; i < 8; i++) {
+        var t = i * 0.26;
+        if (LOBBY_MEL[i]) { tono(LOBBY_MEL[i], .14, 'square', .055, t); tono(LOBBY_MEL[i] * 2, .1, 'sine', .02, t); }
+        tono(LOBBY_BAJO[i], .2, 'triangle', .09, t);
+        tono(3000, .03, 'square', .018, t + 0.13);
+      }
+    };
+    barrita();
+    SND.intervalo = setInterval(function () { if (SND.on) barrita(); }, 2080);
+  }
+  function sndPararLobby() {
+    if (SND.intervalo) { clearInterval(SND.intervalo); SND.intervalo = 0; }
+  }
+
+  function sndTic() { tono(1244.5, .07, 'square', .12); }
+  function sndYa() { tono(523.25, .22, 'square', .16, 0, 783.99); }
+  function sndPregunta() { /* tambor bum-bum + subida, al aparecer la pregunta */
+    tono(150, .22, 'sine', .4, 0, 55);
+    tono(150, .22, 'sine', .4, .24, 55);
+    tono(2200, .04, 'square', .05, 0);
+    tono(2200, .04, 'square', .05, .24);
+    tono(392, .3, 'triangle', .16, .5, 523.25);
+  }
+  function sndRevela() { /* ¡correcto! arpegio brillante al mostrar la respuesta */
+    tono(523.25, .12, 'triangle', .2, 0);
+    tono(659.25, .12, 'triangle', .2, .09);
+    tono(783.99, .12, 'triangle', .2, .18);
+    tono(1046.5, .42, 'triangle', .22, .27);
+    tono(2093, .25, 'sine', .06, .5);
+  }
+  function sndFanfarria() { /* podio final */
+    tono(392, .16, 'square', .13, 0);
+    tono(523.25, .16, 'square', .13, .17);
+    tono(659.25, .16, 'square', .13, .34);
+    tono(783.99, .55, 'square', .16, .51);
+    tono(261.63, .6, 'triangle', .12, .51);
+    tono(1046.5, .5, 'sine', .08, .55);
+    tono(783.99, .16, 'square', .13, 1.2);
+    tono(1046.5, .7, 'square', .15, 1.38);
+    tono(523.25, .7, 'triangle', .12, 1.38);
+  }
+
+  function sndPinta() {
+    var b = document.getElementById('btn-son');
+    if (b) b.innerHTML = SND.on ? SON_ON : SON_OFF;
+  }
+  /* El navegador solo deja sonar después de que alguien toca la página:
+     la primera tecla o clic "despierta" el audio y arranca la música si
+     estamos en la sala de espera. */
+  function sndDespertar() {
+    if (!SND.on) return;
+    var c = sndCtx();
+    if (c && c.state === 'running' && !SND.intervalo && G.ult && G.ult.estado === 'lobby') sndLobby();
+  }
 
   /* el chip "PIN —" del mensaje inicial puede ya no estar en el DOM
      (se reemplaza al cambiar de vista): siempre de forma protegida */
@@ -307,6 +420,7 @@ body {
 
   /* ---------- pantalla de conexión: escribir el código ---------- */
   function pantallaEntrada(mensaje) {
+    sndPararLobby();
     G.cerrada = false;
     G.conectado = false;
     G.ult = null;
@@ -417,6 +531,7 @@ body {
   }
   function salaCerrada() {
     G.cerrada = true;
+    sndPararLobby();
     olvidar();
     V.innerHTML = '<div class="ms"><h1>LA SALA SE CERRÓ</h1>' +
       '<p>La partida terminó o el anfitrión la cerró.</p>' +
@@ -448,7 +563,9 @@ body {
         if (n && d.cuentaHasta) {
           var rest2 = Math.max(0, d.cuentaHasta - ahoraServ());
           var paso = rest2 > 2400 ? '3' : rest2 > 1400 ? '2' : rest2 > 400 ? '1' : '¡YA!';
-          if (n.textContent !== paso) { n.textContent = paso; n.style.animation = 'none'; void n.offsetWidth; n.style.animation = ''; }
+          if (n.textContent !== paso) { n.textContent = paso; n.style.animation = 'none'; void n.offsetWidth; n.style.animation = '';
+            if (paso === '¡YA!') sndYa(); else sndTic();
+          }
         }
       }
     }
@@ -461,6 +578,22 @@ body {
     var clave = [d.estado, d.idx, d.activos, d.respondieron, huellaJug, d.total].join('|');
     if (clave === G.clave) return;
     G.clave = clave;
+
+    /* sonidos: solo cuando cambia de pantalla o de pregunta de verdad
+       (las repeticiones del sondeo no vuelven a sonar) */
+    var prevEst = G.sndEst || '';
+    var prevIdx = (typeof G.sndIdx === 'number') ? G.sndIdx : -1;
+    if (d.estado !== prevEst) {
+      if (d.estado === 'lobby') { sndLobby(); } else { sndPararLobby(); }
+      if (d.estado === 'pregunta') sndPregunta();
+      else if (d.estado === 'revelacion') sndRevela();
+      else if (d.estado === 'podio') sndFanfarria();
+    } else if (d.estado === 'pregunta' && d.idx !== prevIdx) {
+      sndPregunta();
+    } else if (d.estado === 'revelacion' && d.idx !== prevIdx) {
+      sndRevela();
+    }
+    G.sndEst = d.estado; G.sndIdx = d.idx;
 
     if (d.estado === 'lobby') vLobby(d);
     else if (d.estado === 'cuenta') vCuenta(d);
@@ -504,7 +637,7 @@ body {
       var acierto = esRevelacion && i === q.correctaIdx;
       return '<div class="opc r' + (i + 1) + clsLarga + (acierto ? ' acierto' : '') + '">' +
         '<span class="figura">' + FIG[i] + '</span>' +
-        '<span class="texto">' + esc(t) + '</span>' +
+        '<span class="texto">' + esc(recortar(t, 60)) + '</span>' +
         (esRevelacion && acierto ? PALOMITA : '') +
         (conteos && conteos[i] ? '<span class="conteo">' + conteos[i] + '</span>' : '') +
         '</div>';
@@ -541,9 +674,9 @@ body {
         '<span class="spacer"></span><span class="j-chip">Respondieron ' + d.respondieron + '/' + d.activos + '</span></div>' +
         '<div class="revel-zona">' +
           '<div class="revel-izq">' +
-            '<div class="j-preg' + (q.p.length > 110 ? ' larga' : '') + '" style="font-size:2.7vh;font-size:clamp(14px, 2.7vh, 28px)">' + esc(q.p) + '</div>' +
+            '<div class="j-preg' + (q.p.length > 110 ? ' larga' : '') + '" style="font-size:3.4vh;font-size:clamp(17px, 3.4vh, 34px)">' + esc(q.p) + '</div>' +
             opcionesHtml(q, true) +
-            '<div class="veredicto">' + PALOMITA + '<span>' + esc(q.resp || q.opciones[q.correctaIdx]) + '</span></div>' +
+            '<div class="veredicto">' + PALOMITA + '<span>' + esc(recortar(q.resp || q.opciones[q.correctaIdx] || '', 70)) + '</span></div>' +
             (q.r ? '<div class="versiculo">' + esc(q.r) + '</div>' : '') +
           '</div>' +
           '<div class="revel-der">' +
@@ -620,6 +753,20 @@ body {
   try {
     if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(function () {});
   } catch (e) {}
+
+  /* ---------- sonido: botón de muteo + preferencia guardada ---------- */
+  SND.on = (function () { try { return localStorage.getItem('fequiz_son') !== '0'; } catch (e) { return true; } })();
+  sndPinta();
+  document.getElementById('btn-son').addEventListener('click', function () {
+    SND.on = !SND.on;
+    try { localStorage.setItem('fequiz_son', SND.on ? '1' : '0'); } catch (e) {}
+    sndPinta();
+    if (!SND.on) { sndPararLobby(); }
+    else { sndCtx(); if (G.ult && G.ult.estado === 'lobby' && !SND.intervalo) sndLobby(); }
+  });
+  document.addEventListener('click', sndDespertar, false);
+  document.addEventListener('keydown', sndDespertar, false);
+  document.addEventListener('touchstart', sndDespertar, false);
 
   /* ---------- arranque ---------- */
   if (PIN) {
