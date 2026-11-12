@@ -101,11 +101,11 @@ body {
 .j { flex: 1; min-height: 0; display: flex; flex-direction: column; gap:1.3vh;gap:clamp(6px, 1.3vh, 14px); }
 .j-top { display: flex; align-items: center; gap:1.4vw;gap:clamp(8px, 1.4vw, 18px); flex: 0 0 auto; }
 .j-chip { background: rgba(0,0,0,.26); border-radius: 999px; padding:.9vh;padding:clamp(4px, .9vh, 9px) clamp(11px, 1.6vw, 20px);
-  font-size:2vh;font-size:clamp(11px, 2vh, 19px); font-weight: 800; letter-spacing: .08em; }
+  font-size:2.3vh;font-size:clamp(13px, 2.3vh, 22px); font-weight: 800; letter-spacing: .08em; }
 .j-top .spacer { flex: 1; }
 .j-timer { width:6.4vh;width:clamp(34px, 6.4vh, 62px); height:6.4vh;height:clamp(34px, 6.4vh, 62px); border-radius: 50%;
   display: grid; place-items: center; background: rgba(255,255,255,.14);
-  font-size:3vh;font-size:clamp(15px, 3vh, 28px); font-weight: 800; font-variant-numeric: tabular-nums; }
+  font-size:3.4vh;font-size:clamp(17px, 3.4vh, 32px); font-weight: 800; font-variant-numeric: tabular-nums; }
 .j-timer.apurado { box-shadow: inset 0 0 0 3px var(--amarillo); }
 .j-timer.critico { box-shadow: inset 0 0 0 3px var(--rojo); animation: late .5s ease-in-out infinite; }
 .j-pista { flex: 0 0 auto; height:1.1vh;height:clamp(6px, 1.1vh, 11px); border-radius: 99px; background: rgba(255,255,255,.18); overflow: hidden; }
@@ -113,16 +113,20 @@ body {
 .j-preg { flex: 0 0 auto; background: #fff; color: #2b2b2b; border-radius:2vh;border-radius:clamp(10px, 2vh, 20px);
   padding:2.2vh;padding:clamp(10px, 2.2vh, 24px) clamp(14px, 2.6vw, 36px);
   font-weight: 800; text-align: center; display: grid; place-items: center;
-  font-size:4.9vh;font-size:clamp(22px, 4.9vh, 50px); line-height: 1.22; }
-.j-preg.larga { font-size:3.6vh;font-size:clamp(18px, 3.6vh, 37px); }
+  font-size:6.4vh;font-size:clamp(35px, 6.4vh, 64px); line-height: 1.22; }
+.j-preg.larga { font-size:4.9vh;font-size:clamp(31px, 4.9vh, 50px); }
+/* en la revelación la pregunta convive con las pastillas + veredicto:
+   va algo más chica para que las RESPUESTAS queden grandes y completas */
+.j-preg.en-revel { font-size:4.2vh;font-size:clamp(28px, 4.2vh, 42px); }
+.j-preg.en-revel.larga { font-size:3.3vh;font-size:clamp(24px, 3.3vh, 34px); }
 .opcs { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
   gap:1.5vh;gap:clamp(7px, 1.5vh, 15px); }
 .opc { border-radius:1.8vh;border-radius:clamp(9px, 1.8vh, 18px); display: flex; align-items: center; gap:1.4vw;gap:clamp(8px, 1.4vw, 18px);
   padding:1.6vh;padding:clamp(8px, 1.6vh, 18px) clamp(12px, 2vw, 28px); color: #fff;
   box-shadow: 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3); overflow: hidden;
-  font-size:3.2vh;font-size:clamp(16px, 3.2vh, 32px); font-weight: 700; line-height: 1.2; }
-.opc.larga { font-size:2.6vh;font-size:clamp(13px, 2.6vh, 26px); }
-.opc .figura { width:3.4vh;width:clamp(17px, 3.4vh, 32px); height:3.4vh;height:clamp(17px, 3.4vh, 32px); flex: 0 0 auto; }
+  font-size:4.4vh;font-size:clamp(29px, 4.4vh, 45px); font-weight: 700; line-height: 1.2; }
+.opc.larga { font-size:3.6vh;font-size:clamp(26px, 3.6vh, 37px); }
+.opc .figura { width:4.6vh;width:clamp(26px, 4.6vh, 44px); height:4.6vh;height:clamp(26px, 4.6vh, 44px); flex: 0 0 auto; }
 .opc .figura svg { width: 100%; height: 100%; display: block; }
 .opc .texto { flex: 1; }
 .opc .conteo { align-self: center; background: rgba(0,0,0,.3); border-radius: 999px; padding: .2em .6em;
@@ -133,19 +137,19 @@ body {
 .revel .opc.acierto { opacity: 1; filter: none; box-shadow: 0 0 0 clamp(3px, .6vh, 6px) #fff, 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3);
   animation: pulso .6s ease-out 2; }
 @keyframes pulso { 0% { transform: scale(1); } 50% { transform: scale(1.025); } 100% { transform: scale(1); } }
-.revel .opc .palomita { flex: 0 0 auto; width:4vh;width:clamp(20px, 4vh, 38px); height:4vh;height:clamp(20px, 4vh, 38px); }
+.revel .opc .palomita { flex: 0 0 auto; width:4.8vh;width:clamp(26px, 4.8vh, 44px); height:4.8vh;height:clamp(26px, 4.8vh, 44px); }
 .veredicto { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap:1.2vw;gap:clamp(7px, 1.2vw, 14px);
-  font-weight: 800; font-size:2.8vh;font-size:clamp(14px, 2.8vh, 27px); color: #7DDB6A; }
-.veredicto svg { width:3.4vh;width:clamp(18px, 3.4vh, 32px); height:3.4vh;height:clamp(18px, 3.4vh, 32px); flex: 0 0 auto; }
+  font-weight: 800; font-size:4vh;font-size:clamp(24px, 4vh, 40px); color: #7DDB6A; }
+.veredicto svg { width:4.2vh;width:clamp(24px, 4.2vh, 40px); height:4.2vh;height:clamp(24px, 4.2vh, 40px); flex: 0 0 auto; }
 .versiculo { flex: 0 0 auto; text-align: center; font-weight: 700; color: var(--amarillo);
-  font-size:2.2vh;font-size:clamp(12px, 2.2vh, 21px); }
+  font-size:3.2vh;font-size:clamp(20px, 3.2vh, 31px); }
 .revel-zona { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1.35fr 1fr; gap:1.6vw;gap:clamp(8px, 1.6vw, 20px); }
 .revel-izq { min-height: 0; display: flex; flex-direction: column; gap:1.2vh;gap:clamp(6px, 1.2vh, 13px); }
 .revel-der { min-height: 0; display: flex; flex-direction: column; gap:1vh;gap:clamp(5px, 1vh, 10px); }
-.top-tit { font-size:2.1vh;font-size:clamp(12px, 2.1vh, 20px); font-weight: 800; letter-spacing: .2em; color: var(--blanco-75); }
+.top-tit { font-size:2.5vh;font-size:clamp(14px, 2.5vh, 24px); font-weight: 800; letter-spacing: .2em; color: var(--blanco-75); }
 .top-f { display: flex; align-items: center; gap:1.1vw;gap:clamp(7px, 1.1vw, 15px); background: rgba(0,0,0,.22);
   border-radius:1.5vh;border-radius:clamp(8px, 1.5vh, 14px); padding:1vh;padding:clamp(5px, 1vh, 11px) clamp(10px, 1.4vw, 18px);
-  font-size:2.4vh;font-size:clamp(12px, 2.4vh, 23px); font-weight: 700; }
+  font-size:2.9vh;font-size:clamp(15px, 2.9vh, 28px); font-weight: 700; }
 .top-f.primero { background: rgba(255,166,2,.2); box-shadow: inset 0 0 0 2px rgba(255,166,2,.55); }
 .top-f .pos { flex: 0 0 auto; width: 1.7em; text-align: center; }
 .top-f .apo { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -208,13 +212,13 @@ body {
 /* botón SIGUIENTE del anfitrión en la revelación (solo si esta pantalla
    tiene permiso, o sea que se abrió desde el celular del anfitrión) */
 .btn-avanzar { border: 0; cursor: pointer; border-radius: 999px; background: var(--verde); color: #fff;
-  font-family: inherit; font-weight: 800; font-size:3vh;font-size:clamp(15px, 3vh, 30px); letter-spacing: .08em;
+  font-family: inherit; font-weight: 800; font-size:3.6vh;font-size:clamp(18px, 3.6vh, 34px); letter-spacing: .08em;
   padding:2.2vh;padding:clamp(10px, 2.2vh, 22px) clamp(24px, 4.5vw, 54px);
   box-shadow: 0 clamp(4px, .9vh, 9px) 0 rgba(0,0,0,.3); align-self: center; margin-top: 1.4vh;margin-top:clamp(7px, 1.4vh, 14px); }
 .btn-avanzar:active { transform: translateY(2px); }
 .btn-avanzar[disabled] { opacity: .55; }
 .aviso-avanzar { margin-top:auto; text-align:center; font-weight: 700; color: var(--blanco-75);
-  font-size:1.9vh;font-size:clamp(11px, 1.9vh, 17px); line-height: 1.45; padding: 0 1vw;
+  font-size:2.3vh;font-size:clamp(13px, 2.3vh, 21px); line-height: 1.45; padding: 0 1vw;
   padding-bottom:5.5vh;padding-bottom:clamp(26px, 5.5vh, 52px); }
 #confeti { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
 
@@ -724,7 +728,7 @@ body {
       var acierto = esRevelacion && i === q.correctaIdx;
       return '<div class="opc r' + (i + 1) + clsLarga + (acierto ? ' acierto' : '') + '">' +
         '<span class="figura">' + FIG[i] + '</span>' +
-        '<span class="texto">' + esc(recortar(t, 60)) + '</span>' +
+        '<span class="texto">' + esc(recortar(t, esRevelacion ? 45 : 60)) + '</span>' +
         (esRevelacion && acierto ? PALOMITA : '') +
         (conteos && conteos[i] ? '<span class="conteo">' + conteos[i] + '</span>' : '') +
         '</div>';
@@ -761,9 +765,9 @@ body {
         '<span class="spacer"></span><span class="j-chip">Respondieron ' + d.respondieron + '/' + d.activos + '</span></div>' +
         '<div class="revel-zona">' +
           '<div class="revel-izq">' +
-            '<div class="j-preg' + (q.p.length > 110 ? ' larga' : '') + '" style="font-size:3.4vh;font-size:clamp(17px, 3.4vh, 34px)">' + esc(q.p) + '</div>' +
+            '<div class="j-preg en-revel' + (q.p.length > 110 ? ' larga' : '') + '">' + esc(q.p) + '</div>' +
             opcionesHtml(q, true) +
-            '<div class="veredicto">' + PALOMITA + '<span>' + esc(recortar(q.resp || q.opciones[q.correctaIdx] || '', 70)) + '</span></div>' +
+            '<div class="veredicto">' + PALOMITA + '<span>' + esc(recortar(q.resp || q.opciones[q.correctaIdx] || '', 60)) + '</span></div>' +
             (q.r ? '<div class="versiculo">' + esc(q.r) + '</div>' : '') +
           '</div>' +
           '<div class="revel-der">' +
